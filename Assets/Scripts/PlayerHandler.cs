@@ -9,6 +9,7 @@ public class PlayerHandler : NetworkBehaviour {
     private float _moveInput = 0;
     private Camera _camera = null;
     private AudioListener _audioListener = null;
+    private Renderer _renderer = null;
 
     [SerializeField] private float _turnSpeed = 150f;
     [SerializeField] private float _moveSpeed = 10f;
@@ -16,12 +17,16 @@ public class PlayerHandler : NetworkBehaviour {
     private void Awake() {
         _camera = gameObject.GetComponent<Camera>();
         _audioListener = gameObject.GetComponent<AudioListener>();
+        _renderer = gameObject.GetComponent<Renderer>();
     }
 
     private void Start () {
         if (isLocalPlayer) {
             //print(transform.gameObject);
             GameManager.Instance.AssignCamera(transform.gameObject);
+            Renderer[] rs = GetComponentsInChildren<Renderer>();
+            foreach (Renderer r in rs)
+                r.enabled = false;
             //_camera.enabled = true;
             //_audioListener.enabled = true;
         }
