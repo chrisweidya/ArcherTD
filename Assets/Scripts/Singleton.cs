@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Singleton : MonoBehaviour {
+public class Singleton<T> : MonoBehaviour where T : MonoBehaviour{
 
-    private static Singleton _instance;
+    private static T _instance;
 
-    public static Singleton Instance { get { print("get"); return _instance; } }
+    public static T Instance { get { print("get"); return _instance; } }
 
-    private void Awake() {
-        print("created singelton");
-        if(_instance != null && _instance != this) {
-            Destroy(this.gameObject);
+    protected virtual void Awake() {
+        if (_instance != null) {
+            print("Singleton exists.");
+            Destroy(gameObject);
         }
         else {
-            _instance = this;
+            print("Created new Singleton");
+            _instance = gameObject.GetComponent<T>();
+            DontDestroyOnLoad(gameObject);
         }
-    }
-	
+    }	
 }

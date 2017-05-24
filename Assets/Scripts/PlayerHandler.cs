@@ -10,15 +10,20 @@ public class PlayerHandler : NetworkBehaviour {
     private Camera _camera = null;
     private AudioListener _audioListener = null;
 
+    [SerializeField] private float _turnSpeed = 150f;
+    [SerializeField] private float _moveSpeed = 10f;
+
     private void Awake() {
         _camera = gameObject.GetComponent<Camera>();
         _audioListener = gameObject.GetComponent<AudioListener>();
     }
-    // Use this for initialization
+
     private void Start () {
         if (isLocalPlayer) {
-            _camera.enabled = true;
-            _audioListener.enabled = true;
+            //print(transform.gameObject);
+            GameManager.Instance.AssignCamera(transform.gameObject);
+            //_camera.enabled = true;
+            //_audioListener.enabled = true;
         }
         else {
             Destroy(this);
@@ -43,5 +48,4 @@ public class PlayerHandler : NetworkBehaviour {
         transform.Rotate(0, _turnInput * Time.deltaTime * 150f, 0);
         transform.Translate(0, 0, _moveInput * Time.deltaTime * 3f);
     }
-
 }

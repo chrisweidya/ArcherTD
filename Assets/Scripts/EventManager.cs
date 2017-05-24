@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EventManager : Singleton {
+public class EventManager : Singleton <EventManager> { 
 
 	// Use this for initialization
 	void Start () {
