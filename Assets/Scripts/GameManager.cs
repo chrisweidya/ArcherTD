@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : Singleton <GameManager> { 
+public class GameManager : Singleton <GameManager> {
+
+    [SerializeField]
+    private Transform _cameraRigPrefab = null;
+    private Transform _cameraRig = null;
+    private GameObject _cameraPlayer = null;
 
     protected GameManager() {
     }
-
-    private GameObject _cameraPlayer = null;
-
-    [SerializeField] private Transform _cameraRigPrefab = null;
-    private Transform _cameraRig = null;
 
     protected override void Awake() {
         base.Awake();
@@ -39,7 +39,7 @@ public class GameManager : Singleton <GameManager> {
             _cameraPlayer = player;
             _cameraRig.position = player.transform.position;
             _cameraRig.rotation = player.transform.rotation;
-            player.transform.parent = _cameraRig.transform.Find("Camera (head)/Camera (eye)");
+            player.transform.parent = _cameraRig.transform.Find("Camera (eye)");
             print(player.transform.parent);
         }
     }
