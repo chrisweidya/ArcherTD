@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class EventManager : Singleton <EventManager> { 
 
+    protected EventManager() {
+    }
+
+    public delegate void PlayerStateChange(Enums.PlayerState state);
+    public static event PlayerStateChange changePlayerState;
+
 	// Use this for initialization
 	void Start () {
 		

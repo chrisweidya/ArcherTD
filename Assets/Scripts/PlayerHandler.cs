@@ -7,16 +7,26 @@ public class PlayerHandler : NetworkBehaviour {
 
     private float _turnInput = 0;
     private float _moveInput = 0;
-    private Camera _camera = null;
-    private AudioListener _audioListener = null;
     private Renderer _renderer = null;
 
+    private Enums.PlayerState _playerState = 0;
+
     [SerializeField] private float _turnSpeed = 150f;
-    [SerializeField] private float _moveSpeed = 10f;
+    [SerializeField] private float _moveSpeed = 10f;    
+
+    private void OnEnable() {
+        EventManager.changePlayerState += ChangeState;
+    }
+
+    private void OnDisable() {
+        EventManager.changePlayerState -= ChangeState;
+    }
+
+    private void ChangeState(Enums.PlayerState state) {
+        _playerState = state;
+    }
 
     private void Awake() {
-        _camera = gameObject.GetComponent<Camera>();
-        _audioListener = gameObject.GetComponent<AudioListener>();
         _renderer = gameObject.GetComponent<Renderer>();
     }
 
@@ -24,9 +34,10 @@ public class PlayerHandler : NetworkBehaviour {
         if (isLocalPlayer) {
             //print(transform.gameObject);
             GameManager.Instance.AssignCamera(transform.gameObject);
-            Renderer[] rs = GetComponentsInChildren<Renderer>();
-            foreach (Renderer r in rs)
-                r.enabled = false;
+            _renderer.enabled = false;
+            //Renderer[] rs = GetComponentsInChildren<Renderer>();
+            //foreach (Renderer r in rs)
+             //   r.enabled = false;
             //_camera.enabled = true;
             //_audioListener.enabled = true;
         }

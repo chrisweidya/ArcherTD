@@ -30,6 +30,10 @@ public class GameManager : Singleton <GameManager> {
         _cameraRig = Instantiate(_cameraRigPrefab);
     }
 
+    private void SetCameraPos(Vector3 pos) {
+        _cameraRig.position = pos;
+    }
+
     public void AssignCamera(GameObject player) {
         if(_cameraPlayer != null) {
             print("Camera already assigned");
@@ -37,10 +41,11 @@ public class GameManager : Singleton <GameManager> {
         }
         else {
             _cameraPlayer = player;
-            _cameraRig.position = player.transform.position;
-            _cameraRig.rotation = player.transform.rotation;
+            SetCameraPos(player.transform.position);
             player.transform.parent = _cameraRig.transform.Find("Camera (eye)");
-            print(player.transform.parent);
+            player.transform.position = player.transform.parent.position;
+            player.transform.rotation = player.transform.parent.rotation;
+            print(player.transform.position);
         }
     }
 }
