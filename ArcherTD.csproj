@@ -94,6 +94,7 @@
     <Compile Include="Assets\Scripts\Enums.cs" />
     <Compile Include="Assets\Scripts\EventManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\HandEventHooks.cs" />
     <Compile Include="Assets\Scripts\NetworkStartup.cs" />
     <Compile Include="Assets\Scripts\PlayerHandler.cs" />
     <Compile Include="Assets\Scripts\Singleton.cs" />
