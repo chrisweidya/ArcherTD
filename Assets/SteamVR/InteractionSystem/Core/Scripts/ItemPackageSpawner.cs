@@ -224,7 +224,7 @@ namespace Valve.VR.InteractionSystem
 				if ( hand.controller != null && hand.controller.GetHairTriggerDown() )
 				{
 					SpawnAndAttachObject( hand );
-				}
+                }
 			}
 		}
 

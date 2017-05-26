@@ -8,7 +8,6 @@ public class GameManager : Singleton <GameManager> {
     [SerializeField]
     private Transform _cameraRigPrefab = null;
     private Transform _cameraRig = null;
-    [SerializeField]
     private GameObject _cameraRigGO = null;
     private GameObject _cameraPlayer = null;
 

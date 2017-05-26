@@ -22,29 +22,7 @@ namespace Valve.VR.InteractionSystem
 		private Hand.AttachmentFlags attachmentFlags = Hand.defaultAttachmentFlags & ( ~Hand.AttachmentFlags.SnapOnAttach ) & ( ~Hand.AttachmentFlags.DetachOthers );
 
 		//-------------------------------------------------
-		void Awake()
-		{
-			textMesh = GetComponentInChildren<TextMesh>();
-			textMesh.text = "No Hand Hovering";
-		}
-
-
-		//-------------------------------------------------
-		// Called when a Hand starts hovering over this object
-		//-------------------------------------------------
-		private void OnHandHoverBegin( Hand hand )
-		{
-			textMesh.text = "Hovering hand: " + hand.name;
-		}
-
-
-		//-------------------------------------------------
-		// Called when a Hand stops hovering over this object
-		//-------------------------------------------------
-		private void OnHandHoverEnd( Hand hand )
-		{
-			textMesh.text = "No Hand Hovering";
-		}
+		
 
 
 		//-------------------------------------------------
@@ -56,28 +34,10 @@ namespace Valve.VR.InteractionSystem
 			{
 				if ( hand.currentAttachedObject != gameObject )
 				{
-					// Save our position/rotation so that we can restore it when we detach
-					oldPosition = transform.position;
-					oldRotation = transform.rotation;
-
-					// Call this to continue receiving HandHoverUpdate messages,
-					// and prevent the hand from hovering over anything else
-					hand.HoverLock( GetComponent<Interactable>() );
-
-					// Attach this object to the hand
-					hand.AttachObject( gameObject, attachmentFlags );
+					hand.AttachObject( gameObject);
 				}
 				else
 				{
-					// Detach this object from the hand
-					hand.DetachObject( gameObject );
-
-					// Call this to undo HoverLock
-					hand.HoverUnlock( GetComponent<Interactable>() );
-
-					// Restore position/rotation
-					transform.position = oldPosition;
-					transform.rotation = oldRotation;
 				}
 			}
 		}
@@ -88,7 +48,6 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void OnAttachedToHand( Hand hand )
 		{
-			textMesh.text = "Attached to hand: " + hand.name;
 			attachTime = Time.time;
 		}
 
@@ -98,7 +57,6 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void OnDetachedFromHand( Hand hand )
 		{
-			textMesh.text = "Detached from hand: " + hand.name;
 		}
 
 
@@ -107,7 +65,6 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void HandAttachedUpdate( Hand hand )
 		{
-			textMesh.text = "Attached to hand: " + hand.name + "\nAttached time: " + ( Time.time - attachTime ).ToString( "F2" );
 		}
 
 
