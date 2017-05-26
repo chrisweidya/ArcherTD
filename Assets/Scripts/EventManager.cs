@@ -8,7 +8,13 @@ public class EventManager : Singleton <EventManager> {
     }
 
     public delegate void PlayerStateChange(Enums.PlayerState state);
-    public static event PlayerStateChange changePlayerState;
+    public static event PlayerStateChange ChangePlayerState;
+    public static void FirePlayerStateChange(Enums.PlayerState state) {
+        if (ChangePlayerState != null) {
+            print("Player state chaange event fired.");
+            ChangePlayerState(state);
+        }
+    }
 
     protected override void Awake() {
         base.Awake();

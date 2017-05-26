@@ -19,7 +19,7 @@ namespace Valve.VR.InteractionSystem {
         }
 
         private void OnAttachedToHand(Hand hand) {
-            print("trigger");
+            EventManager.FirePlayerStateChange(Enums.PlayerState.Stand);
         }
     }
 }
