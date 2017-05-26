@@ -8,6 +8,8 @@ public class GameManager : Singleton <GameManager> {
     [SerializeField]
     private Transform _cameraRigPrefab = null;
     private Transform _cameraRig = null;
+    [SerializeField]
+    private GameObject _cameraRigGO = null;
     private GameObject _cameraPlayer = null;
 
     protected GameManager() {
@@ -27,11 +29,13 @@ public class GameManager : Singleton <GameManager> {
 
     private void OnSceneLoad(Scene scene, LoadSceneMode mode) {
         print("Scene Loaded.");
-        _cameraRig = Instantiate(_cameraRigPrefab);
+        _cameraRigGO = GameObject.Find("Player");
+        print(_cameraRigGO);
+        //_cameraRig = Instantiate(_cameraRigPrefab);
     }
 
     private void SetCameraPos(Vector3 pos) {
-        _cameraRig.position = pos;
+        _cameraRigGO.transform.position = pos;
     }
 
     public void AssignCamera(GameObject player) {
@@ -42,7 +46,11 @@ public class GameManager : Singleton <GameManager> {
         else {
             _cameraPlayer = player;
             SetCameraPos(player.transform.position);
-            player.transform.parent = _cameraRig.transform.Find("Camera (eye)");
+            player.transform.parent = _cameraRigGO.transform.Find("SteamVRObjects/VRCamera");
+            if(player.transform.parent == null) {
+                print("VR Camera not found, Vive not connected? Fallback.");
+                player.transform.parent = _cameraRigGO.transform.Find("NoSteamVRFallbackObjects/FallbackObjects");
+            }
             player.transform.position = player.transform.parent.position;
             player.transform.rotation = player.transform.parent.rotation;
             print(player.transform.position);

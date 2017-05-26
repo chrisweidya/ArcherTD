@@ -9,7 +9,8 @@ public class PlayerHandler : NetworkBehaviour {
     private float _moveInput = 0;
     private Renderer _renderer = null;
 
-    private Enums.PlayerState _playerState = 0;
+    [SyncVar(hook="TriggerPlayerAnimation")]
+    private Enums.PlayerState _playerState = Enums.PlayerState.Stand;
 
     [SerializeField] private float _turnSpeed = 150f;
     [SerializeField] private float _moveSpeed = 10f;    
@@ -24,6 +25,10 @@ public class PlayerHandler : NetworkBehaviour {
 
     private void ChangeState(Enums.PlayerState state) {
         _playerState = state;
+    }
+
+    private void TriggerPlayerAnimation(Enums.PlayerState playerstate) {
+        print(playerstate);
     }
 
     private void Awake() {

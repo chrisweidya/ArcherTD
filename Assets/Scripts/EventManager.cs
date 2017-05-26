@@ -10,8 +10,12 @@ public class EventManager : Singleton <EventManager> {
     public delegate void PlayerStateChange(Enums.PlayerState state);
     public static event PlayerStateChange changePlayerState;
 
-	// Use this for initialization
-	void Start () {
+    protected override void Awake() {
+        base.Awake();
+    }
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
