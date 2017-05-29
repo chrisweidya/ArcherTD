@@ -4,8 +4,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class PlayerHandler : NetworkBehaviour {
-    
-    private Renderer _renderer = null;
+
+    [SerializeField]
+    List<Renderer> _modelRenderers = new List<Renderer>();
+    [SerializeField]
+    private Renderer _weaponRenderer = null;
 
     [SyncVar(hook="TriggerPlayerAnimation")]
     private Enums.PlayerState _playerState = Enums.PlayerState.Stand;
@@ -24,16 +27,19 @@ public class PlayerHandler : NetworkBehaviour {
 
     private void TriggerPlayerAnimation(Enums.PlayerState playerstate) {
         print(playerstate);
+
     }
 
     private void Awake() {
-        _renderer = gameObject.GetComponent<Renderer>();
+        //_modelRenderer = gameObject.GetComponent<Renderer>();
     }
 
     private void Start () {
         if (isLocalPlayer) {
             GameManager.Instance.AssignCamera(transform.gameObject);
-            _renderer.enabled = false;
+            foreach(Renderer r in _modelRenderers) {
+                r.enabled = false;
+            }
             //Renderer[] rs = GetComponentsInChildren<Renderer>();
             //foreach (Renderer r in rs)
              //   r.enabled = false;
