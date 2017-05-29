@@ -8,11 +8,12 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
 namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
-	public class ArrowHand : MonoBehaviour
+	public class ArrowHand : NetworkBehaviour
 	{
 		private Hand hand;
 		private Longbow bow;
@@ -42,7 +43,7 @@ namespace Valve.VR.InteractionSystem
 
 
 		//-------------------------------------------------
-		void Awake()
+		private void Awake()
 		{
 			allowTeleport = GetComponent<AllowTeleportWhileAttachedToHand>();
 			allowTeleport.teleportAllowed = true;
@@ -60,34 +61,63 @@ namespace Valve.VR.InteractionSystem
 		}
 
 
-		//-------------------------------------------------
-		private GameObject InstantiateArrow()
+        //-------------------------------------------------
+        [Command]
+        private void CmdInstantiateArrow()
+        {
+            Debug.Log("SpawnedArrow");
+            GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
+            arrow.name = "Bow Arrow";
+            arrow.transform.parent = arrowNockTransform;
+            Util.ResetTransform(arrow.transform);
+
+            arrowList.Add(arrow);
+
+            while (arrowList.Count > maxArrowCount)
+            {
+                GameObject oldArrow = arrowList[0];
+                arrowList.RemoveAt(0);
+                if (oldArrow)
+                {
+                    Destroy(oldArrow);
+                }
+            }
+            currentArrow = arrow;
+            NetworkServer.Spawn(arrow);
+
+            
+        }
+
+        //private GameObject InstantiateArrow()
+        //{
+        //    GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
+        //    arrow.name = "Bow Arrow";
+        //    arrow.transform.parent = arrowNockTransform;
+        //    Util.ResetTransform(arrow.transform);
+
+        //    arrowList.Add(arrow);
+
+        //    while (arrowList.Count > maxArrowCount)
+        //    {
+        //        GameObject oldArrow = arrowList[0];
+        //        arrowList.RemoveAt(0);
+        //        if (oldArrow)
+        //        {
+        //            Destroy(oldArrow);
+        //        }
+        //    }
+
+        //    NetworkServer.Spawn(arrow);
+
+        //    return arrow;
+        //}
+
+
+        //-------------------------------------------------
+        private void HandAttachedUpdate( Hand hand )
 		{
-			GameObject arrow = Instantiate( arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation ) as GameObject;
-			arrow.name = "Bow Arrow";
-			arrow.transform.parent = arrowNockTransform;
-			Util.ResetTransform( arrow.transform );
-
-			arrowList.Add( arrow );
-
-			while ( arrowList.Count > maxArrowCount )
-			{
-				GameObject oldArrow = arrowList[0];
-				arrowList.RemoveAt( 0 );
-				if ( oldArrow )
-				{
-					Destroy( oldArrow );
-				}
-			}
-
-			return arrow;
-		}
-
-
-		//-------------------------------------------------
-		private void HandAttachedUpdate( Hand hand )
-		{
-			if ( bow == null )
+            Debug.Log("as");
+            if ( bow == null )
 			{
 				FindBow();
 			}
@@ -99,8 +129,9 @@ namespace Valve.VR.InteractionSystem
 
 			if ( allowArrowSpawn && ( currentArrow == null ) ) // If we're allowed to have an active arrow in hand but don't yet, spawn one
 			{
-				currentArrow = InstantiateArrow();
-				arrowSpawnSound.Play();
+                //currentArrow = InstantiateArrow();
+                CmdInstantiateArrow();
+                arrowSpawnSound.Play();
 			}
 
 			float distanceToNockPosition = Vector3.Distance( transform.parent.position, bow.nockTransform.position );
@@ -174,8 +205,9 @@ namespace Valve.VR.InteractionSystem
 				{
 					if ( currentArrow == null )
 					{
-						currentArrow = InstantiateArrow();
-					}
+                        //currentArrow = InstantiateArrow();
+                        CmdInstantiateArrow();
+                    }
 
 					nocked = true;
 					bow.StartNock( this );
@@ -193,7 +225,7 @@ namespace Valve.VR.InteractionSystem
 			{
 				if ( bow.pulled ) // If bow is pulled back far enough, fire arrow, otherwise reset arrow in arrowhand
 				{
-					FireArrow();
+					CmdFireArrow();
 				}
 				else
 				{
@@ -219,8 +251,10 @@ namespace Valve.VR.InteractionSystem
 
 
 		//-------------------------------------------------
-		private void FireArrow()
+        [Command]
+		private void CmdFireArrow()
 		{
+           
 			currentArrow.transform.parent = null;
 
 			Arrow arrow = currentArrow.GetComponent<Arrow>();
