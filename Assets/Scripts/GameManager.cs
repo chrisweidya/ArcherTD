@@ -26,7 +26,6 @@ public class GameManager : Singleton <GameManager> {
     private void OnSceneLoad(Scene scene, LoadSceneMode mode) {
         print("Scene Loaded.");
         _cameraRigGO = GameObject.Find("Player");
-        print(_cameraRigGO);
         //_cameraRig = Instantiate(_cameraRigPrefab);
     }
 
@@ -49,7 +48,6 @@ public class GameManager : Singleton <GameManager> {
             }
             player.transform.position = player.transform.parent.position;
             player.transform.rotation = player.transform.parent.rotation;
-            print(player.transform.position);
         }
     }
 }
