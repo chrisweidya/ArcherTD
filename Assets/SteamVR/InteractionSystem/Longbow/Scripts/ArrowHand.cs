@@ -15,7 +15,11 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	public class ArrowHand : NetworkBehaviour
 	{
-		private Hand hand;
+        public GameObject bulletPrefab;
+        public Transform bulletSpawnPoint;
+        private float timer = 2.0f;
+
+        private Hand hand;
 		private Longbow bow;
 
 		private GameObject currentArrow;
@@ -50,6 +54,7 @@ namespace Valve.VR.InteractionSystem
 			allowTeleport.overrideHoverLock = false;
 
 			arrowList = new List<GameObject>();
+            //GetComponent<NetworkIdentity>().AssignClientAuthority(this.GetComponent<NetworkIdentity>().connectionToClient);
 		}
 
 
@@ -60,11 +65,31 @@ namespace Valve.VR.InteractionSystem
 			FindBow();
 		}
 
+        [Command]
+        private void CmdFire()
+        {
+            bulletSpawnPoint = currentArrow.transform;
 
+            // Create the Bullet from the Bullet Prefab
+            GameObject bullet = (GameObject)Instantiate(
+                bulletPrefab,
+                bulletSpawnPoint.position,
+                bulletSpawnPoint.rotation);
+
+            // Add velocity to the bullet
+            bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6;
+
+            // Spawn the bullet on the Clients
+            NetworkServer.Spawn(bullet);
+
+            // Destroy the bullet after 2 seconds
+            Destroy(bullet, 2.0f);
+        }
         //-------------------------------------------------
         [Command]
         private void CmdInstantiateArrow()
         {
+            
             Debug.Log("SpawnedArrow");
             GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
             arrow.name = "Bow Arrow";
@@ -82,41 +107,41 @@ namespace Valve.VR.InteractionSystem
                     Destroy(oldArrow);
                 }
             }
-            currentArrow = arrow;
             NetworkServer.Spawn(arrow);
 
+            currentArrow = arrow;
             
         }
 
-        private GameObject InstantiateArrow()
-        {
-            GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
-            arrow.name = "Bow Arrow";
-            arrow.transform.parent = arrowNockTransform;
-            Util.ResetTransform(arrow.transform);
+        //private GameObject InstantiateArrow()
+        //{
+        //    GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
+        //    arrow.name = "Bow Arrow";
+        //    arrow.transform.parent = arrowNockTransform;
+        //    Util.ResetTransform(arrow.transform);
 
-            arrowList.Add(arrow);
+        //    arrowList.Add(arrow);
 
-            while (arrowList.Count > maxArrowCount)
-            {
-                GameObject oldArrow = arrowList[0];
-                arrowList.RemoveAt(0);
-                if (oldArrow)
-                {
-                    Destroy(oldArrow);
-                }
-            }
+        //    while (arrowList.Count > maxArrowCount)
+        //    {
+        //        GameObject oldArrow = arrowList[0];
+        //        arrowList.RemoveAt(0);
+        //        if (oldArrow)
+        //        {
+        //            Destroy(oldArrow);
+        //        }
+        //    }
 
-            //NetworkServer.Spawn(arrow);
+        //    NetworkServer.Spawn(arrow);
 
-            return arrow;
-        }
+        //    return arrow;
+        //}
 
 
         //-------------------------------------------------
+
         private void HandAttachedUpdate( Hand hand )
 		{
-            //Debug.Log("as");
             if ( bow == null )
 			{
 				FindBow();
@@ -129,8 +154,8 @@ namespace Valve.VR.InteractionSystem
 
 			if ( allowArrowSpawn && ( currentArrow == null ) ) // If we're allowed to have an active arrow in hand but don't yet, spawn one
 			{
-                currentArrow = InstantiateArrow();
-                //CmdInstantiateArrow();
+                //currentArrow = InstantiateArrow();
+                CmdInstantiateArrow();
                 arrowSpawnSound.Play();
 			}
 
@@ -225,8 +250,9 @@ namespace Valve.VR.InteractionSystem
 			{
 				if ( bow.pulled ) // If bow is pulled back far enough, fire arrow, otherwise reset arrow in arrowhand
 				{
-                    FireArrow();
-				}
+					CmdFireArrow();
+                    CmdFire();
+                }
 				else
 				{
 					arrowNockTransform.rotation = currentArrow.transform.rotation;
@@ -251,13 +277,14 @@ namespace Valve.VR.InteractionSystem
 
 
 		//-------------------------------------------------
-        
-		private void FireArrow()
+        [Command]
+		private void CmdFireArrow()
 		{
-           
+            Debug.Log("FireArrow");
 			currentArrow.transform.parent = null;
 
-			Arrow arrow = currentArrow.GetComponent<Arrow>();
+            Arrow arrow = currentArrow.GetComponent<Arrow>();
+
 			arrow.shaftRB.isKinematic = false;
 			arrow.shaftRB.useGravity = true;
 			arrow.shaftRB.transform.GetComponent<BoxCollider>().enabled = true;
@@ -267,14 +294,15 @@ namespace Valve.VR.InteractionSystem
 			arrow.arrowHeadRB.transform.GetComponent<BoxCollider>().enabled = true;
 
 			arrow.arrowHeadRB.AddForce( currentArrow.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange );
-			arrow.arrowHeadRB.AddTorque( currentArrow.transform.forward * 10 );
+            arrow.shaftRB.AddForce(currentArrow.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange);
+
+            arrow.arrowHeadRB.AddTorque( currentArrow.transform.forward * 10 );
 
 			nocked = false;
-
-			currentArrow.GetComponent<Arrow>().ArrowReleased( bow.GetArrowVelocity() );
+            currentArrow.GetComponent<Arrow>().ArrowReleased( bow.GetArrowVelocity() );
 			bow.ArrowReleased();
 
-			allowArrowSpawn = false;
+            allowArrowSpawn = false;
 			Invoke( "EnableArrowSpawn", 0.5f );
 			StartCoroutine( ArrowReleaseHaptics() );
 
