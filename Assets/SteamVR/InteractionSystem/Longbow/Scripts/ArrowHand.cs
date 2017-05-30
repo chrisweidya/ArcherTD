@@ -23,6 +23,7 @@ namespace Valve.VR.InteractionSystem
 		private Longbow bow;
 
 		private GameObject currentArrow;
+        private GameObject rpcArrow;
 		public GameObject arrowPrefab;
 
 		public Transform arrowNockTransform;
@@ -78,7 +79,7 @@ namespace Valve.VR.InteractionSystem
 
             // Add velocity to the bullet
             bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6;
-
+            bullet.name = "Bulettt";
             // Spawn the bullet on the Clients
             NetworkServer.Spawn(bullet);
 
@@ -91,6 +92,55 @@ namespace Valve.VR.InteractionSystem
         {
             
             Debug.Log("SpawnedArrow");
+            //GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
+            //arrow.name = "Bow Arrow";
+            //arrow.transform.parent = arrowNockTransform;
+            //Util.ResetTransform(arrow.transform);
+
+            //arrowList.Add(arrow);
+
+            //while (arrowList.Count > maxArrowCount)
+            //{
+            //    GameObject oldArrow = arrowList[0];
+            //    arrowList.RemoveAt(0);
+            //    if (oldArrow)
+            //    {
+            //        Destroy(oldArrow);
+            //    }
+            //}
+            
+            //currentArrow = arrow;
+            //NetworkServer.Spawn(arrow);
+            RpcInstantiateArrow();
+            
+            
+        }
+        [ClientRpc]
+        private void RpcInstantiateArrow()
+        {
+            Debug.Log("rpcInstantiateArrow");
+            //GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
+            //arrow.name = "Bow Arrow";
+            //arrow.transform.parent = arrowNockTransform;
+            //Util.ResetTransform(arrow.transform);
+
+            //arrowList.Add(arrow);
+
+            //while (arrowList.Count > maxArrowCount)
+            //{
+            //    GameObject oldArrow = arrowList[0];
+            //    arrowList.RemoveAt(0);
+            //    if (oldArrow)
+            //    {
+            //        Destroy(oldArrow);
+            //    }
+            //}
+            //currentArrow = arrow;
+            InstantiateArrow();
+        }
+
+        private void InstantiateArrow()
+        {
             GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
             arrow.name = "Bow Arrow";
             arrow.transform.parent = arrowNockTransform;
@@ -107,35 +157,8 @@ namespace Valve.VR.InteractionSystem
                     Destroy(oldArrow);
                 }
             }
-            NetworkServer.Spawn(arrow);
-
             currentArrow = arrow;
-            
         }
-
-        //private GameObject InstantiateArrow()
-        //{
-        //    GameObject arrow = Instantiate(arrowPrefab, arrowNockTransform.position, arrowNockTransform.rotation) as GameObject;
-        //    arrow.name = "Bow Arrow";
-        //    arrow.transform.parent = arrowNockTransform;
-        //    Util.ResetTransform(arrow.transform);
-
-        //    arrowList.Add(arrow);
-
-        //    while (arrowList.Count > maxArrowCount)
-        //    {
-        //        GameObject oldArrow = arrowList[0];
-        //        arrowList.RemoveAt(0);
-        //        if (oldArrow)
-        //        {
-        //            Destroy(oldArrow);
-        //        }
-        //    }
-
-        //    NetworkServer.Spawn(arrow);
-
-        //    return arrow;
-        //}
 
 
         //-------------------------------------------------
@@ -250,8 +273,8 @@ namespace Valve.VR.InteractionSystem
 			{
 				if ( bow.pulled ) // If bow is pulled back far enough, fire arrow, otherwise reset arrow in arrowhand
 				{
-					CmdFireArrow();
-                    CmdFire();
+                    //CmdFire();
+                    CmdFireArrow();
                 }
 				else
 				{
@@ -282,34 +305,52 @@ namespace Valve.VR.InteractionSystem
 		{
             Debug.Log("FireArrow");
 			currentArrow.transform.parent = null;
-
+            rpcArrow = currentArrow;
             Arrow arrow = currentArrow.GetComponent<Arrow>();
-
-			arrow.shaftRB.isKinematic = false;
+           
+            arrow.shaftRB.isKinematic = false;
 			arrow.shaftRB.useGravity = true;
 			arrow.shaftRB.transform.GetComponent<BoxCollider>().enabled = true;
 
 			arrow.arrowHeadRB.isKinematic = false;
 			arrow.arrowHeadRB.useGravity = true;
 			arrow.arrowHeadRB.transform.GetComponent<BoxCollider>().enabled = true;
-
+            
 			arrow.arrowHeadRB.AddForce( currentArrow.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange );
             arrow.shaftRB.AddForce(currentArrow.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange);
-
             arrow.arrowHeadRB.AddTorque( currentArrow.transform.forward * 10 );
-
-			nocked = false;
+          
+            nocked = false;
             currentArrow.GetComponent<Arrow>().ArrowReleased( bow.GetArrowVelocity() );
 			bow.ArrowReleased();
 
             allowArrowSpawn = false;
 			Invoke( "EnableArrowSpawn", 0.5f );
 			StartCoroutine( ArrowReleaseHaptics() );
+            NetworkServer.Spawn(currentArrow);
 
-			currentArrow = null;
+            currentArrow = null;
 			allowTeleport.teleportAllowed = true;
-		}
 
+            //RpcFireArrow(rpcArrow);
+        }
+        [ClientRpc] 
+        void RpcFireArrow(GameObject temp)
+        {
+            if (!isServer)
+                return;
+            Arrow arrow = temp.GetComponent<Arrow>();
+            arrow.shaftRB.isKinematic = false;
+            arrow.shaftRB.useGravity = true;
+            arrow.shaftRB.transform.GetComponent<BoxCollider>().enabled = true;
+
+            arrow.arrowHeadRB.isKinematic = false;
+            arrow.arrowHeadRB.useGravity = true;
+            arrow.arrowHeadRB.transform.GetComponent<BoxCollider>().enabled = true;
+            arrow.arrowHeadRB.AddForce(temp.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange);
+            arrow.shaftRB.AddForce(temp.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange);
+            Debug.Log("rpccalled");
+        }
 
 		//-------------------------------------------------
 		private void EnableArrowSpawn()

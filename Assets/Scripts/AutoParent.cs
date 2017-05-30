@@ -26,6 +26,16 @@ namespace Valve.VR.InteractionSystem {
         [Command]
         void CmdSpawnWeapons()
         {
+            SpawnWeapons();
+            RpcSpawnWeapons();
+        }
+        [ClientRpc]
+        void RpcSpawnWeapons()
+        {
+            SpawnWeapons();
+        }
+        void SpawnWeapons()
+        {
             if (gameObject == null || hand == null)
             {
                 print("Hand or hand object missing.");
@@ -34,8 +44,8 @@ namespace Valve.VR.InteractionSystem {
             GameObject spawnedItem = GameObject.Instantiate(_primaryHandGameObject, transform);
             spawnedItem.SetActive(true);
             hand.AttachObject(spawnedItem, attachmentFlags, "");
-            NetworkServer.Spawn(spawnedItem);
         }
+       
 
     }
 }
