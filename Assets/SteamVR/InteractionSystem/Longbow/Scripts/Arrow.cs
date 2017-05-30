@@ -5,12 +5,13 @@
 //=============================================================================
 
 using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
 namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
-	public class Arrow : MonoBehaviour
+	public class Arrow : NetworkBehaviour
 	{
 		public ParticleSystem glintParticle;
 		public Rigidbody arrowHeadRB;
