@@ -25,8 +25,10 @@ public class SpawnArrow : NetworkBehaviour {
     }
 
     private void StartFireArrow(Vector3 position, Quaternion rotation, Vector3 forward, float force) {
-        if (isLocalPlayer)
+        print("AM i local player " + isLocalPlayer);
+        if (isLocalPlayer) {
             CmdFireArrow(position, rotation, forward, force);
+        }
     }
 
     [Command]
