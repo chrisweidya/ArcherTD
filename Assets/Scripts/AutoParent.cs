@@ -33,6 +33,7 @@ namespace Valve.VR.InteractionSystem {
         void RpcSpawnWeapons()
         {
             SpawnWeapons();
+            Debug.Log("RPC Spawned " + gameObject.name);
         }
         void SpawnWeapons()
         {
@@ -44,6 +45,7 @@ namespace Valve.VR.InteractionSystem {
             GameObject spawnedItem = GameObject.Instantiate(_primaryHandGameObject, transform);
             spawnedItem.SetActive(true);
             hand.AttachObject(spawnedItem, attachmentFlags, "");
+            NetworkServer.Spawn(spawnedItem);
         }
        
 

@@ -22,9 +22,12 @@ namespace Valve.VR.InteractionSystem
         private Hand hand;
 		private Longbow bow;
 
+        [SerializeField]
 		private GameObject currentArrow;
-        private GameObject rpcArrow;
+        public GameObject rpcArrow;
 		public GameObject arrowPrefab;
+        [SyncVar(hook = "SyncFireArrow")]
+        public bool fireArrow = false;
 
 		public Transform arrowNockTransform;
 
@@ -46,7 +49,8 @@ namespace Valve.VR.InteractionSystem
 		public int maxArrowCount = 10;
 		private List<GameObject> arrowList;
 
-
+        private float arrowVelFrmBow;
+        private float rpc_arrowVelFrmBow;
 		//-------------------------------------------------
 		private void Awake()
 		{
@@ -108,7 +112,7 @@ namespace Valve.VR.InteractionSystem
             //        Destroy(oldArrow);
             //    }
             //}
-            
+
             //currentArrow = arrow;
             //NetworkServer.Spawn(arrow);
             RpcInstantiateArrow();
@@ -275,6 +279,7 @@ namespace Valve.VR.InteractionSystem
 				{
                     //CmdFire();
                     CmdFireArrow();
+                    //fireArrow = true;
                 }
 				else
 				{
@@ -303,43 +308,26 @@ namespace Valve.VR.InteractionSystem
         [Command]
 		private void CmdFireArrow()
 		{
+            Debug.Log("CmdFireArrow");
+            FireArrow();
+            //NetworkServer.Spawn(rpcArrow);
+          // RpcFireArrow();
+
+
+        }
+        void SyncFireArrow(bool boolean)
+        {
+            fireArrow = !boolean;
+            //CmdFireArrow();
+            FireArrow();
+        }
+        void FireArrow()
+        { 
             Debug.Log("FireArrow");
-			currentArrow.transform.parent = null;
+            currentArrow.transform.parent = null;
             rpcArrow = currentArrow;
             Arrow arrow = currentArrow.GetComponent<Arrow>();
-           
-            arrow.shaftRB.isKinematic = false;
-			arrow.shaftRB.useGravity = true;
-			arrow.shaftRB.transform.GetComponent<BoxCollider>().enabled = true;
 
-			arrow.arrowHeadRB.isKinematic = false;
-			arrow.arrowHeadRB.useGravity = true;
-			arrow.arrowHeadRB.transform.GetComponent<BoxCollider>().enabled = true;
-            
-			arrow.arrowHeadRB.AddForce( currentArrow.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange );
-            arrow.shaftRB.AddForce(currentArrow.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange);
-            arrow.arrowHeadRB.AddTorque( currentArrow.transform.forward * 10 );
-          
-            nocked = false;
-            currentArrow.GetComponent<Arrow>().ArrowReleased( bow.GetArrowVelocity() );
-			bow.ArrowReleased();
-
-            allowArrowSpawn = false;
-			Invoke( "EnableArrowSpawn", 0.5f );
-			StartCoroutine( ArrowReleaseHaptics() );
-            NetworkServer.Spawn(currentArrow);
-
-            currentArrow = null;
-			allowTeleport.teleportAllowed = true;
-
-            //RpcFireArrow(rpcArrow);
-        }
-        [ClientRpc] 
-        void RpcFireArrow(GameObject temp)
-        {
-            if (!isServer)
-                return;
-            Arrow arrow = temp.GetComponent<Arrow>();
             arrow.shaftRB.isKinematic = false;
             arrow.shaftRB.useGravity = true;
             arrow.shaftRB.transform.GetComponent<BoxCollider>().enabled = true;
@@ -347,9 +335,34 @@ namespace Valve.VR.InteractionSystem
             arrow.arrowHeadRB.isKinematic = false;
             arrow.arrowHeadRB.useGravity = true;
             arrow.arrowHeadRB.transform.GetComponent<BoxCollider>().enabled = true;
-            arrow.arrowHeadRB.AddForce(temp.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange);
-            arrow.shaftRB.AddForce(temp.transform.forward * bow.GetArrowVelocity(), ForceMode.VelocityChange);
-            Debug.Log("rpccalled");
+            CmdGetArrowVelocityFromBow();
+            arrow.arrowHeadRB.AddForce(currentArrow.transform.forward 
+                * rpc_arrowVelFrmBow, 
+                ForceMode.VelocityChange);
+            arrow.shaftRB.AddForce(currentArrow.transform.forward * rpc_arrowVelFrmBow, ForceMode.VelocityChange);
+            arrow.arrowHeadRB.AddTorque(currentArrow.transform.forward * 10);
+
+            nocked = false;
+            //currentArrow.GetComponent<Arrow>().ArrowReleased(bow.GetArrowVelocity());
+            currentArrow.GetComponent<Arrow>().ArrowReleased(rpc_arrowVelFrmBow);
+
+            bow.ArrowReleased();
+
+            allowArrowSpawn = false;
+            Invoke("EnableArrowSpawn", 0.5f);
+            StartCoroutine(ArrowReleaseHaptics());
+            currentArrow = null;
+            allowTeleport.teleportAllowed = true;
+
+        }
+
+        [ClientRpc] 
+        void RpcFireArrow()
+        {
+            if (!isServer)
+                return;
+            FireArrow();
+            Debug.Log("rpcFireArrow");
         }
 
 		//-------------------------------------------------
@@ -396,5 +409,18 @@ namespace Valve.VR.InteractionSystem
 		{
 			bow = hand.otherHand.GetComponentInChildren<Longbow>();
 		}
+
+        [Command]
+        void CmdGetArrowVelocityFromBow()
+        {
+            arrowVelFrmBow = bow.GetArrowVelocity();
+            Debug.Log("CMD_arrow velocity");
+            RpcArrowVelocityFromBow();
+        }
+        [ClientRpc]
+        void RpcArrowVelocityFromBow()
+        {
+            rpc_arrowVelFrmBow = arrowVelFrmBow;
+        }
 	}
 }
