@@ -33,6 +33,30 @@ public class SpawnArrow : NetworkBehaviour {
 
     [Command]
     private void CmdFireArrow(Vector3 position, Quaternion rotation, Vector3 forward, float force) {
+        RpcFireArrow(position, rotation, forward, force);
+        //GameObject ArrowGO = Instantiate(ArrowPrefab, position, rotation);
+        //Valve.VR.InteractionSystem.Arrow ArrowScript = ArrowGO.GetComponent<Valve.VR.InteractionSystem.Arrow>();
+
+        //ArrowScript.shaftRB.isKinematic = false;
+        //ArrowScript.shaftRB.useGravity = true;
+        //ArrowScript.shaftRB.transform.GetComponent<BoxCollider>().enabled = true;
+
+        //ArrowScript.arrowHeadRB.isKinematic = false;
+        //ArrowScript.arrowHeadRB.useGravity = true;
+        //ArrowScript.arrowHeadRB.transform.GetComponent<BoxCollider>().enabled = true;
+
+        //ArrowScript.arrowHeadRB.AddForce(forward * force, ForceMode.VelocityChange);
+        //ArrowScript.arrowHeadRB.AddTorque(forward * 10);
+
+        //ArrowScript.ArrowReleased(force);
+        //print(ArrowGO);
+        //print("Server arrow spawn");
+        //NetworkServer.Spawn(ArrowGO);
+    }
+
+    [ClientRpc]
+    private void RpcFireArrow(Vector3 position, Quaternion rotation, Vector3 forward, float force)
+    {
         GameObject ArrowGO = Instantiate(ArrowPrefab, position, rotation);
         Valve.VR.InteractionSystem.Arrow ArrowScript = ArrowGO.GetComponent<Valve.VR.InteractionSystem.Arrow>();
 
@@ -47,12 +71,10 @@ public class SpawnArrow : NetworkBehaviour {
         ArrowScript.arrowHeadRB.AddForce(forward * force, ForceMode.VelocityChange);
         ArrowScript.arrowHeadRB.AddTorque(forward * 10);
 
-        ArrowScript.ArrowReleased(force);
+       // ArrowScript.ArrowReleased(force);
         print(ArrowGO);
-        print("Server arrow spawn");
-        NetworkServer.Spawn(ArrowGO);
+        print("Rpc arrow spawn");
     }
-
     // Use this for initialization
     void Start () {
 		
