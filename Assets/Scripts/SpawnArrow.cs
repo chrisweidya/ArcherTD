@@ -48,6 +48,7 @@ public class SpawnArrow : NetworkBehaviour {
         ArrowScript.arrowHeadRB.AddTorque(forward * 10);
 
         ArrowScript.ArrowReleased(force);
+        print(ArrowGO);
         print("Server arrow spawn");
         NetworkServer.Spawn(ArrowGO);
     }
