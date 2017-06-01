@@ -26,6 +26,8 @@ public class GameManager : Singleton <GameManager> {
     private void OnSceneLoad(Scene scene, LoadSceneMode mode) {
         print("Scene Loaded.");
         _cameraRigGO = GameObject.Find("Player");
+        if (_cameraRigGO == null)
+            print("Vive camera not found!");
         //_cameraRig = Instantiate(_cameraRigPrefab);
     }
 

@@ -11,7 +11,7 @@ public class EventManager : Singleton <EventManager> {
     public static event PlayerStateChange ChangePlayerState;
     public static void FirePlayerStateChange(Enums.PlayerState state) {
         if (ChangePlayerState != null) {
-            print("Player state change event fired.");
+            //print("Player state change event fired.");
             ChangePlayerState(state);
         }
     }
@@ -20,7 +20,7 @@ public class EventManager : Singleton <EventManager> {
     public static event CreateArrow CreateArrowAction;
     public static void FireArrow(Vector3 position, Quaternion rotation, Vector3 forward, float force) {
         if (CreateArrowAction != null) {
-            print("Arrow fired.");
+            //print("Arrow fired.");
             CreateArrowAction(position, rotation, forward, force);
         }
     }

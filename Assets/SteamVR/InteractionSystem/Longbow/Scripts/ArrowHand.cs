@@ -221,7 +221,6 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void FireArrow()
 		{
-            print("fired from hand arrow");
 			currentArrow.transform.parent = null;
 
 			Arrow arrow = currentArrow.GetComponent<Arrow>();

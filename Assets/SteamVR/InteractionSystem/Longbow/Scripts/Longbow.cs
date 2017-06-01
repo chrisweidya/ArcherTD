@@ -181,11 +181,14 @@ namespace Valve.VR.InteractionSystem
 
 					if ( nockDistanceTravelled > minPull )
 					{
-						pulled = true;
+                        if(!pulled)
+                            EventManager.FirePlayerStateChange(Enums.PlayerState.BowPulled);
+                        pulled = true;
 					}
-					else
-					{
-						pulled = false;
+					else {
+                        if (pulled)
+                            EventManager.FirePlayerStateChange(Enums.PlayerState.Stand);
+                        pulled = false;
 					}
 
 					if ( ( nockDistanceTravelled > ( lastTickDistance + hapticDistanceThreshold ) ) || nockDistanceTravelled < ( lastTickDistance - hapticDistanceThreshold ) )
