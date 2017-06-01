@@ -245,9 +245,10 @@ namespace Valve.VR.InteractionSystem
 			StartCoroutine( ArrowReleaseHaptics() );
 
             EventManager.FireArrow(currentArrow.transform.position, currentArrow.transform.rotation, currentArrow.transform.forward, bow.GetArrowVelocity());
-
+            Destroy(currentArrow);
             currentArrow = null;
 			allowTeleport.teleportAllowed = true;
+
 
 		}
 
