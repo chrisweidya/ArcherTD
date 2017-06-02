@@ -186,8 +186,8 @@ namespace Valve.VR.InteractionSystem
                         pulled = true;
 					}
 					else {
-                        if (pulled)
-                            EventManager.FirePlayerStateChange(Enums.PlayerState.Stand);
+                        //if (pulled)
+                            //EventManager.FirePlayerStateChange(Enums.PlayerState.Stand);
                         pulled = false;
 					}
 
@@ -243,6 +243,7 @@ namespace Valve.VR.InteractionSystem
 		public void ArrowReleased()
 		{
 			nocked = false;
+            pulled = false;
 			hand.HoverUnlock( GetComponent<Interactable>() );
 			hand.otherHand.HoverUnlock( arrowHand.GetComponent<Interactable>() );
 

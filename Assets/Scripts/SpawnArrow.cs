@@ -49,7 +49,7 @@ public class SpawnArrow : NetworkBehaviour {
         ArrowScript.arrowHeadRB.AddForce(forward * force, ForceMode.VelocityChange);
         ArrowScript.arrowHeadRB.AddTorque(forward * 10);
 
-        EventManager.FirePlayerStateChange(Enums.PlayerState.Stand);
+        EventManager.FirePlayerStateChange(Enums.PlayerState.BowReleased);
        // ArrowScript.ArrowReleased(force);
         print("Rpc arrow spawn");
     }

@@ -26,6 +26,7 @@ namespace Valve.VR.InteractionSystem
 		public float lerpCompleteDistance = 0.08f;
 		public float rotationLerpThreshold = 0.15f;
 		public float positionLerpThreshold = 0.15f;
+        public float arrowCooldown = 0.5f;
 
 		private bool allowArrowSpawn = true;
 		private bool nocked;
@@ -106,7 +107,7 @@ namespace Valve.VR.InteractionSystem
 			float distanceToNockPosition = Vector3.Distance( transform.parent.position, bow.nockTransform.position );
 
 			// If there's an arrow spawned in the hand and it's not nocked yet
-			if ( !nocked )
+			if ( !nocked && currentArrow)
 			{
 				// If we're close enough to nock position that we want to start arrow rotation lerp, do so
 				if ( distanceToNockPosition < rotationLerpThreshold )
@@ -174,7 +175,7 @@ namespace Valve.VR.InteractionSystem
 				{
 					if ( currentArrow == null )
 					{
-						currentArrow = InstantiateArrow();
+                        currentArrow = InstantiateArrow();
 					}
 
 					nocked = true;
@@ -241,7 +242,7 @@ namespace Valve.VR.InteractionSystem
 			bow.ArrowReleased();
 
 			allowArrowSpawn = false;
-			Invoke( "EnableArrowSpawn", 0.5f );
+			Invoke( "EnableArrowSpawn", arrowCooldown);
 			StartCoroutine( ArrowReleaseHaptics() );
 
             EventManager.FireArrow(currentArrow.transform.position, currentArrow.transform.rotation, currentArrow.transform.forward, bow.GetArrowVelocity());
