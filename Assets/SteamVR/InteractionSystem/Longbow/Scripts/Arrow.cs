@@ -102,9 +102,12 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		void OnCollisionEnter( Collision collision )
 		{
+           
 			if ( inFlight )
 			{
-				Rigidbody rb = GetComponent<Rigidbody>();
+                Debug.Log("Collided with " + collision.gameObject.name);
+
+                Rigidbody rb = GetComponent<Rigidbody>();
 				float rbSpeed = rb.velocity.sqrMagnitude;
 				bool canStick = ( targetPhysMaterial != null && collision.collider.sharedMaterial == targetPhysMaterial && rbSpeed > 0.2f );
 				bool hitBalloon = collision.collider.gameObject.GetComponent<Balloon>() != null;

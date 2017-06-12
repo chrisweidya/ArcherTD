@@ -51,7 +51,7 @@ public class SpawnArrow : NetworkBehaviour {
 
         EventManager.FirePlayerStateChange(Enums.PlayerState.BowReleased);
        // ArrowScript.ArrowReleased(force);
-        print("Rpc arrow spawn");
+        //print("Rpc arrow spawn");
     }
     // Use this for initialization
     void Start () {

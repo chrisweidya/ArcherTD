@@ -25,6 +25,16 @@ public class EventManager : Singleton <EventManager> {
         }
     }
 
+    public delegate void TakeDamage(float dmg);
+    public static event TakeDamage TakeDamageAction;
+    public static void FireTakeDamage(float dmg)
+    {
+        if (TakeDamageAction != null)
+        {
+            TakeDamageAction(dmg);
+        }
+    }
+
     protected override void Awake() {
         base.Awake();
     }
