@@ -10,6 +10,9 @@ public class HealthNetwork : NetworkBehaviour {
     [SerializeField]
     private float maxHealth;
 
+    public HealthBarUI hpBar;
+
+
     private void OnEnable()
     {
         EventManager.TakeDamageAction += ReduceHealth;
@@ -22,7 +25,6 @@ public class HealthNetwork : NetworkBehaviour {
     }
     // Use this for initialization
     void Start () {
-		
 	}
 	
 	// Update is called once per frame
@@ -42,13 +44,14 @@ public class HealthNetwork : NetworkBehaviour {
     {
         currentHealth -= dmg;
         Debug.Log("CMD:" + dmg +" health: " + currentHealth);
-        RpcReduceHealth(dmg);
+        RpcReduceHealth(currentHealth);
     }
 
     [ClientRpc]
-    private void RpcReduceHealth(float dmg)
+    private void RpcReduceHealth(float healthLeft)
     {
-        
-        Debug.Log("Rpc " + dmg + " health: " + currentHealth);
+        //currentHealth -= dmg;
+        hpBar.SetHealthBar(healthLeft);
+        Debug.Log("Rpc: healthLeft: " + healthLeft + " currentHealth: " + currentHealth);
     }
 }
