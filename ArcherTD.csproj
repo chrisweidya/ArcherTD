@@ -96,6 +96,7 @@
     <Compile Include="Assets\Scripts\EventManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\HandEventHooks.cs" />
+    <Compile Include="Assets\Scripts\HealthBarUI.cs" />
     <Compile Include="Assets\Scripts\HealthNetwork.cs" />
     <Compile Include="Assets\Scripts\NetworkCollisionDetection.cs" />
     <Compile Include="Assets\Scripts\NetworkStartup.cs" />
