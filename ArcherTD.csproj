@@ -101,6 +101,8 @@
     <Compile Include="Assets\Scripts\NetworkCollisionDetection.cs" />
     <Compile Include="Assets\Scripts\NetworkStartup.cs" />
     <Compile Include="Assets\Scripts\PlayerHandler.cs" />
+    <Compile Include="Assets\Scripts\PlayerHook.cs" />
+    <Compile Include="Assets\Scripts\PlayerProperties.cs" />
     <Compile Include="Assets\Scripts\SelfFireGun.cs" />
     <Compile Include="Assets\Scripts\Singleton.cs" />
     <Compile Include="Assets\Scripts\SpawnArrow.cs" />
