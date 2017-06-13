@@ -339,6 +339,11 @@ namespace Prototype.NetworkLobby
                     break;
                 }
             }
+            for (int i = 0; i < Factions.Length; i++) {
+                if(Factions[i] == playerFaction) {
+                    _factionInUse[i] = false;
+                }
+            }
         }
     }
 }
