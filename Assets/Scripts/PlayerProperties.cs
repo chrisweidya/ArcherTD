@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PlayerProperties : MonoBehaviour {
+public class PlayerProperties : NetworkBehaviour {
+    [SyncVar]
     [SerializeField]
-    private string team = "";
+    private string team;
 	// Use this for initialization
 	void Start () {
 		
