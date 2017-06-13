@@ -35,8 +35,8 @@ namespace Prototype.NetworkLobby
 
         public Button backButton;
 
-        public Text statusInfo;
-        public Text hostInfo;
+        //public Text statusInfo;
+        //public Text hostInfo;
 
         //Client numPlayers from NetworkManager is always 0, so we count (throught connect/destroy in LobbyPlayer) the number
         //of players, so that even client know how many player there is.
@@ -151,8 +151,8 @@ namespace Prototype.NetworkLobby
 
         public void SetServerInfo(string status, string host)
         {
-            statusInfo.text = status;
-            hostInfo.text = host;
+            //statusInfo.text = status;
+            //hostInfo.text = host;
         }
 
 

@@ -12,11 +12,14 @@ namespace Prototype.NetworkLobby
     public class LobbyPlayer : NetworkLobbyPlayer
     {
         static Color[] Colors = new Color[] { Color.magenta, Color.red, Color.cyan, Color.blue, Color.green, Color.yellow };
+        static string[] Factions = new string[] { "Legion", "Hellbourne" };
         //used on server to avoid assigning the same color to two player
         static List<int> _colorInUse = new List<int>();
+        static bool[] _factionInUse = new bool[] { false, false };
 
         public Button colorButton;
         public InputField nameInput;
+        public Text factionText;
         public Button readyButton;
         public Button waitingPlayerButton;
         public Button removePlayerButton;
@@ -29,6 +32,8 @@ namespace Prototype.NetworkLobby
         public string playerName = "";
         [SyncVar(hook = "OnMyColor")]
         public Color playerColor = Color.white;
+        [SyncVar(hook = "OnMyFaction")]
+        public string playerFaction = "";
 
         public Color OddRowColor = new Color(250.0f / 255.0f, 250.0f / 255.0f, 250.0f / 255.0f, 1.0f);
         public Color EvenRowColor = new Color(180.0f / 255.0f, 180.0f / 255.0f, 180.0f / 255.0f, 1.0f);
@@ -64,6 +69,7 @@ namespace Prototype.NetworkLobby
             //will be created with the right value currently on server
             OnMyName(playerName);
             OnMyColor(playerColor);
+            OnMyFaction(playerFaction);
         }
 
         public override void OnStartAuthority()
@@ -110,6 +116,8 @@ namespace Prototype.NetworkLobby
             if (playerColor == Color.white)
                 CmdColorChange();
 
+            if (playerFaction == "")
+                CmdFactionChange();
             ChangeReadyButtonColor(JoinColor);
 
             readyButton.transform.GetChild(0).GetComponent<Text>().text = "JOIN";
@@ -193,6 +201,11 @@ namespace Prototype.NetworkLobby
         {
             playerColor = newColor;
             colorButton.GetComponent<Image>().color = newColor;
+        }
+
+        public void OnMyFaction(string newFaction) {
+            playerFaction = newFaction;
+            factionText.text = newFaction;
         }
 
         //===== UI Handler
@@ -289,6 +302,22 @@ namespace Prototype.NetworkLobby
         public void CmdNameChanged(string name)
         {
             playerName = name;
+        }
+
+        [Command]
+        public void CmdFactionChange() 
+        {
+            for (int i = 0; i < Factions.Length; i++) {
+                if (!_factionInUse[i]) {
+                    playerFaction = Factions[i];
+                    print(Factions[i]);
+                    _factionInUse[i] = true;
+                    break;
+                }
+                if(i == Factions.Length - 1) {
+                    Debug.LogError("Error: More than 2 players not supported at the moment.");
+                }
+            }
         }
 
         //Cleanup thing when get destroy (which happen when client kick or disconnect)

@@ -10,7 +10,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour{
 
     protected virtual void Awake() {
         if (_instance != null) {
-            print("Singleton exists.");
+            print("Singleton exists of type: " + typeof(T));
             Destroy(gameObject);
         }
         else {
