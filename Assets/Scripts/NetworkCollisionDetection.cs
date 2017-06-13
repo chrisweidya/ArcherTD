@@ -5,10 +5,10 @@ using UnityEngine;
 public class NetworkCollisionDetection : MonoBehaviour {
 
     private PlayerProperties playerProps;
-
+    private HealthNetwork health;
 	// Use this for initialization
 	void Start () {
-        playerProps = GetComponent<PlayerProperties>();
+        //playerProps = GetComponent<PlayerProperties>();
 	}
 	
 	// Update is called once per frame
@@ -19,12 +19,18 @@ public class NetworkCollisionDetection : MonoBehaviour {
     private void OnCollisionEnter(Collision collision)
     {
         //CmdReduceHealth(10);
-        if (collision.gameObject.tag == "projectile")
+        //if (collision.gameObject.tag == "Avatar")
+        //{
+        //    Debug.Log(playerProps.GetTeam()+gameObject.name + " got collided by " + collision.gameObject.name);
+        //    EventManager.FireTakeDamage(13,playerProps.GetTeam());
+        //}
+
+        health = collision.gameObject.GetComponent<HealthNetwork>();
+        if (health != null)
         {
-            Debug.Log(playerProps.GetTeam()+gameObject.name + " got collided by " + collision.gameObject.name);
-            EventManager.FireTakeDamage(13,playerProps.GetTeam());
+            Debug.Log("Collsion Event");
+            EventManager.FireTakeDamage(13, health);
         }
-        
     }
 
 }

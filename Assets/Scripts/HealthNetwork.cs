@@ -6,6 +6,7 @@ using UnityEngine;
 public class HealthNetwork : NetworkBehaviour {
 
     [SerializeField]
+    [SyncVar(hook = "OnHealthUpdate")]
     private float currentHealth;
     [SerializeField]
     private float maxHealth;
@@ -33,26 +34,33 @@ public class HealthNetwork : NetworkBehaviour {
 		
 	}
 
-    private void ReduceHealth(float dmg, string name)
+    public void ReduceHealth(float dmg, HealthNetwork hpNetwork)
     {
-        if (name == playerProps.GetTeam())
+        if (hpNetwork == this)
         {
+            Debug.Log("test " + playerProps.GetTeam());
+        
             CmdReduceHealth(dmg);
         }
     }
+
     [Command]
     private void CmdReduceHealth(float dmg)
     {
-        //currentHealth -= dmg;
-        Debug.Log("CMD:" + dmg +" health: " + currentHealth);
-        RpcReduceHealth(dmg);
+        currentHealth -= dmg;
+        Debug.Log("Cmd health " + currentHealth);
     }
 
     [ClientRpc]
     private void RpcReduceHealth(float dmg)
     {
-        currentHealth -= dmg;
         hpBar.SetHealthBar(currentHealth);
         Debug.Log("Rpc: healthLeft: " + currentHealth);
+    }
+
+    void OnHealthUpdate(float health)
+    {
+        Debug.Log("UI health " + health);
+        hpBar.SetHealthBar(health);
     }
 }
