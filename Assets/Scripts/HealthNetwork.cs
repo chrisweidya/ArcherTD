@@ -11,7 +11,7 @@ public class HealthNetwork : NetworkBehaviour {
     private float maxHealth;
 
     public HealthBarUI hpBar;
-
+    private PlayerProperties playerProps;
 
     private void OnEnable()
     {
@@ -25,6 +25,7 @@ public class HealthNetwork : NetworkBehaviour {
     }
     // Use this for initialization
     void Start () {
+        playerProps = GetComponent<PlayerProperties>();
 	}
 	
 	// Update is called once per frame
@@ -32,9 +33,9 @@ public class HealthNetwork : NetworkBehaviour {
 		
 	}
 
-    private void ReduceHealth(float dmg)
+    private void ReduceHealth(float dmg, string name)
     {
-        if (isLocalPlayer)
+        if (name == playerProps.GetTeam())
         {
             CmdReduceHealth(dmg);
         }
@@ -42,16 +43,16 @@ public class HealthNetwork : NetworkBehaviour {
     [Command]
     private void CmdReduceHealth(float dmg)
     {
-        currentHealth -= dmg;
+        //currentHealth -= dmg;
         Debug.Log("CMD:" + dmg +" health: " + currentHealth);
-        RpcReduceHealth(currentHealth);
+        RpcReduceHealth(dmg);
     }
 
     [ClientRpc]
-    private void RpcReduceHealth(float healthLeft)
+    private void RpcReduceHealth(float dmg)
     {
-        //currentHealth -= dmg;
-        hpBar.SetHealthBar(healthLeft);
-        Debug.Log("Rpc: healthLeft: " + healthLeft + " currentHealth: " + currentHealth);
+        currentHealth -= dmg;
+        hpBar.SetHealthBar(currentHealth);
+        Debug.Log("Rpc: healthLeft: " + currentHealth);
     }
 }

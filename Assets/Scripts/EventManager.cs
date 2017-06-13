@@ -25,13 +25,13 @@ public class EventManager : Singleton <EventManager> {
         }
     }
 
-    public delegate void TakeDamage(float dmg);
+    public delegate void TakeDamage(float dmg, string teamName);
     public static event TakeDamage TakeDamageAction;
-    public static void FireTakeDamage(float dmg)
+    public static void FireTakeDamage(float dmg, string teamName)
     {
         if (TakeDamageAction != null)
         {
-            TakeDamageAction(dmg);
+            TakeDamageAction(dmg, teamName);
         }
     }
 

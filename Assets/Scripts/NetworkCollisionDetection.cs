@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class NetworkCollisionDetection : MonoBehaviour {
 
+    private PlayerProperties playerProps;
+
 	// Use this for initialization
 	void Start () {
-		
+        playerProps = GetComponent<PlayerProperties>();
 	}
 	
 	// Update is called once per frame
@@ -19,14 +21,10 @@ public class NetworkCollisionDetection : MonoBehaviour {
         //CmdReduceHealth(10);
         if (collision.gameObject.tag == "projectile")
         {
-            Debug.Log(gameObject.name + " got collided by " + collision.gameObject.name);
-            EventManager.FireTakeDamage(13);
+            Debug.Log(playerProps.GetTeam()+gameObject.name + " got collided by " + collision.gameObject.name);
+            EventManager.FireTakeDamage(13,playerProps.GetTeam());
         }
         
     }
-    //[Command]
-    //void CmdReduceHealth(float dmg)
-    //{
-    //    Debug.Log("Took " + dmg + " damage");
-    //}
+
 }
