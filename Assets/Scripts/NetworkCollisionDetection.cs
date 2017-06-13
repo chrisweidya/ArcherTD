@@ -6,9 +6,11 @@ public class NetworkCollisionDetection : MonoBehaviour {
 
     private PlayerProperties playerProps;
     private HealthNetwork health;
+    private bool collided;
 	// Use this for initialization
 	void Start () {
         //playerProps = GetComponent<PlayerProperties>();
+        collided = false;
 	}
 	
 	// Update is called once per frame
@@ -26,10 +28,11 @@ public class NetworkCollisionDetection : MonoBehaviour {
         //}
 
         health = collision.gameObject.GetComponent<HealthNetwork>();
-        if (health != null)
+        if (health != null && !collided)
         {
             Debug.Log("Collsion Event");
             EventManager.FireTakeDamage(13, health);
+            collided = true;
         }
     }
 
