@@ -12,11 +12,11 @@ public class PlayerHandler : NetworkBehaviour {
     private List<Renderer> _modelRenderers = new List<Renderer>();
     [SerializeField]
     private Animator _animator = null;
-    
-    private Enums.PlayerState _playerState = Enums.PlayerState.Stand;
 
-    private float CooldownStateChange = 0.5f;
-    private float CurrentTimeElapsed = 0;
+
+    public enum PlayerState { Stand, BowPulled, BowReleased, Death}
+
+    private PlayerState _playerState = PlayerState.Stand;
 
     private void OnEnable() {
         print("enabled player state change event");
@@ -28,23 +28,23 @@ public class PlayerHandler : NetworkBehaviour {
         EventManager.ChangePlayerState -= ChangeState;
     }
     
-    private void TriggerPlayerAnimation(Enums.PlayerState playerstate) {
+    private void TriggerPlayerAnimation(PlayerState playerstate) {
         _animator.SetTrigger(playerstate.ToString());
     }
 
-    private void ChangeState(Enums.PlayerState state) {
+    private void ChangeState(PlayerState state) {
         if (isLocalPlayer && _playerState != state) {
             CmdChangePlayerState(state);
         }
     }
 
     [Command]
-    private void CmdChangePlayerState(Enums.PlayerState state) {
+    private void CmdChangePlayerState(PlayerState state) {
         RpcChangePlayerState(state);
     }
 
     [ClientRpc]
-    private void RpcChangePlayerState(Enums.PlayerState state) {
+    private void RpcChangePlayerState(PlayerState state) {
         _playerState = state;
         TriggerPlayerAnimation(state);
     }
@@ -60,15 +60,20 @@ public class PlayerHandler : NetworkBehaviour {
         if (isLocalPlayer) {
             GameManager.Instance.AssignCamera(transform.gameObject);
             //print("fdsf");
-            //transform.localPosition = new Vector3(0.052f, -1.947f, -0.57f);
-            //foreach(Renderer r in _modelRenderers) {
-            //    r.enabled = false;
-           // }
+            transform.localPosition = _modelOffset;
+            foreach(Renderer r in _modelRenderers) {
+                r.enabled = false;
+            }
         }
     }
-
-    // Update is called once per frame
+    
     private void Update () {
+        if(Input.GetKeyDown(KeyCode.K)) {
+            print("pressed");
+            
+        TriggerPlayerAnimation(PlayerState.Death);
+            //EventManager.FirePlayerStateChange(PlayerState.Death);
+        }
 	}
     
 }

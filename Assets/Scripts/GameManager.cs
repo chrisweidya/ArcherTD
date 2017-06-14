@@ -48,7 +48,7 @@ public class GameManager : Singleton <GameManager> {
                 print("VR Camera not found, Vive not connected? Fallback.");
                 player.transform.parent = _cameraRigGO.transform.Find("NoSteamVRFallbackObjects/FallbackObjects");
             }
-            player.transform.position = new Vector3(player.transform.parent.position.x, player.transform.position.y, player.transform.parent.position.z);
+            player.transform.position = player.transform.parent.position;
             player.transform.rotation = player.transform.parent.rotation;
         }
     }

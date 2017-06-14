@@ -182,7 +182,7 @@ namespace Valve.VR.InteractionSystem
 					if ( nockDistanceTravelled > minPull )
 					{
                         if(!pulled)
-                            EventManager.FirePlayerStateChange(Enums.PlayerState.BowPulled);
+                            EventManager.FirePlayerStateChange(PlayerHandler.PlayerState.BowPulled);
                         pulled = true;
 					}
 					else {
