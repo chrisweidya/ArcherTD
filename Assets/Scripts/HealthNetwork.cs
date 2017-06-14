@@ -36,18 +36,16 @@ public class HealthNetwork : NetworkBehaviour {
 
     public void ReduceHealth(float dmg, HealthNetwork hpNetwork)
     {
-        if (hpNetwork == this)
-        {
-            Debug.Log("test " + playerProps.GetTeam());
-        
-            CmdReduceHealth(dmg);
-        }
+        Debug.Log("test " + playerProps.GetTeam() + this.netId);
+        if(isLocalPlayer)
+            CmdReduceHealth(dmg, hpNetwork.netId);
     }
 
     [Command]
-    private void CmdReduceHealth(float dmg)
+    private void CmdReduceHealth(float dmg, NetworkInstanceId id)
     {
-        currentHealth -= dmg;
+        GameObject affected = NetworkServer.FindLocalObject(id);
+        affected.GetComponent<HealthNetwork>().currentHealth -= dmg;
         Debug.Log("Cmd health " + currentHealth);
     }
 
