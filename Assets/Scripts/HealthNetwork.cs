@@ -36,9 +36,10 @@ public class HealthNetwork : NetworkBehaviour {
 
     public void ReduceHealth(float dmg, HealthNetwork hpNetwork)
     {
-        Debug.Log("test " + playerProps.GetTeam() + this.netId);
-        if(isLocalPlayer)
+        if (isLocalPlayer) {
+            print("minus" + hpNetwork.netId);
             CmdReduceHealth(dmg, hpNetwork.netId);
+        }
     }
 
     [Command]
@@ -60,12 +61,8 @@ public class HealthNetwork : NetworkBehaviour {
     {
         Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health);
-        if (!isServer) {
-            currentHealth = health;
-        }
         Debug.Log("Rpc: healthLeft: " + currentHealth);
         if (currentHealth <= 0) {
-
             EventManager.FirePlayerStateChange(PlayerHandler.PlayerState.Death);
         }
     }
