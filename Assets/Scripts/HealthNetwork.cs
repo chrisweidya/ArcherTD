@@ -36,12 +36,12 @@ public class HealthNetwork : NetworkBehaviour {
 
     public void ReduceHealth(float dmg, HealthNetwork hpNetwork)
     {
-        if (hpNetwork == this)
-        {
-            Debug.Log("test " + playerProps.GetTeam());
         
+            Debug.Log("test " + playerProps.GetTeam());
+        if (isLocalPlayer) {
             CmdReduceHealth(dmg);
         }
+
     }
 
     [Command]
@@ -62,9 +62,9 @@ public class HealthNetwork : NetworkBehaviour {
     {
         Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health);
-        if (!isServer) {
-            currentHealth = health;
-        }
+        
+        currentHealth = health;
+        
         Debug.Log("Rpc: healthLeft: " + currentHealth);
         if (currentHealth <= 0) {
 
