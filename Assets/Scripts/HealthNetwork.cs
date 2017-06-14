@@ -55,12 +55,17 @@ public class HealthNetwork : NetworkBehaviour {
     private void RpcReduceHealth(float dmg)
     {
         hpBar.SetHealthBar(currentHealth);
-        Debug.Log("Rpc: healthLeft: " + currentHealth);
+      
     }
 
     void OnHealthUpdate(float health)
     {
         Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health);
+        Debug.Log("Rpc: healthLeft: " + currentHealth);
+        if (currentHealth <= 0) {
+
+            EventManager.FirePlayerStateChange(PlayerHandler.PlayerState.Death);
+        }
     }
 }
