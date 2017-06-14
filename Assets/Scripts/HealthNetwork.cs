@@ -51,17 +51,20 @@ public class HealthNetwork : NetworkBehaviour {
         Debug.Log("Cmd health " + currentHealth);
     }
 
-    [ClientRpc]
-    private void RpcReduceHealth(float dmg)
-    {
-        hpBar.SetHealthBar(currentHealth);
+    //[ClientRpc]
+    //private void RpcReduceHealth(float dmg)
+    //{
+    //    hpBar.SetHealthBar(currentHealth);
       
-    }
+    //}
 
     void OnHealthUpdate(float health)
     {
         Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health);
+        if (!isServer) {
+            currentHealth = health;
+        }
         Debug.Log("Rpc: healthLeft: " + currentHealth);
         if (currentHealth <= 0) {
 
