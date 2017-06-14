@@ -8,6 +8,9 @@ public class SpawnArrow : NetworkBehaviour {
     [SerializeField]
     private GameObject ArrowPrefab = null;
 
+    private List<GameObject> arrowList;
+    private int maxArrowCount;
+
     private void OnEnable() {
         //print("Added create arrow event1");
         //print(isLocalPlayer);
@@ -50,13 +53,26 @@ public class SpawnArrow : NetworkBehaviour {
         ArrowScript.arrowHeadRB.AddTorque(forward * 10);
 
         EventManager.FirePlayerStateChange(PlayerHandler.PlayerState.BowReleased);
-       // ArrowScript.ArrowReleased(force);
+
+        arrowList.Add(ArrowGO);
+
+        while (arrowList.Count > maxArrowCount) {
+            GameObject oldArrow = arrowList[0];
+            arrowList.RemoveAt(0);
+            if (oldArrow) {
+                Destroy(oldArrow);
+            }
+        }
+
+
+        // ArrowScript.ArrowReleased(force);
         //print("Rpc arrow spawn");
     }
     // Use this for initialization
     void Start () {
-		
-	}
+        maxArrowCount = 10;
+        arrowList = new List<GameObject>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
