@@ -11,7 +11,7 @@ using System.Collections;
 namespace Valve.VR.InteractionSystem
 {
 	//-------------------------------------------------------------------------
-	public class Arrow : NetworkBehaviour
+	public class Arrow : MonoBehaviour
 	{
 		public ParticleSystem glintParticle;
 		public Rigidbody arrowHeadRB;
@@ -46,22 +46,20 @@ namespace Valve.VR.InteractionSystem
 		}
 
 
-		//-------------------------------------------------
-		void FixedUpdate()
-		{
-			if ( released && inFlight )
-			{
-				prevPosition = transform.position;
-				prevRotation = transform.rotation;
-				prevVelocity = GetComponent<Rigidbody>().velocity;
-				prevHeadPosition = arrowHeadRB.transform.position;
-				travelledFrames++;
-			}
-		}
+        //-------------------------------------------------
+        void FixedUpdate() {
+            if (released && inFlight) {
+                prevPosition = transform.position;
+                prevRotation = transform.rotation;
+                prevVelocity = GetComponent<Rigidbody>().velocity;
+                prevHeadPosition = arrowHeadRB.transform.position;
+                travelledFrames++;
+            }
+        }
 
 
-		//-------------------------------------------------
-		public void ArrowReleased( float inputVelocity )
+        //-------------------------------------------------
+        public void ArrowReleased( float inputVelocity )
 		{
 			inFlight = true;
 			released = true;
@@ -102,7 +100,6 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		void OnCollisionEnter( Collision collision )
 		{
-           
 			if ( inFlight )
 			{
                 Debug.Log("Collided with " + collision.gameObject.name);
@@ -182,9 +179,39 @@ namespace Valve.VR.InteractionSystem
 			}
 		}
 
+        private void OnTriggerEnter(Collider other) {
+            PlayerProperties pProps = other.gameObject.GetComponent<PlayerProperties>();
+            if (pProps != null) {
 
-		//-------------------------------------------------
-		private void StickInTarget( Collision collision, bool bSkipRayCast )
+                if (GetComponent<NetworkCollisionDetection>().team != pProps.GetTeam()) {
+                    Destroy(glintParticle);
+
+                    inFlight = false;
+
+                    shaftRB.velocity = Vector3.zero;
+                    shaftRB.angularVelocity = Vector3.zero;
+                    shaftRB.isKinematic = true;
+                    shaftRB.useGravity = false;
+                    shaftRB.transform.GetComponent<BoxCollider>().enabled = false;
+
+                    arrowHeadRB.velocity = Vector3.zero;
+                    arrowHeadRB.angularVelocity = Vector3.zero;
+                    arrowHeadRB.isKinematic = true;
+                    arrowHeadRB.useGravity = false;
+                    arrowHeadRB.transform.GetComponent<BoxCollider>().enabled = false;
+
+                    hitTargetSound.Play();
+                    scaleParentObject = new GameObject("Arrow Scale Parent");
+                    Transform parentTransform = other.transform;
+                    scaleParentObject.transform.parent = parentTransform;
+                    transform.parent = scaleParentObject.transform;
+                }
+            }
+           
+        }
+
+        //-------------------------------------------------
+        private void StickInTarget( Collision collision, bool bSkipRayCast )
 		{
 			Vector3 prevForward = prevRotation * Vector3.forward;
 
