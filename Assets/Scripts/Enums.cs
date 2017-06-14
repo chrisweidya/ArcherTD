@@ -4,5 +4,5 @@ using UnityEngine;
 
 public static class Enums {
 
-    public enum PlayerState {Stand, BowPulled, BowReleased}
+    
 }

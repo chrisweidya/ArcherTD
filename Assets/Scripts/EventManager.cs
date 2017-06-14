@@ -7,9 +7,9 @@ public class EventManager : Singleton <EventManager> {
     protected EventManager() {
     }
 
-    public delegate void PlayerStateChange(Enums.PlayerState state);
+    public delegate void PlayerStateChange(PlayerHandler.PlayerState state);
     public static event PlayerStateChange ChangePlayerState;
-    public static void FirePlayerStateChange(Enums.PlayerState state) {
+    public static void FirePlayerStateChange(PlayerHandler.PlayerState state) {
         if (ChangePlayerState != null) {
             //print("Player state change event fired.");
             ChangePlayerState(state);
