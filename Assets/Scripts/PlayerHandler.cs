@@ -60,7 +60,7 @@ public class PlayerHandler : NetworkBehaviour {
         if (isLocalPlayer) {
             GameManager.Instance.AssignCamera(transform.gameObject);
             //print("fdsf");
-            transform.localPosition = new Vector3(0.05f, -1.641f, -0.34f);
+            transform.localPosition = _modelOffset;
             //foreach(Renderer r in _modelRenderers) {
             //    r.enabled = false;
             // }
