@@ -7,6 +7,7 @@ public class NetworkCollisionDetection : MonoBehaviour {
     private PlayerProperties playerProps;
     private HealthNetwork health;
     private bool collided;
+    public string team;
 	// Use this for initialization
 	void Start () {
         //playerProps = GetComponent<PlayerProperties>();
@@ -18,9 +19,23 @@ public class NetworkCollisionDetection : MonoBehaviour {
 		
 	}
 
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(other.name);
+        health = other.gameObject.GetComponent<HealthNetwork>();
+        if ( health != null && team != other.gameObject.GetComponent<PlayerProperties>().GetTeam() && !collided)
+        {
+            Debug.Log("Collsion Event");
+            EventManager.FireTakeDamage(13, health);
+            collided = true;
+        }
+
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        //CmdReduceHealth(10);
+        //CmdReduceHealth(10);  
         //if (collision.gameObject.tag == "Avatar")
         //{
         //    Debug.Log(playerProps.GetTeam()+gameObject.name + " got collided by " + collision.gameObject.name);
