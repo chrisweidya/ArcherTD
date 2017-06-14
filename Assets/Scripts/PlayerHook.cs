@@ -11,7 +11,6 @@ namespace Prototype.NetworkLobby {
             PlayerProperties playerProperties = gamePlayer.GetComponent<PlayerProperties>();
 
             playerProperties.SetTeam(lobby.playerFaction);
-            print("set " + lobby.playerFaction);
         }
     }
 }

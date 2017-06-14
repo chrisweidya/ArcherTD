@@ -34,7 +34,6 @@ public class PlayerHandler : NetworkBehaviour {
 
     private void ChangeState(Enums.PlayerState state) {
         if (isLocalPlayer && _playerState != state) {
-            print("Dissimilar states");
             CmdChangePlayerState(state);
         }
     }
@@ -46,7 +45,6 @@ public class PlayerHandler : NetworkBehaviour {
 
     [ClientRpc]
     private void RpcChangePlayerState(Enums.PlayerState state) {
-        print("Changed state to: " + state + " at client.");
         _playerState = state;
         TriggerPlayerAnimation(state);
     }
