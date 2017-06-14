@@ -61,9 +61,9 @@ public class PlayerHandler : NetworkBehaviour {
             GameManager.Instance.AssignCamera(transform.gameObject);
             //print("fdsf");
             transform.localPosition = _modelOffset;
-            //foreach(Renderer r in _modelRenderers) {
-            //    r.enabled = false;
-            // }
+            foreach(Renderer r in _modelRenderers) {
+                r.enabled = false;
+            }
         }
     }
     
