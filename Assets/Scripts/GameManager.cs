@@ -6,10 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : Singleton <GameManager> {
     
     private GameObject _cameraRigGO = null;
-    private GameObject _cameraPlayer = null;
-
-    protected GameManager() {
-    }
+    private GameObject _cameraPlayer = null;    
 
     protected override void Awake() {
         base.Awake();
@@ -28,7 +25,6 @@ public class GameManager : Singleton <GameManager> {
         _cameraRigGO = GameObject.Find("Player");
         if (_cameraRigGO == null)
             print("Vive camera not found!");
-        //_cameraRig = Instantiate(_cameraRigPrefab);
     }
 
     private void SetCameraPos(Vector3 pos) {
