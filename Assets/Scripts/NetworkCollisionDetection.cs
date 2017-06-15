@@ -8,8 +8,9 @@ public class NetworkCollisionDetection : MonoBehaviour {
     private HealthNetwork health;
     private bool collided;
     public string team;
-	// Use this for initialization
-	void Start () {
+    GameObject parentGameObject;
+    // Use this for initialization
+    void Start () {
         //playerProps = GetComponent<PlayerProperties>();
         collided = false;
 	}
@@ -23,13 +24,17 @@ public class NetworkCollisionDetection : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.name);
-        health = other.gameObject.GetComponent<HealthNetwork>();
-        if ( health != null && team != other.gameObject.GetComponent<PlayerProperties>().GetTeam() && !collided)
-        {
-            Debug.Log("Collsion Event");
-            EventManager.FireTakeDamage(13, health.netId);
-            collided = true;
+        if (other.gameObject.layer == 8) {
+
+            parentGameObject = other.gameObject.GetComponent<BodyPartScript>().ParentGameObject;
+            health = parentGameObject.GetComponent<HealthNetwork>();
+            if (health != null && team != parentGameObject.GetComponent<PlayerProperties>().GetTeam() && !collided) {
+                Debug.Log("Collsion Event");
+                EventManager.FireTakeDamage(13, health.netId);
+                collided = true;
+            }
         }
+       
 
     }
 

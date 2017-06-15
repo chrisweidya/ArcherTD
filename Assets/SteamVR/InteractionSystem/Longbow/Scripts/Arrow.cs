@@ -180,7 +180,13 @@ namespace Valve.VR.InteractionSystem
 		}
 
         private void OnTriggerEnter(Collider other) {
-            PlayerProperties pProps = other.gameObject.GetComponent<PlayerProperties>();
+            PlayerProperties pProps = null;
+            if (other.gameObject.layer == 8) {
+                GameObject parentGameObject = other.gameObject.GetComponent<BodyPartScript>().ParentGameObject;
+                pProps = parentGameObject.GetComponent<PlayerProperties>();
+            }
+            
+           
             if (pProps != null) {
 
                 if (GetComponent<NetworkCollisionDetection>().team != pProps.GetTeam()) {
