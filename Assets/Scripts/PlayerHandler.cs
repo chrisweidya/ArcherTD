@@ -28,7 +28,26 @@ public class PlayerHandler : NetworkBehaviour {
     private void OnDisable() {
         EventManager.ChangePlayerState -= ChangeState;
     }
-    
+
+    private void Awake() {
+        //Gets first animator component in children.
+        if (_animator == null) {
+            _animator = GetComponentsInChildren<Animator>()[0];
+        }
+    }
+
+    private void Start() {
+        if (isLocalPlayer) {
+            GameManager.Instance.AssignCamera(transform.gameObject);
+            //print("fdsf");
+            transform.localPosition = _modelOffset;
+            foreach (Renderer r in _modelRenderers) {
+                r.enabled = false;
+            }
+            localWardenNetId = netId;
+        }
+    }
+
     private void TriggerPlayerAnimation(PlayerState playerstate) {
         _animator.SetTrigger(playerstate.ToString());
     }
@@ -49,25 +68,6 @@ public class PlayerHandler : NetworkBehaviour {
         _playerState = state;
         TriggerPlayerAnimation(state);
     }
-
-    private void Awake() {
-        //Gets first animator component in children.
-        if(_animator == null) {
-            _animator = GetComponentsInChildren<Animator>()[0];
-        }
-    }
-
-    private void Start () {
-        if (isLocalPlayer) {
-            GameManager.Instance.AssignCamera(transform.gameObject);
-            //print("fdsf");
-            transform.localPosition = _modelOffset;
-            foreach(Renderer r in _modelRenderers) {
-                r.enabled = false;
-            }
-            localWardenNetId = netId;
-        }
-    }
     
     private void Update () {
 	}
@@ -79,6 +79,7 @@ public class PlayerHandler : NetworkBehaviour {
     public bool GetIsDead() {
         return isDead;
     }
+
     private void OnIsDead(bool isDead) {
         if (isDead) {
             EventManager.FirePlayerStateChange(PlayerState.Death, this.netId);

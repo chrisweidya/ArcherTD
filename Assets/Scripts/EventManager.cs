@@ -4,10 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class EventManager : Singleton <EventManager> { 
-
-    protected EventManager() {
-    }
-
+    
     public delegate void PlayerStateChange(PlayerHandler.PlayerState state, NetworkInstanceId netId);
     public static event PlayerStateChange ChangePlayerState;
     public static void FirePlayerStateChange(PlayerHandler.PlayerState state, NetworkInstanceId netId) {
@@ -33,6 +30,14 @@ public class EventManager : Singleton <EventManager> {
         if (TakeDamageAction != null)
         {
             TakeDamageAction(dmg, netId);
+        }
+    }
+    
+    public delegate void GameEnd(NetworkInstanceId winnerId);
+    public static event GameEnd GameEndAction;
+    public static void FireGameEnd(NetworkInstanceId winnerId) {
+        if (GameEndAction != null) {
+            GameEndAction(winnerId);
         }
     }
 
