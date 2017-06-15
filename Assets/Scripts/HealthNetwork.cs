@@ -42,7 +42,7 @@ public class HealthNetwork : NetworkBehaviour {
         if (isLocalPlayer) {
             print("minus" + victimNetId);
             if (victimNetId == this.netId) {
-
+                return;
             }
 
             CmdReduceHealth(dmg, victimNetId, this.netId);
