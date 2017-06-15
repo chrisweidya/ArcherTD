@@ -37,11 +37,15 @@ public class HealthNetwork : NetworkBehaviour {
 		
 	}
 
-    public void ReduceHealth(float dmg, HealthNetwork hpNetwork)
+    public void ReduceHealth(float dmg, NetworkInstanceId victimNetId)
     {
         if (isLocalPlayer) {
-            print("minus" + hpNetwork.netId);
-            CmdReduceHealth(dmg, hpNetwork.netId, this.netId);
+            print("minus" + victimNetId);
+            if (victimNetId == this.netId) {
+
+            }
+
+            CmdReduceHealth(dmg, victimNetId, this.netId);
         }
     }
 
@@ -49,6 +53,7 @@ public class HealthNetwork : NetworkBehaviour {
     private void CmdReduceHealth(float dmg, NetworkInstanceId victimNetId, NetworkInstanceId killerNetId)
     {
         GameObject playerGO = NetworkServer.FindLocalObject(victimNetId);
+        
         PlayerHandler playerHandler = playerGO.GetComponent<PlayerHandler>();
         if (!playerHandler.GetIsDead()) {
             HealthNetwork affectedHealth = playerGO.GetComponent<HealthNetwork>();
@@ -72,6 +77,7 @@ public class HealthNetwork : NetworkBehaviour {
     {
         Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health);
+        currentHealth = health;
         Debug.Log("Rpc: healthLeft: " + currentHealth);
     }
     

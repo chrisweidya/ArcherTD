@@ -27,7 +27,7 @@ public class NetworkCollisionDetection : MonoBehaviour {
         if ( health != null && team != other.gameObject.GetComponent<PlayerProperties>().GetTeam() && !collided)
         {
             Debug.Log("Collsion Event");
-            EventManager.FireTakeDamage(13, health);
+            EventManager.FireTakeDamage(13, health.netId);
             collided = true;
         }
 
@@ -46,7 +46,7 @@ public class NetworkCollisionDetection : MonoBehaviour {
         if (health != null && !collided)
         {
             Debug.Log("Collsion Event");
-            EventManager.FireTakeDamage(13, health);
+            EventManager.FireTakeDamage(13, health.netId);
             collided = true;
         }
     }
