@@ -1,18 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class EventManager : Singleton <EventManager> { 
 
     protected EventManager() {
     }
 
-    public delegate void PlayerStateChange(PlayerHandler.PlayerState state);
+    public delegate void PlayerStateChange(PlayerHandler.PlayerState state, NetworkInstanceId netId);
     public static event PlayerStateChange ChangePlayerState;
-    public static void FirePlayerStateChange(PlayerHandler.PlayerState state) {
+    public static void FirePlayerStateChange(PlayerHandler.PlayerState state, NetworkInstanceId netId) {
         if (ChangePlayerState != null) {
             //print("Player state change event fired.");
-            ChangePlayerState(state);
+            ChangePlayerState(state, netId);
         }
     }
 

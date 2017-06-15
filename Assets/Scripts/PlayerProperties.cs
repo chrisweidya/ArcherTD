@@ -7,6 +7,7 @@ public class PlayerProperties : NetworkBehaviour {
     [SyncVar]
     [SerializeField]
     private string team;
+
 	// Use this for initialization
 	void Start () {
 		

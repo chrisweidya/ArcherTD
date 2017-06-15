@@ -11,6 +11,9 @@ public class HealthNetwork : NetworkBehaviour {
     [SerializeField]
     private float maxHealth;
 
+    [SyncVar]
+    bool isDead = false;
+
     public HealthBarUI hpBar;
     private PlayerProperties playerProps;
 
@@ -38,17 +41,25 @@ public class HealthNetwork : NetworkBehaviour {
     {
         if (isLocalPlayer) {
             print("minus" + hpNetwork.netId);
-            CmdReduceHealth(dmg, hpNetwork.netId);
+            CmdReduceHealth(dmg, hpNetwork.netId, this.netId);
         }
     }
 
     [Command]
-    private void CmdReduceHealth(float dmg, NetworkInstanceId id)
+    private void CmdReduceHealth(float dmg, NetworkInstanceId victimNetId, NetworkInstanceId killerNetId)
     {
-        GameObject affected = NetworkServer.FindLocalObject(id);
-        affected.GetComponent<HealthNetwork>().currentHealth -= dmg;
-        Debug.Log("Cmd health " + currentHealth);
+        GameObject playerGO = NetworkServer.FindLocalObject(victimNetId);
+        PlayerHandler playerHandler = playerGO.GetComponent<PlayerHandler>();
+        if (!playerHandler.GetIsDead()) {
+            HealthNetwork affectedHealth = playerGO.GetComponent<HealthNetwork>();
+            affectedHealth.currentHealth -= dmg;
+            Debug.Log("Cmd health " + currentHealth);
+            if (affectedHealth.currentHealth <= 0) {
+                playerHandler.SetIsDead(true);
+            }
+        }
     }
+    
 
     //[ClientRpc]
     //private void RpcReduceHealth(float dmg)
@@ -56,14 +67,12 @@ public class HealthNetwork : NetworkBehaviour {
     //    hpBar.SetHealthBar(currentHealth);
       
     //}
-
+    
     void OnHealthUpdate(float health)
     {
         Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health);
         Debug.Log("Rpc: healthLeft: " + currentHealth);
-        if (currentHealth <= 0) {
-            EventManager.FirePlayerStateChange(PlayerHandler.PlayerState.Death);
-        }
     }
+    
 }

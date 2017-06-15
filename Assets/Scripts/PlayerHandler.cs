@@ -6,6 +6,8 @@ using UnityEngine.Networking;
 
 public class PlayerHandler : NetworkBehaviour {
 
+    public static NetworkInstanceId localWardenNetId;
+
     [SerializeField]
     private Vector3 _modelOffset = Vector3.zero;
     [SerializeField]
@@ -13,18 +15,17 @@ public class PlayerHandler : NetworkBehaviour {
     [SerializeField]
     private Animator _animator = null;
 
-
     public enum PlayerState { Stand, BowPulled, BowReleased, Death}
 
     private PlayerState _playerState = PlayerState.Stand;
+    [SyncVar(hook = "OnIsDead")]
+    private bool isDead = false;
 
     private void OnEnable() {
-        print("enabled player state change event");
         EventManager.ChangePlayerState += ChangeState;
     }
 
     private void OnDisable() {
-        print("disable player state changed event");
         EventManager.ChangePlayerState -= ChangeState;
     }
     
@@ -32,8 +33,8 @@ public class PlayerHandler : NetworkBehaviour {
         _animator.SetTrigger(playerstate.ToString());
     }
 
-    private void ChangeState(PlayerState state) {
-        if (isLocalPlayer && _playerState != state) {
+    private void ChangeState(PlayerState state, NetworkInstanceId netId) {
+        if (this.netId == netId && _playerState != state) {
             CmdChangePlayerState(state);
         }
     }
@@ -64,16 +65,23 @@ public class PlayerHandler : NetworkBehaviour {
             foreach(Renderer r in _modelRenderers) {
                 r.enabled = false;
             }
+            localWardenNetId = netId;
         }
     }
     
     private void Update () {
-        if(Input.GetKeyDown(KeyCode.K)) {
-            print("pressed");
-            
-        TriggerPlayerAnimation(PlayerState.Death);
-            //EventManager.FirePlayerStateChange(PlayerState.Death);
-        }
 	}
-    
+ 
+    public void SetIsDead(bool isDead) {
+        this.isDead = isDead;
+    }
+
+    public bool GetIsDead() {
+        return isDead;
+    }
+    private void OnIsDead(bool isDead) {
+        if (isDead) {
+            EventManager.FirePlayerStateChange(PlayerState.Death, this.netId);
+        }
+    }
 }
