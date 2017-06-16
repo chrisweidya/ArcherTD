@@ -36,8 +36,9 @@ public class EventManager : Singleton <EventManager> {
     public delegate void GameEnd(NetworkInstanceId winnerId);
     public static event GameEnd GameEndAction;
     public static void FireGameEnd(NetworkInstanceId winnerId) {
-        if (GameEndAction != null) {
+        if (GameEndAction != null && !GameManager.GameWon) {
             GameEndAction(winnerId);
+            GameManager.GameWon = true;
         }
     }
 

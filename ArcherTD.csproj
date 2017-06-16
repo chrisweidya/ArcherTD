@@ -91,13 +91,12 @@
     <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyServerList.cs" />
     <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyTopPanel.cs" />
     <Compile Include="Assets\Scripts\ArrowStickScript.cs" />
-    <Compile Include="Assets\Scripts\AutoParent.cs" />
     <Compile Include="Assets\Scripts\BodyPartScript.cs" />
     <Compile Include="Assets\Scripts\CreepMovementNetworkTest.cs" />
+    <Compile Include="Assets\Scripts\DisableOnWin.cs" />
     <Compile Include="Assets\Scripts\Enums.cs" />
     <Compile Include="Assets\Scripts\EventManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
-    <Compile Include="Assets\Scripts\HandEventHooks.cs" />
     <Compile Include="Assets\Scripts\HealthBarUI.cs" />
     <Compile Include="Assets\Scripts\HealthNetwork.cs" />
     <Compile Include="Assets\Scripts\NetworkCollisionDetection.cs" />
@@ -108,6 +107,7 @@
     <Compile Include="Assets\Scripts\SelfFireGun.cs" />
     <Compile Include="Assets\Scripts\Singleton.cs" />
     <Compile Include="Assets\Scripts\SpawnArrow.cs" />
+    <Compile Include="Assets\Scripts\TowerHandler.cs" />
     <Compile Include="Assets\Scripts\UI\Fade.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_LaserPointer.cs" />

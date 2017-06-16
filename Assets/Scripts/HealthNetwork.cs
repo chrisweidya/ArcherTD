@@ -11,9 +11,6 @@ public class HealthNetwork : NetworkBehaviour {
     [SerializeField]
     private float maxHealth;
 
-    [SyncVar]
-    bool isDead = false;
-
     public HealthBarUI hpBar;
     private PlayerProperties playerProps;
 
