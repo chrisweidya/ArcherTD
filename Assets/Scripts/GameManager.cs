@@ -4,9 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton <GameManager> {
-    
+
+    public static bool GameWon = false;
+
     private GameObject _cameraRigGO = null;
-    private GameObject _cameraPlayer = null;    
+    private GameObject _cameraPlayer = null;
+    [SerializeField]
+    private string _currentScene;
 
     protected override void Awake() {
         base.Awake();
@@ -25,6 +29,7 @@ public class GameManager : Singleton <GameManager> {
         _cameraRigGO = GameObject.Find("Player");
         if (_cameraRigGO == null)
             print("Vive camera not found!");
+        _currentScene = SceneManager.GetActiveScene().name;
     }
 
     private void SetCameraPos(Vector3 pos) {

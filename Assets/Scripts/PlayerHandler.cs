@@ -84,6 +84,7 @@ public class PlayerHandler : NetworkBehaviour {
         if (isDead) {
             transform.parent = null;
             EventManager.FirePlayerStateChange(PlayerState.Death, this.netId);
+            EventManager.FireGameEnd(netId);
         }
     }
 }
