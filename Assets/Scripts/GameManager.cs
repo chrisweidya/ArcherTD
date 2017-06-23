@@ -14,6 +14,8 @@ public class GameManager : Singleton <GameManager> {
     [SerializeField]
     private string _currentScene;
 
+    private static string localPlayerTeam;
+
     protected override void Awake() {
         base.Awake();
     }
@@ -73,5 +75,12 @@ public class GameManager : Singleton <GameManager> {
         }
         else
             return ServerConnection;
+    }
+
+    public static void SetLocalPlayerTeam(string str) {
+        localPlayerTeam = str;
+    }
+    public static string GetLocalPlayerTeam( ) {
+       return localPlayerTeam;
     }
 }
