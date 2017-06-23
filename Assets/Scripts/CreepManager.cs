@@ -7,11 +7,10 @@ using UnityEngine.AI;
 public class CreepManager : NetworkBehaviour {
 
     //private NetworkConnection _serverConnection;
-    [SerializeField]
-    private WolfHandler wolfHandler;
-    [SerializeField]
-    private Transform pos;
-    
+    [SerializeField] private WolfHandler wolfHandler;
+    [SerializeField] private Transform pos;
+    [SerializeField] private Transform _creepSpawnPoint;
+    [SerializeField] private GameObject _creepPrefab;
 
     private void Awake() {
     }
@@ -19,6 +18,9 @@ public class CreepManager : NetworkBehaviour {
     void Start () {
         //_serverConnection = GameManager.GetServerConnection();
         //print(_serverConnection);
+        GameObject creep = Instantiate(_creepPrefab);
+        creep.transform.position = _creepSpawnPoint.position;
+        NetworkServer.Spawn(creep);
     }
 	
 	// Update is called once per frame
