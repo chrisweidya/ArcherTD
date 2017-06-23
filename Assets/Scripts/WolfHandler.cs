@@ -12,6 +12,7 @@ public class WolfHandler : NetworkBehaviour {
     private Animator _animator;
 
     private const string ANIM_RUN_TRIGGER = "RunTrigger";
+    private const string ANIM_IDLE_TRIGGER = "IdleTrigger";
 
     private void Awake() {
         _agent = GetComponent<NavMeshAgent>();
@@ -25,17 +26,13 @@ public class WolfHandler : NetworkBehaviour {
     }
 
     private IEnumerator HasReached() {
-
-        print(_agent.remainingDistance);
         while(_agent.pathPending) {
-            print("path pending");
             yield return new WaitForSeconds(0.1f);
         }
         while (_agent.remainingDistance > float.Epsilon) {
-            print(_agent.remainingDistance);
             yield return new WaitForSeconds(0.1f);
         }
-        print("reached");
+        _animator.SetTrigger(ANIM_IDLE_TRIGGER);
         yield return null;
     }
 }
