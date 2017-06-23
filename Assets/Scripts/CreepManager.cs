@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class CreepManager : NetworkBehaviour {
 
-    private NetworkConnection _serverConnection;
+    //private NetworkConnection _serverConnection;
     [SerializeField]
     private WolfHandler wolfHandler;
     [SerializeField]
