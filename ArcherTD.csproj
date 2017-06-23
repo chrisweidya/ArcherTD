@@ -107,6 +107,7 @@
     <Compile Include="Assets\Scripts\SelfFireGun.cs" />
     <Compile Include="Assets\Scripts\Singleton.cs" />
     <Compile Include="Assets\Scripts\SpawnArrow.cs" />
+    <Compile Include="Assets\Scripts\TeleportPointManager.cs" />
     <Compile Include="Assets\Scripts\TowerHandler.cs" />
     <Compile Include="Assets\Scripts\UI\Fade.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
