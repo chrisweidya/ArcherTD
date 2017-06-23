@@ -34,6 +34,7 @@ public class PlayerHandler : NetworkBehaviour {
         if (_animator == null) {
             _animator = GetComponentsInChildren<Animator>()[0];
         }
+        GameManager.SetOnceServerConnection(connectionToServer);
     }
 
     private void Start() {
