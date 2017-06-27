@@ -79,6 +79,7 @@ public class GameManager : Singleton <GameManager> {
 
     public static void SetLocalPlayerTeam(string str) {
         localPlayerTeam = str;
+        GameObject.Find("TeleporterPointManager").GetComponent<TeleportPointManager>().TeleporterSetUp();
     }
 
     public static string GetLocalPlayerTeam( ) {
