@@ -8,8 +8,13 @@ public class TeleportPointManager : MonoBehaviour {
     public GameObject hellborneTelePoints;
 	// Use this for initialization
 	void Start () {
+       
+    }
+    public void TeleporterSetUp() {
+
         Debug.Log("teleport" + GameManager.GetLocalPlayerTeam());
-        if (GameManager.GetLocalPlayerTeam() == "Hellborne") {
+
+        if (GameManager.GetLocalPlayerTeam() == "Hellbourne") {
             hellborneTelePoints.SetActive(true);
         }
         if (GameManager.GetLocalPlayerTeam() == "Legion") {

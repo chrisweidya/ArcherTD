@@ -110,6 +110,10 @@ namespace Valve.VR.InteractionSystem
 
 		SteamVR_Events.Action chaperoneInfoInitializedAction;
 
+        //teleport cooldown
+        private float teleCD;
+        private float teleTimer;
+
 		// Events
 
 		public static SteamVR_Events.Event< float > ChangeScene = new SteamVR_Events.Event< float >();
@@ -161,6 +165,8 @@ namespace Valve.VR.InteractionSystem
 			float invalidReticleStartingScale = invalidReticleTransform.localScale.x;
 			invalidReticleMinScale *= invalidReticleStartingScale;
 			invalidReticleMaxScale *= invalidReticleStartingScale;
+            teleCD = 5.0f;
+            teleTimer = 0;
 		}
 
 
@@ -182,7 +188,7 @@ namespace Valve.VR.InteractionSystem
 
 			CheckForSpawnPoint();
 
-			Invoke( "ShowTeleportHint", 5.0f );
+			//Invoke( "ShowTeleportHint", 5.0f );
 		}
 
 
@@ -231,6 +237,12 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		void Update()
 		{
+            //teleport cooldown
+            if (teleTimer > 0) {
+                teleTimer -= Time.deltaTime;
+            }
+
+
 			Hand oldPointerHand = pointerHand;
 			Hand newPointerHand = null;
 
@@ -896,6 +908,9 @@ namespace Valve.VR.InteractionSystem
 			}
 
 			Teleport.Player.Send( pointedAtTeleportMarker );
+
+            //teleport cooldown
+            teleTimer = teleCD;
 		}
 
 
@@ -1038,6 +1053,11 @@ namespace Valve.VR.InteractionSystem
 			{
 				return false;
 			}
+
+            //teleport cooldown
+            if (teleTimer > 0) {
+                return false;
+            }
 
 			if ( hand.noSteamVRFallbackCamera == null )
 			{
