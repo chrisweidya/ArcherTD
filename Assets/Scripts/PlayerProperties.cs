@@ -20,6 +20,7 @@ public class PlayerProperties : NetworkBehaviour {
 
     public void SetTeam(string team) {
         this.team = team;
+        GameManager.SetLocalPlayerTeam(team);
     }
 
     public string GetTeam() {

@@ -36,6 +36,10 @@ public class PlayerHandler : NetworkBehaviour {
         }
         GameManager.SetOnceServerConnection(connectionToServer);
 
+       
+    }
+
+    private void Start() {
         if (isLocalPlayer) {
             GameManager.Instance.AssignCamera(transform.gameObject);
             print("fdsf");
@@ -47,10 +51,6 @@ public class PlayerHandler : NetworkBehaviour {
             Debug.Log(GameManager.GetLocalPlayerTeam());
             localWardenNetId = netId;
         }
-    }
-
-    private void Start() {
-        
     }
 
     private void TriggerPlayerAnimation(PlayerState playerstate) {
