@@ -34,17 +34,17 @@ public class PlayerHandler : NetworkBehaviour {
         if (_animator == null) {
             _animator = GetComponentsInChildren<Animator>()[0];
         }
-        GameManager.SetOnceServerConnection(connectionToServer);
     }
 
     private void Start() {
         if (isLocalPlayer) {
             GameManager.Instance.AssignCamera(transform.gameObject);
-            //print("fdsf");
             transform.localPosition = _modelOffset;
             foreach (Renderer r in _modelRenderers) {
                 r.enabled = false;
             }
+            GameManager.SetLocalPlayerTeam(GetComponent<PlayerProperties>().GetTeam());
+            Debug.Log(GameManager.GetLocalPlayerTeam());
             localWardenNetId = netId;
         }
     }

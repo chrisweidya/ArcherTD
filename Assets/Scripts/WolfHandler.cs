@@ -10,18 +10,31 @@ using UnityEngine.Networking;
 public class WolfHandler : NetworkBehaviour {
     private NavMeshAgent _agent;
     private Animator _animator;
+    private NetworkAnimator _networkAnimator;
+    private CreepManager _creepManager;
 
-    private const string ANIM_RUN_TRIGGER = "RunTrigger";
-    private const string ANIM_IDLE_TRIGGER = "IdleTrigger";
+    public enum WolfAnimationTrigger {RunTrigger, IdleTrigger};
 
     private void Awake() {
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
+        _networkAnimator = GetComponent<NetworkAnimator>();
+    }
+
+    private void Start() {
+        _creepManager = CreepManager.Instance;
     }
 
     public void SetDestination(Vector3 pos) {
         _agent.SetDestination(pos);
-        _animator.SetTrigger(ANIM_RUN_TRIGGER);
+    }
+
+    [ClientRpc]
+    public void RpcSetAnimationTrigger(WolfAnimationTrigger trigger) {
+        _animator.SetTrigger(trigger.ToString());
+    }
+
+    public void StartOnReachRoutine() {
         StartCoroutine(HasReached());
     }
 
@@ -32,7 +45,7 @@ public class WolfHandler : NetworkBehaviour {
         while (_agent.remainingDistance > float.Epsilon) {
             yield return new WaitForSeconds(0.1f);
         }
-        _animator.SetTrigger(ANIM_IDLE_TRIGGER);
+        _creepManager.ServerSetAnimationTrigger(gameObject, WolfAnimationTrigger.IdleTrigger);
         yield return null;
     }
 }
