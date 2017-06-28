@@ -33,10 +33,6 @@ public class HealthNetwork : NetworkBehaviour {
     {
         if (isLocalPlayer) {
             print("minus" + victimNetId);
-            if (victimNetId == this.netId) {
-                return;
-            }
-
             CmdReduceHealth(dmg, victimNetId, this.netId);
         }
     }
@@ -45,8 +41,8 @@ public class HealthNetwork : NetworkBehaviour {
     private void CmdReduceHealth(float dmg, NetworkInstanceId victimNetId, NetworkInstanceId killerNetId)
     {
         GameObject playerGO = NetworkServer.FindLocalObject(victimNetId);
-        PlayerHandler killerPlayerHandler = NetworkServer.FindLocalObject(killerNetId).GetComponent<PlayerHandler>();
-        PlayerHandler victimPlayerHandler = playerGO.GetComponent<PlayerHandler>();
+        CreatureHandler killerPlayerHandler = NetworkServer.FindLocalObject(killerNetId).GetComponent<CreatureHandler>();
+        CreatureHandler victimPlayerHandler = playerGO.GetComponent<CreatureHandler>();
 
         if (!killerPlayerHandler.GetIsDead() && !victimPlayerHandler.GetIsDead()) {
             HealthNetwork affectedHealth = playerGO.GetComponent<HealthNetwork>();
