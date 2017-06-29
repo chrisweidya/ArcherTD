@@ -27,42 +27,30 @@ public class CreepManager : NetworkBehaviour {
         Instance = this;
         _legionCreepsDead = new Stack<GameObject>();
     }
-
-
-    // Use this for initialization
+    
     void Start () {
-        //_serverConnection = GameManager.GetServerConnection();
-        //print(_serverConnection);
-        //GameObject creep = Instantiate(_creepPrefab);
-        //creep.transform.position = _creepSpawnPoint.position;
-        //NetworkServer.Spawn(creep);
-        //CreepHandler = 
     }
-	
-	// Update is called once per frame
+
 	void Update () {
         if (isServer && Input.GetKeyDown(KeyCode.K)) {
-            CmdSpawnCreep(CreepType.Legion);
+            SpawnCreep(CreepType.Legion);
         }
     }
-
-    [Command]
-    private void CmdSpawnCreep(CreepType type) {
+    
+    private void SpawnCreep(CreepType type) {
         GameObject creep = GetCreepGO(type);
         if(type == CreepType.Legion)
-            CmdSetCreepDestination(creep, _legionCreepTargetPosTransform.position);
+            SetCreepDestination(creep, _legionCreepTargetPosTransform.position);
     }
-
-    [Command]
-    private void CmdSetCreepDestination(GameObject creep, Vector3 targetPos) {
+    
+    private void SetCreepDestination(GameObject creep, Vector3 targetPos) {
         CreepHandler handler = creep.GetComponent<CreepHandler>();
         handler.SetDestination(targetPos);
-        CmdSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.RunTrigger);
+        SetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.RunTrigger);
         handler.StartOnReachRoutine();
     }
-
-    [Command]
-    private void CmdSetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
+    
+    private void SetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
         creep.GetComponent<CreepHandler>().RpcSetAnimationTrigger(trigger);
     }
 
@@ -127,6 +115,6 @@ public class CreepManager : NetworkBehaviour {
     public void ServerSetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
         if (!isServer)
             return;
-        CmdSetAnimationTrigger(creep, trigger);
+        SetAnimationTrigger(creep, trigger);
     }
 }
