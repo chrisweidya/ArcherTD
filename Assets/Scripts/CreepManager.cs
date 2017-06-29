@@ -19,6 +19,8 @@ public class CreepManager : NetworkBehaviour {
 
     public enum CreepType { Legion, Hellbourne};
 
+    //timer 
+    float timer= 3;
     private void Awake() {
         if(Instance != null) {
             Debug.LogWarning("Attempting to instantiate another CreepManager instance.");
@@ -33,9 +35,12 @@ public class CreepManager : NetworkBehaviour {
 
 	void Update () {
         if (isServer && Input.GetKeyDown(KeyCode.K)) {
-            print("lol1");
             SpawnCreep(CreepType.Legion);
-            print("lol2");
+        }
+        timer -= Time.deltaTime;
+        if (timer < 0) {
+            timer = 5;
+            SpawnCreep(CreepType.Legion);
         }
     }
     
@@ -92,8 +97,9 @@ public class CreepManager : NetworkBehaviour {
     }
 
     private GameObject Resurrect(GameObject creep, Vector3 position) {
-        creep.transform.position = position;
         creep.SetActive(true);
+        creep.transform.position = position;
+        creep.GetComponent<HealthNetwork>().ResetHealth();
         NetworkServer.Spawn(creep);
         return creep;
     }
@@ -118,10 +124,5 @@ public class CreepManager : NetworkBehaviour {
         if (!isServer)
             return;
         SetAnimationTrigger(creep, trigger);
-    }
-
-    private IEnumerator DelaySpawn(float s, GameObject creep) {
-        yield return new WaitForSeconds(s);
-        NetworkServer.Spawn(creep);
     }
 }

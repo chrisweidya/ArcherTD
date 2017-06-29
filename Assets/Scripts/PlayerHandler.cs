@@ -82,7 +82,7 @@ public class PlayerHandler : CreatureHandler {
     //}
 
     public override void OnIsDead(bool isDead) {
-        if (base.GetIsDead()) {
+        if (GetIsDead()) {
             transform.parent = null;
             EventManager.FirePlayerStateChange(PlayerState.Death, this.netId);
             

@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 
-public class CreepHandler : NetworkBehaviour {
+public class CreepHandler : CreatureHandler {
     [SerializeField] private float _defaultCreepSpeed = 3.5f;
 
     private NavMeshAgent _agent;
@@ -45,9 +45,14 @@ public class CreepHandler : NetworkBehaviour {
         _agent.speed = _defaultCreepSpeed;
     }
 
+    [Command]
+    public void CmdSetAnimationTrigger() {
+        _creepManager.SetDeath(gameObject);
+    }
+
     [ClientRpc]
     public void RpcSetAnimationTrigger(CreepAnimationTrigger trigger) {
-        print("animation");
+        Debug.Log("TriggerDeathAnimation");
         _animator.SetTrigger(trigger.ToString());
     }
 
@@ -66,10 +71,24 @@ public class CreepHandler : NetworkBehaviour {
         yield return null;
     }
 
+    //called when hp less than 0
     private void TriggerDeath() {
-        _creepManager.SetDeath(gameObject);
+        Debug.Log("TriggerDeath");
+       _creepManager.SetDeath(gameObject);     
     }
 
+    public override void SetIsDead(bool isDead) {
+        Debug.Log("override setisdead");    
+        base.SetIsDead(isDead);
+        TriggerDeath();
+    }
+
+    //base class sync var hook
+    public override void OnIsDead(bool isDead) {
+        if (GetIsDead()) {
+            TriggerDeath();
+        }
+    }
     public void SetAgentEnabled(bool val) {
         if (!val)
             StopAllCoroutines();

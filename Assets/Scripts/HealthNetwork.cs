@@ -57,9 +57,14 @@ public class HealthNetwork : NetworkBehaviour {
     void OnHealthUpdate(float health)
     {
         Debug.Log("UI health " + health);
-        hpBar.SetHealthBar(health);
+        hpBar.SetHealthBar(health,maxHealth);
         currentHealth = health;
         Debug.Log("Rpc: healthLeft: " + currentHealth);
+    }
+
+    public void ResetHealth() {
+        currentHealth = maxHealth;
+        GetComponent<CreatureHandler>().ResetDeath();
     }
     
 }

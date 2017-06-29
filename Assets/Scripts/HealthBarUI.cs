@@ -8,7 +8,7 @@ public class HealthBarUI : MonoBehaviour {
     private Slider healthBar;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         healthBar = GetComponent<Slider>();
 	}
 	
@@ -17,8 +17,8 @@ public class HealthBarUI : MonoBehaviour {
 		
 	}
 
-    public void SetHealthBar(float health)
+    public void SetHealthBar(float health,float maxHealth)
     {
-        healthBar.value = health;
+        healthBar.value =  ( health/maxHealth ) * 100;
     }
 }
