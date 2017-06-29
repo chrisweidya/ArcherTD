@@ -9,9 +9,15 @@ public class CreepManager : NetworkBehaviour {
     public static CreepManager Instance;
 
     //private NetworkConnection _serverConnection;
-    [SerializeField] private Transform _targetTransform;
-    [SerializeField] private Transform _creepSpawnPoint;
-    [SerializeField] private GameObject _creepPrefab;
+    [SerializeField] private Transform _legionCreepTargetPosTransform;
+    [SerializeField] private Transform _legionCreepSpawnPoint;
+    [SerializeField] private GameObject _legionCreepPrefab;
+    [SerializeField] private Stack<GameObject> _legionCreepsDead;
+    [SerializeField] private List<GameObject> _legionCreeps;
+    [SerializeField] private Transform _legionCreepsContainer;
+    [SerializeField] private float _despawnSecs = 3f;
+
+    public enum CreepType { Legion, Hellbourne};
 
     private void Awake() {
         if(Instance != null) {
@@ -19,6 +25,7 @@ public class CreepManager : NetworkBehaviour {
             return;
         }
         Instance = this;
+        _legionCreepsDead = new Stack<GameObject>();
     }
 
 
@@ -29,38 +36,99 @@ public class CreepManager : NetworkBehaviour {
         //GameObject creep = Instantiate(_creepPrefab);
         //creep.transform.position = _creepSpawnPoint.position;
         //NetworkServer.Spawn(creep);
-        //wolfHandler = 
+        //CreepHandler = 
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.K)) {
-            CmdSpawnWolf();
+        if (isServer && Input.GetKeyDown(KeyCode.K)) {
+            CmdSpawnCreep(CreepType.Legion);
         }
     }
 
     [Command]
-    private void CmdSpawnWolf() {
-        GameObject wolf = Instantiate(_creepPrefab);
-        wolf.transform.position = _creepSpawnPoint.position;
-        NetworkServer.Spawn(wolf);
-        CmdSetWolfDestination(wolf, _targetTransform.position);
+    private void CmdSpawnCreep(CreepType type) {
+        GameObject creep = GetCreepGO(type);
+        if(type == CreepType.Legion)
+            CmdSetCreepDestination(creep, _legionCreepTargetPosTransform.position);
     }
 
     [Command]
-    private void CmdSetWolfDestination(GameObject wolf, Vector3 targetPos) {
-        WolfHandler handler = wolf.GetComponent<WolfHandler>();
+    private void CmdSetCreepDestination(GameObject creep, Vector3 targetPos) {
+        print("set");
+        CreepHandler handler = creep.GetComponent<CreepHandler>();
         handler.SetDestination(targetPos);
-        CmdSetAnimationTrigger(wolf, WolfHandler.WolfAnimationTrigger.RunTrigger);
+        CmdSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.RunTrigger);
         handler.StartOnReachRoutine();
     }
 
     [Command]
-    private void CmdSetAnimationTrigger(GameObject wolf, WolfHandler.WolfAnimationTrigger trigger) {
-        wolf.GetComponent<WolfHandler>().RpcSetAnimationTrigger(trigger);
+    private void CmdSetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
+        creep.GetComponent<CreepHandler>().RpcSetAnimationTrigger(trigger);
     }
 
-    public void ServerSetAnimationTrigger(GameObject wolf, WolfHandler.WolfAnimationTrigger trigger) {
-        CmdSetAnimationTrigger(wolf, trigger);
+    private GameObject GetCreepGO(CreepType type) {
+        Stack<GameObject> creepDeadStack = _legionCreepsDead;
+        List<GameObject> creepList = _legionCreeps;
+        Vector3 spawnPosition = _legionCreepSpawnPoint.position;
+        GameObject creepPrefab = _legionCreepPrefab;
+        Transform parentTransform = _legionCreepsContainer;
+        GameObject creep = null;
+
+        if(type == CreepType.Legion) {
+            creepDeadStack = _legionCreepsDead;
+            spawnPosition = _legionCreepSpawnPoint.position;
+            creepPrefab = _legionCreepPrefab;
+            creepList = _legionCreeps;
+            parentTransform = _legionCreepsContainer;
+        }
+        if(creepDeadStack.Count == 0) {
+            creep = CreateCreep(creepList, creepPrefab, parentTransform, spawnPosition, type);
+        }
+        else {
+            creep = creepDeadStack.Pop();
+            creep = Resurrect(creep, spawnPosition);
+        }
+        return creep;
+    }
+
+    private GameObject CreateCreep(List<GameObject> creepList, GameObject creepPrefab, Transform parentGO, Vector3 position, CreepType type) {
+        GameObject creep = Instantiate(creepPrefab);
+        creep.transform.parent = _legionCreepsContainer.transform;
+        creep.GetComponent<CreepHandler>().SetCreepType(type);
+        creepList.Add(creep);
+        creep = Resurrect(creep, position);
+
+        return creep;
+    }
+
+    private GameObject Resurrect(GameObject creep, Vector3 position) {
+        creep.SetActive(true);
+        creep.transform.position = position;
+        creep.GetComponent<CreepHandler>().SetAgentEnabled(true);
+        NetworkServer.Spawn(creep);
+        return creep;
+    }
+
+    private IEnumerator Unspawn(GameObject creep) {
+        yield return new WaitForSeconds(_despawnSecs);
+        NetworkServer.UnSpawn(creep);
+        creep.SetActive(false);
+        _legionCreepsDead.Push(creep);
+    }
+
+    public void SetDeath(GameObject creep) {
+        if (!isServer)
+            return;
+        CreepHandler creepHandler = creep.GetComponent<CreepHandler>();
+        creepHandler.SetAgentSpeed(0);
+        creepHandler.RpcSetAnimationTrigger(CreepHandler.CreepAnimationTrigger.DeathTrigger);
+        StartCoroutine(Unspawn(creep));
+    }
+
+    public void ServerSetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
+        if (!isServer)
+            return;
+        CmdSetAnimationTrigger(creep, trigger);
     }
 }

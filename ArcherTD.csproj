@@ -92,6 +92,7 @@
     <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyTopPanel.cs" />
     <Compile Include="Assets\Scripts\ArrowStickScript.cs" />
     <Compile Include="Assets\Scripts\BodyPartScript.cs" />
+    <Compile Include="Assets\Scripts\CreepHandler.cs" />
     <Compile Include="Assets\Scripts\CreepManager.cs" />
     <Compile Include="Assets\Scripts\CreepMovementNetworkTest.cs" />
     <Compile Include="Assets\Scripts\DisableOnWin.cs" />
@@ -111,7 +112,6 @@
     <Compile Include="Assets\Scripts\TeleportPointManager.cs" />
     <Compile Include="Assets\Scripts\TowerHandler.cs" />
     <Compile Include="Assets\Scripts\UI\Fade.cs" />
-    <Compile Include="Assets\Scripts\WolfHandler.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_LaserPointer.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_Teleporter.cs" />
