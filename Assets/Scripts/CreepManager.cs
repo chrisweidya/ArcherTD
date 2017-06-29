@@ -55,7 +55,6 @@ public class CreepManager : NetworkBehaviour {
 
     [Command]
     private void CmdSetCreepDestination(GameObject creep, Vector3 targetPos) {
-        print("set");
         CreepHandler handler = creep.GetComponent<CreepHandler>();
         handler.SetDestination(targetPos);
         CmdSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.RunTrigger);
@@ -92,9 +91,9 @@ public class CreepManager : NetworkBehaviour {
         return creep;
     }
 
-    private GameObject CreateCreep(List<GameObject> creepList, GameObject creepPrefab, Transform parentGO, Vector3 position, CreepType type) {
+    private GameObject CreateCreep(List<GameObject> creepList, GameObject creepPrefab, Transform parentTransform, Vector3 position, CreepType type) {
         GameObject creep = Instantiate(creepPrefab);
-        creep.transform.parent = _legionCreepsContainer.transform;
+        creep.transform.parent = parentTransform;
         creep.GetComponent<CreepHandler>().SetCreepType(type);
         creepList.Add(creep);
         creep = Resurrect(creep, position);
@@ -105,7 +104,6 @@ public class CreepManager : NetworkBehaviour {
     private GameObject Resurrect(GameObject creep, Vector3 position) {
         creep.SetActive(true);
         creep.transform.position = position;
-        creep.GetComponent<CreepHandler>().SetAgentEnabled(true);
         NetworkServer.Spawn(creep);
         return creep;
     }
