@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-public class PlayerHandler : NetworkBehaviour {
+public class PlayerHandler : CreatureHandler {
 
     public static NetworkInstanceId localWardenNetId;
 
@@ -18,8 +18,7 @@ public class PlayerHandler : NetworkBehaviour {
     public enum PlayerState { Stand, BowPulled, BowReleased, Death}
 
     private PlayerState _playerState = PlayerState.Stand;
-    [SyncVar(hook = "OnIsDead")]
-    private bool isDead = false;
+
 
     private void OnEnable() {
         EventManager.ChangePlayerState += ChangeState;
@@ -73,18 +72,20 @@ public class PlayerHandler : NetworkBehaviour {
     private void Update () {
 	}
  
-    public void SetIsDead(bool isDead) {
-        this.isDead = isDead;
-    }
+    //public void PlayerSetIsDead(bool isDead) {
+    //    this.isDead = isDead;
+    //    base.SetIsDead(isDead);
+    //}
 
-    public bool GetIsDead() {
-        return isDead;
-    }
+    //public bool PlayerGetIsDead() {
+    //    return base.GetIsDead();
+    //}
 
-    private void OnIsDead(bool isDead) {
-        if (isDead) {
+    public override void OnIsDead(bool isDead) {
+        if (base.GetIsDead()) {
             transform.parent = null;
             EventManager.FirePlayerStateChange(PlayerState.Death, this.netId);
+            
             EventManager.FireGameEnd(netId);
         }
     }
