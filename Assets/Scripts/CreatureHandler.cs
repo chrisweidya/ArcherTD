@@ -19,14 +19,16 @@ public class CreatureHandler : NetworkBehaviour {
 		
 	}
 
-    public void SetIsDead(bool isDead) {
+    public virtual void SetIsDead(bool isDead) {
         this.isDead = isDead;
     }
 
     public bool GetIsDead() {
         return isDead;
     }
-
+    public void ResetDeath() {
+        isDead = false;
+    }
     private void OnIsDeadHook(bool dead) {
         isDead = dead;
         OnIsDead(dead);
