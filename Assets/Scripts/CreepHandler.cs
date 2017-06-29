@@ -47,6 +47,7 @@ public class CreepHandler : NetworkBehaviour {
 
     [ClientRpc]
     public void RpcSetAnimationTrigger(CreepAnimationTrigger trigger) {
+        print("animation");
         _animator.SetTrigger(trigger.ToString());
     }
 

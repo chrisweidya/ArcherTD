@@ -33,7 +33,9 @@ public class CreepManager : NetworkBehaviour {
 
 	void Update () {
         if (isServer && Input.GetKeyDown(KeyCode.K)) {
+            print("lol1");
             SpawnCreep(CreepType.Legion);
+            print("lol2");
         }
     }
     
@@ -90,8 +92,8 @@ public class CreepManager : NetworkBehaviour {
     }
 
     private GameObject Resurrect(GameObject creep, Vector3 position) {
-        creep.SetActive(true);
         creep.transform.position = position;
+        creep.SetActive(true);
         NetworkServer.Spawn(creep);
         return creep;
     }
@@ -116,5 +118,10 @@ public class CreepManager : NetworkBehaviour {
         if (!isServer)
             return;
         SetAnimationTrigger(creep, trigger);
+    }
+
+    private IEnumerator DelaySpawn(float s, GameObject creep) {
+        yield return new WaitForSeconds(s);
+        NetworkServer.Spawn(creep);
     }
 }
