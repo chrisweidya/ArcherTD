@@ -28,7 +28,7 @@ public class CreepManager : NetworkBehaviour {
         Instance = this;
         _legionCreepsDead = new Stack<GameObject>();
     }
-    
+        
     void Start () {
     }
 
@@ -40,14 +40,15 @@ public class CreepManager : NetworkBehaviour {
         if (timer < 0) {
             timer = 5;
             SpawnCreep(CreepType.Legion);
-            Debug.Log("SpawnCreep");
         }
     }
     
     private void SpawnCreep(CreepType type) {
+        if (!isServer) {
+            Debug.LogError("Only Server can spawn creeps.");
+            return;
+        }
         GameObject creep = GetCreepGO(type);
-        if (creep == null)
-            Debug.LogError("No creep initialized");
         if(type == CreepType.Legion)
             SetCreepDestination(creep, _legionCreepTargetPosTransform.position);
     }
@@ -56,7 +57,6 @@ public class CreepManager : NetworkBehaviour {
         CreepHandler handler = creep.GetComponent<CreepHandler>();
         handler.SetDestination(targetPos);
         ServerSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.RunTrigger);
-        handler.StartOnReachRoutine();
     }
 
     private GameObject GetCreepGO(CreepType type) {
@@ -84,7 +84,6 @@ public class CreepManager : NetworkBehaviour {
 
     private GameObject CreateCreep(List<GameObject> creepList, GameObject creepPrefab, Transform parentTransform, CreepType type) {
         GameObject creep = Instantiate(creepPrefab, parentTransform);
-        creep.GetComponent<CreepHandler>().SetCreepType(type);
         creepList.Add(creep);
         NetworkServer.Spawn(creep);
         creep = Resurrect(creep);
@@ -108,8 +107,10 @@ public class CreepManager : NetworkBehaviour {
     }
 
     public void SetDeath(GameObject creep) {
-        if (!isServer)
+        if (!isServer) {
+            Debug.LogError("Set Death not called by server");
             return;
+        }
         CreepHandler creepHandler = creep.GetComponent<CreepHandler>();
         creepHandler.SetAgentSpeed(0);
         ServerSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.DeathTrigger);
@@ -117,8 +118,10 @@ public class CreepManager : NetworkBehaviour {
     }
 
     public void ServerSetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
-        if (!isServer)
+        if (!isServer) {
+            Debug.LogError("Server creep animation trigger not called by server");
             return;
+        }
         creep.GetComponent<CreepHandler>().RpcSetAnimationTrigger(trigger.ToString());
     }
 }

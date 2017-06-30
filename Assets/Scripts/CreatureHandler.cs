@@ -22,6 +22,11 @@ public class CreatureHandler : NetworkBehaviour {
         _animator.SetTrigger(triggerString);
     }
 
+    [ClientRpc]
+    public void RpcSetActive(bool val) {
+        gameObject.SetActive(val);
+    }
+
     public virtual void SetIsDead(bool isDead) {
         this.isDead = isDead;
     }

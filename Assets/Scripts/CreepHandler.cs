@@ -9,9 +9,9 @@ using UnityEngine.Networking;
 
 public class CreepHandler : CreatureHandler {
     [SerializeField] private float _defaultCreepSpeed = 3.5f;
+    [SerializeField] private CreepManager.CreepType _creepType;
 
     private NavMeshAgent _agent;
-    private CreepManager.CreepType _creepType;
     private Vector3 _startPosition;
     private CreepManager _creepManager;
 
@@ -23,21 +23,11 @@ public class CreepHandler : CreatureHandler {
         _startPosition = transform.position;
     }
 
-    private void Start() {
-        //_creepManager = CreepManager.Instance;
-        //print(_startPosition);
-    }
-
-    private void OnEnable() {
-        print("creep onenable");
-    }
-
     private void OnDisable() {
         transform.position = _startPosition;
     }
 
     private void Update() {
-        //print(_creepManager);
         if (isServer && Input.GetKeyDown(KeyCode.C)) {
             SetIsDead(true);
         }
@@ -45,16 +35,8 @@ public class CreepHandler : CreatureHandler {
 
     public void SetDestination(Vector3 pos) {
         _agent.SetDestination(pos);
-        _agent.speed = _defaultCreepSpeed;
-    }
-
-    [ClientRpc]
-    public void RpcSetActive(bool val) {
-        gameObject.SetActive(val);
-    }
-
-    public void StartOnReachRoutine() {
         StartCoroutine(HasReached(gameObject));
+        _agent.speed = _defaultCreepSpeed;
     }
 
     private IEnumerator HasReached(GameObject creepGO) {
@@ -73,28 +55,9 @@ public class CreepHandler : CreatureHandler {
         CreepManager.Instance.SetDeath(gameObject);
     }
 
-    //base class sync var hook
-    public override void OnIsDead(bool isDead) {
-    }
-
-    public void SetAgentEnabled(bool val) {
-        if (!val)
-            StopAllCoroutines();
-        _agent.enabled = val;
-    }
-
     public void SetAgentSpeed(float val) {
         if (val == 0)
             StopAllCoroutines();
         _agent.speed = val;
     }
-
-    public CreepManager.CreepType GetCreepType() {
-        return _creepType;
-    }
-
-    public void SetCreepType(CreepManager.CreepType type) {
-        _creepType = type;
-    }
-
 }
