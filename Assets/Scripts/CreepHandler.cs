@@ -14,6 +14,7 @@ public class CreepHandler : CreatureHandler {
     private Animator _animator;
     private NetworkAnimator _networkAnimator;
     private CreepManager.CreepType _creepType;
+    private Vector3 _startPosition;
     private CreepManager _creepManager;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger};
@@ -22,15 +23,20 @@ public class CreepHandler : CreatureHandler {
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
         _networkAnimator = GetComponent<NetworkAnimator>();
+        _startPosition = transform.position;
     }
 
     private void Start() {
         //_creepManager = CreepManager.Instance;
+        //print(_startPosition);
     }
 
     private void OnEnable() {
-        print("initialized");
-        _creepManager = CreepManager.Instance;
+        print("creep onenable");
+    }
+
+    private void OnDisable() {
+        transform.position = _startPosition;
     }
 
     private void Update() {
@@ -45,15 +51,15 @@ public class CreepHandler : CreatureHandler {
         _agent.speed = _defaultCreepSpeed;
     }
 
-    [Command]
-    public void CmdSetAnimationTrigger() {
-        _creepManager.SetDeath(gameObject);
-    }
-
     [ClientRpc]
     public void RpcSetAnimationTrigger(CreepAnimationTrigger trigger) {
         Debug.Log("TriggerDeathAnimation");
         _animator.SetTrigger(trigger.ToString());
+    }
+
+    [ClientRpc]
+    public void RpcSetActive(bool val) {
+        gameObject.SetActive(val);
     }
 
     public void StartOnReachRoutine() {
@@ -67,14 +73,14 @@ public class CreepHandler : CreatureHandler {
         while (_agent.remainingDistance > float.Epsilon) {
             yield return new WaitForSeconds(0.1f);
         }
-        _creepManager.ServerSetAnimationTrigger(creepGO, CreepAnimationTrigger.IdleTrigger);
+        CreepManager.Instance.ServerSetAnimationTrigger(creepGO, CreepAnimationTrigger.IdleTrigger);
         yield return null;
     }
 
     //called when hp less than 0
     private void TriggerDeath() {
         Debug.Log("TriggerDeath");
-       _creepManager.SetDeath(gameObject);     
+        CreepManager.Instance.SetDeath(gameObject);     
     }
 
     public override void SetIsDead(bool isDead) {

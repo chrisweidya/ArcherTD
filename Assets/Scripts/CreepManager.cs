@@ -7,10 +7,9 @@ using UnityEngine.AI;
 public class CreepManager : NetworkBehaviour {
 
     public static CreepManager Instance;
-
-    //private NetworkConnection _serverConnection;
+    
     [SerializeField] private Transform _legionCreepTargetPosTransform;
-    [SerializeField] private Transform _legionCreepSpawnPoint;
+    //[SerializeField] private Transform _legionCreepSpawnPoint;
     [SerializeField] private GameObject _legionCreepPrefab;
     [SerializeField] private Stack<GameObject> _legionCreepsDead;
     [SerializeField] private List<GameObject> _legionCreeps;
@@ -64,50 +63,48 @@ public class CreepManager : NetworkBehaviour {
     private GameObject GetCreepGO(CreepType type) {
         Stack<GameObject> creepDeadStack = _legionCreepsDead;
         List<GameObject> creepList = _legionCreeps;
-        Vector3 spawnPosition = _legionCreepSpawnPoint.position;
         GameObject creepPrefab = _legionCreepPrefab;
         Transform parentTransform = _legionCreepsContainer;
         GameObject creep = null;
 
         if(type == CreepType.Legion) {
             creepDeadStack = _legionCreepsDead;
-            spawnPosition = _legionCreepSpawnPoint.position;
             creepPrefab = _legionCreepPrefab;
             creepList = _legionCreeps;
             parentTransform = _legionCreepsContainer;
         }
         if(creepDeadStack.Count == 0) {
-            creep = CreateCreep(creepList, creepPrefab, parentTransform, spawnPosition, type);
+            creep = CreateCreep(creepList, creepPrefab, parentTransform, type);
         }
         else {
             creep = creepDeadStack.Pop();
-            creep = Resurrect(creep, spawnPosition);
+            creep = Resurrect(creep);
         }
         return creep;
     }
 
-    private GameObject CreateCreep(List<GameObject> creepList, GameObject creepPrefab, Transform parentTransform, Vector3 position, CreepType type) {
-        GameObject creep = Instantiate(creepPrefab);
-        creep.transform.parent = parentTransform;
+    private GameObject CreateCreep(List<GameObject> creepList, GameObject creepPrefab, Transform parentTransform, CreepType type) {
+        GameObject creep = Instantiate(creepPrefab, parentTransform);
         creep.GetComponent<CreepHandler>().SetCreepType(type);
         creepList.Add(creep);
-        creep = Resurrect(creep, position);
+        NetworkServer.Spawn(creep);
+        creep = Resurrect(creep);
 
         return creep;
     }
 
-    private GameObject Resurrect(GameObject creep, Vector3 position) {
-        creep.SetActive(true);
-        creep.transform.position = position;
+    private GameObject Resurrect(GameObject creep) {
         creep.GetComponent<HealthNetwork>().ResetHealth();
-        NetworkServer.Spawn(creep);
+        creep.SetActive(true);
+        creep.GetComponent<CreepHandler>().RpcSetActive(true);
         return creep;
     }
 
     private IEnumerator Unspawn(GameObject creep) {
         yield return new WaitForSeconds(_despawnSecs);
-        NetworkServer.UnSpawn(creep);
+        //NetworkServer.UnSpawn(creep);
         creep.SetActive(false);
+        creep.GetComponent<CreepHandler>().RpcSetActive(false);
         _legionCreepsDead.Push(creep);
     }
 
