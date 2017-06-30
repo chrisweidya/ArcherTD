@@ -11,8 +11,6 @@ public class CreepHandler : CreatureHandler {
     [SerializeField] private float _defaultCreepSpeed = 3.5f;
 
     private NavMeshAgent _agent;
-    private Animator _animator;
-    private NetworkAnimator _networkAnimator;
     private CreepManager.CreepType _creepType;
     private Vector3 _startPosition;
     private CreepManager _creepManager;
@@ -20,9 +18,8 @@ public class CreepHandler : CreatureHandler {
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger};
 
     private void Awake() {
+        base.Awake();
         _agent = GetComponent<NavMeshAgent>();
-        _animator = GetComponent<Animator>();
-        _networkAnimator = GetComponent<NetworkAnimator>();
         _startPosition = transform.position;
     }
 
@@ -42,19 +39,13 @@ public class CreepHandler : CreatureHandler {
     private void Update() {
         //print(_creepManager);
         if (isServer && Input.GetKeyDown(KeyCode.C)) {
-            TriggerDeath();
+            SetIsDead(true);
         }
     }
 
     public void SetDestination(Vector3 pos) {
         _agent.SetDestination(pos);
         _agent.speed = _defaultCreepSpeed;
-    }
-
-    [ClientRpc]
-    public void RpcSetAnimationTrigger(CreepAnimationTrigger trigger) {
-        Debug.Log("TriggerDeathAnimation");
-        _animator.SetTrigger(trigger.ToString());
     }
 
     [ClientRpc]
@@ -77,24 +68,15 @@ public class CreepHandler : CreatureHandler {
         yield return null;
     }
 
-    //called when hp less than 0
-    private void TriggerDeath() {
-        Debug.Log("TriggerDeath");
-        CreepManager.Instance.SetDeath(gameObject);     
-    }
-
     public override void SetIsDead(bool isDead) {
-        Debug.Log("override setisdead");    
         base.SetIsDead(isDead);
-        TriggerDeath();
+        CreepManager.Instance.SetDeath(gameObject);
     }
 
     //base class sync var hook
     public override void OnIsDead(bool isDead) {
-        if (GetIsDead()) {
-            TriggerDeath();
-        }
     }
+
     public void SetAgentEnabled(bool val) {
         if (!val)
             StopAllCoroutines();

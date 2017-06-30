@@ -54,12 +54,8 @@ public class CreepManager : NetworkBehaviour {
     private void SetCreepDestination(GameObject creep, Vector3 targetPos) {
         CreepHandler handler = creep.GetComponent<CreepHandler>();
         handler.SetDestination(targetPos);
-        SetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.RunTrigger);
+        ServerSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.RunTrigger);
         handler.StartOnReachRoutine();
-    }
-    
-    private void SetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
-        creep.GetComponent<CreepHandler>().RpcSetAnimationTrigger(trigger);
     }
 
     private GameObject GetCreepGO(CreepType type) {
@@ -115,13 +111,13 @@ public class CreepManager : NetworkBehaviour {
             return;
         CreepHandler creepHandler = creep.GetComponent<CreepHandler>();
         creepHandler.SetAgentSpeed(0);
-        creepHandler.RpcSetAnimationTrigger(CreepHandler.CreepAnimationTrigger.DeathTrigger);
+        ServerSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.DeathTrigger);
         StartCoroutine(Unspawn(creep));
     }
 
     public void ServerSetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
         if (!isServer)
             return;
-        SetAnimationTrigger(creep, trigger);
+        creep.GetComponent<CreepHandler>().RpcSetAnimationTrigger(trigger.ToString());
     }
 }

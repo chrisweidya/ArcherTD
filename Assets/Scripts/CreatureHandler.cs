@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
+
 public class CreatureHandler : NetworkBehaviour {
-
-
     [SyncVar(hook = "OnIsDeadHook")]
     private bool isDead = false;
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    [SerializeField]
+    protected Animator _animator;
+
+    protected void Awake() {
+        if(_animator == null)
+            _animator = GetComponent<Animator>();
+    }
+
+    [ClientRpc]
+    public void RpcSetAnimationTrigger(string triggerString) {
+        _animator.SetTrigger(triggerString);
+    }
 
     public virtual void SetIsDead(bool isDead) {
         this.isDead = isDead;
