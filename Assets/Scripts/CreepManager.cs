@@ -40,6 +40,7 @@ public class CreepManager : NetworkBehaviour {
         if (timer < 0) {
             timer = 5;
             SpawnCreep(CreepType.Legion);
+            Debug.Log("SpawnCreep");
         }
     }
     
