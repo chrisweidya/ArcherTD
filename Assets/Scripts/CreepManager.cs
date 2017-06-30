@@ -45,6 +45,8 @@ public class CreepManager : NetworkBehaviour {
     
     private void SpawnCreep(CreepType type) {
         GameObject creep = GetCreepGO(type);
+        if (creep == null)
+            Debug.LogError("No creep initialized");
         if(type == CreepType.Legion)
             SetCreepDestination(creep, _legionCreepTargetPosTransform.position);
     }
