@@ -9,13 +9,12 @@ public class CreepManager : NetworkBehaviour {
     public static CreepManager Instance;
     
     [SerializeField] private Transform _legionCreepTargetPosTransform;
-    //[SerializeField] private Transform _legionCreepSpawnPoint;
     [SerializeField] private GameObject _legionCreepPrefab;
     [SerializeField] private Transform _legionCreepsContainer;
     [SerializeField] private List<GameObject> _legionCreeps;
     private Stack<GameObject> _legionCreepsDead;
+
     [SerializeField] private Transform _hellbourneCreepTargetPosTransform;
-    //[SerializeField] private Transform _legionCreepSpawnPoint;
     [SerializeField] private GameObject _hellbourneCreepPrefab;
     [SerializeField] private Transform _hellbourneCreepsContainer;
     [SerializeField] private List<GameObject> _hellbourneCreeps;
@@ -27,7 +26,6 @@ public class CreepManager : NetworkBehaviour {
 
     public enum CreepType { Legion, Hellbourne};
 
-    //timer 
     private void Awake() {
         if(Instance != null) {
             Debug.LogWarning("Attempting to instantiate another CreepManager instance.");

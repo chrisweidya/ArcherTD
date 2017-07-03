@@ -13,14 +13,19 @@ public class CreepHandler : CreatureHandler {
 
     private NavMeshAgent _agent;
     private Vector3 _startPosition;
-    private CreepManager _creepManager;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger};
+
+    [SerializeField] private float _acquisitionRadius;
+    [SerializeField] private float _attackRadius;
+    //Taken from navmesh radius
+    private float _hitboxRadius;
 
     private void Awake() {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
         _startPosition = transform.position;
+        _hitboxRadius = _agent.radius;
     }
 
     private void OnDisable() {
@@ -44,7 +49,7 @@ public class CreepHandler : CreatureHandler {
             yield return new WaitForSeconds(0.1f);
         }
         while (_agent.remainingDistance > float.Epsilon) {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f);
         }
         CreepManager.Instance.ServerSetAnimationTrigger(creepGO, CreepAnimationTrigger.IdleTrigger);
         yield return null;
@@ -63,5 +68,9 @@ public class CreepHandler : CreatureHandler {
 
     public CreepManager.CreepType GetCreepType() {
         return _creepType;
+    }
+
+    private void OnDrawGizmos() {
+
     }
 }
