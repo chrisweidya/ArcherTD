@@ -92,7 +92,7 @@ public class CreepHandler : CreatureHandler {
     //base class sync var hook
     public override void OnIsDead(bool isDead) {
         if (GetIsDead()) {
-            TriggerDeath();
+            Debug.Log("no called on server");
         }
     }
     public void SetAgentEnabled(bool val) {

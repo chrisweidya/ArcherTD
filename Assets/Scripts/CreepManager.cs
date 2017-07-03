@@ -27,6 +27,7 @@ public class CreepManager : NetworkBehaviour {
         }
         Instance = this;
         _legionCreepsDead = new Stack<GameObject>();
+        Debug.Log(_legionCreepsDead.Count);
     }
     
     void Start () {
@@ -78,9 +79,12 @@ public class CreepManager : NetworkBehaviour {
         }
         if(creepDeadStack.Count == 0) {
             creep = CreateCreep(creepList, creepPrefab, parentTransform, type);
+            Debug.Log("New Creep " + creepDeadStack.Count);
         }
         else {
+            Debug.Log("Ressurect Creep " + creepDeadStack.Count);
             creep = creepDeadStack.Pop();
+            Debug.Log("afterpop " + creepDeadStack.Count + " " + creep);
             creep = Resurrect(creep);
         }
         return creep;
