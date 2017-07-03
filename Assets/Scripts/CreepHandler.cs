@@ -60,4 +60,8 @@ public class CreepHandler : CreatureHandler {
             StopAllCoroutines();
         _agent.speed = val;
     }
+
+    public CreepManager.CreepType GetCreepType() {
+        return _creepType;
+    }
 }

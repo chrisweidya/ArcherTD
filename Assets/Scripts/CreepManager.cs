@@ -11,15 +11,23 @@ public class CreepManager : NetworkBehaviour {
     [SerializeField] private Transform _legionCreepTargetPosTransform;
     //[SerializeField] private Transform _legionCreepSpawnPoint;
     [SerializeField] private GameObject _legionCreepPrefab;
-    [SerializeField] private Stack<GameObject> _legionCreepsDead;
-    [SerializeField] private List<GameObject> _legionCreeps;
     [SerializeField] private Transform _legionCreepsContainer;
+    [SerializeField] private List<GameObject> _legionCreeps;
+    private Stack<GameObject> _legionCreepsDead;
+    [SerializeField] private Transform _hellbourneCreepTargetPosTransform;
+    //[SerializeField] private Transform _legionCreepSpawnPoint;
+    [SerializeField] private GameObject _hellbourneCreepPrefab;
+    [SerializeField] private Transform _hellbourneCreepsContainer;
+    [SerializeField] private List<GameObject> _hellbourneCreeps;
+    private Stack<GameObject> _hellbourneCreepsDead;
+
+    [SerializeField] private int _creepsInBatch = 3;
+    [SerializeField] private float _creepSpawnSecs = 20f;
     [SerializeField] private float _despawnSecs = 3f;
 
     public enum CreepType { Legion, Hellbourne};
 
     //timer 
-    float timer= 3;
     private void Awake() {
         if(Instance != null) {
             Debug.LogWarning("Attempting to instantiate another CreepManager instance.");
@@ -27,31 +35,40 @@ public class CreepManager : NetworkBehaviour {
         }
         Instance = this;
         _legionCreepsDead = new Stack<GameObject>();
-        Debug.Log(_legionCreepsDead.Count);
+        _hellbourneCreepsDead = new Stack<GameObject>();
     }
-        
-    void Start () {
+    private void Start() {
+        if (isServer) {
+            StartCoroutine(CreepSpawner(_creepSpawnSecs, _creepsInBatch));
+        }
     }
 
 	void Update () {
         if (isServer && Input.GetKeyDown(KeyCode.K)) {
             SpawnCreep(CreepType.Legion);
         }
-        timer -= Time.deltaTime;
-        if (timer < 0) {
-            timer = 5;
-            SpawnCreep(CreepType.Legion);
+    }
+
+    private IEnumerator CreepSpawner(float secs, int numCreeps) {
+        while (true) {
+            yield return new WaitForSeconds(secs);
+            for (int i = 0; i < numCreeps; i++) {
+                SpawnCreep(CreepType.Legion);
+                SpawnCreep(CreepType.Hellbourne);
+            }
         }
     }
     
     private void SpawnCreep(CreepType type) {
-        if (!isServer) {
+        if(!isServer) {
             Debug.LogError("Only Server can spawn creeps.");
             return;
         }
         GameObject creep = GetCreepGO(type);
         if(type == CreepType.Legion)
             SetCreepDestination(creep, _legionCreepTargetPosTransform.position);
+        else if(type == CreepType.Hellbourne)
+            SetCreepDestination(creep, _hellbourneCreepTargetPosTransform.position);
     }
     
     private void SetCreepDestination(GameObject creep, Vector3 targetPos) {
@@ -72,6 +89,12 @@ public class CreepManager : NetworkBehaviour {
             creepPrefab = _legionCreepPrefab;
             creepList = _legionCreeps;
             parentTransform = _legionCreepsContainer;
+        }
+        else if(type == CreepType.Hellbourne) {
+            creepDeadStack = _hellbourneCreepsDead;
+            creepPrefab = _hellbourneCreepPrefab;
+            creepList = _hellbourneCreeps;
+            parentTransform = _hellbourneCreepsContainer;
         }
         if(creepDeadStack.Count == 0) {
             creep = CreateCreep(creepList, creepPrefab, parentTransform, type);
@@ -107,7 +130,10 @@ public class CreepManager : NetworkBehaviour {
         //NetworkServer.UnSpawn(creep);
         creep.SetActive(false);
         creep.GetComponent<CreepHandler>().RpcSetActive(false);
-        _legionCreepsDead.Push(creep);
+        if (creep.GetComponent<CreepHandler>().GetCreepType() == CreepType.Legion)
+            _legionCreepsDead.Push(creep);
+        else if (creep.GetComponent<CreepHandler>().GetCreepType() == CreepType.Hellbourne)
+            _hellbourneCreepsDead.Push(creep);
     }
 
     public void SetDeath(GameObject creep) {
