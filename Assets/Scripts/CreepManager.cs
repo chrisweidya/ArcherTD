@@ -11,9 +11,15 @@ public class CreepManager : NetworkBehaviour {
     [SerializeField] private Transform _legionCreepTargetPosTransform;
     //[SerializeField] private Transform _legionCreepSpawnPoint;
     [SerializeField] private GameObject _legionCreepPrefab;
-    [SerializeField] private Stack<GameObject> _legionCreepsDead;
     [SerializeField] private List<GameObject> _legionCreeps;
     [SerializeField] private Transform _legionCreepsContainer;
+    private Stack<GameObject> _legionCreepsDead;
+    [SerializeField] private Transform _hellbourneCreepTargetPosTransform;
+    //[SerializeField] private Transform _legionCreepSpawnPoint;
+    [SerializeField] private GameObject _hellbourneCreepPrefab;
+    [SerializeField] private List<GameObject> _hellbourneCreeps;
+    [SerializeField] private Transform _hellbourneCreepsContainer;
+    private Stack<GameObject> _hellbourneCreepsDead;
     [SerializeField] private float _despawnSecs = 3f;
 
     public enum CreepType { Legion, Hellbourne};
@@ -103,7 +109,8 @@ public class CreepManager : NetworkBehaviour {
         //NetworkServer.UnSpawn(creep);
         creep.SetActive(false);
         creep.GetComponent<CreepHandler>().RpcSetActive(false);
-        _legionCreepsDead.Push(creep);
+        if(creep.GetComponent<CreepHandler>().GetCreepType() == CreepType.Legion)
+            _legionCreepsDead.Push(creep);
     }
 
     public void SetDeath(GameObject creep) {
