@@ -12,8 +12,6 @@ public class PlayerHandler : CreatureHandler {
     private Vector3 _modelOffset = Vector3.zero;
     [SerializeField]
     private List<Renderer> _modelRenderers = new List<Renderer>();
-    [SerializeField]
-    private Animator _animator = null;
 
     public enum PlayerState { Stand, BowPulled, BowReleased, Death}
 
@@ -29,10 +27,7 @@ public class PlayerHandler : CreatureHandler {
     }
 
     private void Awake() {
-        //Gets first animator component in children.
-        if (_animator == null) {
-            _animator = GetComponentsInChildren<Animator>()[0];
-        }
+        base.Awake();
     }
 
     private void Start() {
@@ -43,34 +38,27 @@ public class PlayerHandler : CreatureHandler {
                 r.enabled = false;
             }
             GameManager.SetLocalPlayerTeam(GetComponent<PlayerProperties>().GetTeam());
-            Debug.Log(GameManager.GetLocalPlayerTeam());
             localWardenNetId = netId;
         }
     }
 
-    private void TriggerPlayerAnimation(PlayerState playerstate) {
-        _animator.SetTrigger(playerstate.ToString());
-    }
-
     private void ChangeState(PlayerState state, NetworkInstanceId netId) {
-        if (this.netId == netId && _playerState != state) {
-            CmdChangePlayerState(state);
-        }
+        if(isLocalPlayer)
+            //if (this.netId == netId && _playerState != state) {
+            CmdSetAnimationTrigger(state);
+        //}
     }
 
     [Command]
-    private void CmdChangePlayerState(PlayerState state) {
-        RpcChangePlayerState(state);
+    private void CmdSetAnimationTrigger(PlayerState state) {
+        RpcSetAnimationTrigger(state.ToString());
     }
 
-    [ClientRpc]
-    private void RpcChangePlayerState(PlayerState state) {
-        _playerState = state;
-        TriggerPlayerAnimation(state);
-    }
-    
-    private void Update () {
-	}
+    //[ClientRpc]
+    //private void RpcChangePlayerState(PlayerState state) {
+    //    _playerState = state;
+    //    RpcSetAnimationTrigger(state.ToString());
+    //}
  
     //public void PlayerSetIsDead(bool isDead) {
     //    this.isDead = isDead;
@@ -84,8 +72,7 @@ public class PlayerHandler : CreatureHandler {
     public override void OnIsDead(bool isDead) {
         if (GetIsDead()) {
             transform.parent = null;
-            EventManager.FirePlayerStateChange(PlayerState.Death, this.netId);
-            
+            EventManager.FirePlayerStateChange(PlayerState.Death, this.netId);            
             EventManager.FireGameEnd(netId);
         }
     }

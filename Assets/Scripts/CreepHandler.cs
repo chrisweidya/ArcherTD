@@ -9,30 +9,18 @@ using UnityEngine.Networking;
 
 public class CreepHandler : CreatureHandler {
     [SerializeField] private float _defaultCreepSpeed = 3.5f;
+    [SerializeField] private CreepManager.CreepType _creepType;
 
     private NavMeshAgent _agent;
-    private Animator _animator;
-    private NetworkAnimator _networkAnimator;
-    private CreepManager.CreepType _creepType;
     private Vector3 _startPosition;
     private CreepManager _creepManager;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger};
 
     private void Awake() {
+        base.Awake();
         _agent = GetComponent<NavMeshAgent>();
-        _animator = GetComponent<Animator>();
-        _networkAnimator = GetComponent<NetworkAnimator>();
         _startPosition = transform.position;
-    }
-
-    private void Start() {
-        //_creepManager = CreepManager.Instance;
-        //print(_startPosition);
-    }
-
-    private void OnEnable() {
-        print("creep onenable");
     }
 
     private void OnDisable() {
@@ -40,30 +28,15 @@ public class CreepHandler : CreatureHandler {
     }
 
     private void Update() {
-        //print(_creepManager);
         if (isServer && Input.GetKeyDown(KeyCode.C)) {
-            TriggerDeath();
+            SetIsDead(true);
         }
     }
 
     public void SetDestination(Vector3 pos) {
         _agent.SetDestination(pos);
-        _agent.speed = _defaultCreepSpeed;
-    }
-
-    [ClientRpc]
-    public void RpcSetAnimationTrigger(CreepAnimationTrigger trigger) {
-        Debug.Log("TriggerDeathAnimation");
-        _animator.SetTrigger(trigger.ToString());
-    }
-
-    [ClientRpc]
-    public void RpcSetActive(bool val) {
-        gameObject.SetActive(val);
-    }
-
-    public void StartOnReachRoutine() {
         StartCoroutine(HasReached(gameObject));
+        _agent.speed = _defaultCreepSpeed;
     }
 
     private IEnumerator HasReached(GameObject creepGO) {
@@ -77,28 +50,9 @@ public class CreepHandler : CreatureHandler {
         yield return null;
     }
 
-    //called when hp less than 0
-    private void TriggerDeath() {
-        Debug.Log("TriggerDeath");
-        CreepManager.Instance.SetDeath(gameObject);     
-    }
-
     public override void SetIsDead(bool isDead) {
-        Debug.Log("override setisdead");    
         base.SetIsDead(isDead);
-        TriggerDeath();
-    }
-
-    //base class sync var hook
-    public override void OnIsDead(bool isDead) {
-        if (GetIsDead()) {
-            Debug.Log("no called on server");
-        }
-    }
-    public void SetAgentEnabled(bool val) {
-        if (!val)
-            StopAllCoroutines();
-        _agent.enabled = val;
+        CreepManager.Instance.SetDeath(gameObject);
     }
 
     public void SetAgentSpeed(float val) {
@@ -106,13 +60,4 @@ public class CreepHandler : CreatureHandler {
             StopAllCoroutines();
         _agent.speed = val;
     }
-
-    public CreepManager.CreepType GetCreepType() {
-        return _creepType;
-    }
-
-    public void SetCreepType(CreepManager.CreepType type) {
-        _creepType = type;
-    }
-
 }
