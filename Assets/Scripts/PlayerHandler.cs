@@ -45,14 +45,11 @@ public class PlayerHandler : CreatureHandler {
     private void ChangeState(PlayerState state, NetworkInstanceId netId) {
         if(isLocalPlayer)
             //if (this.netId == netId && _playerState != state) {
-            CmdSetAnimationTrigger(state);
+            CmdSetAnimationTrigger(state.ToString());
         //}
     }
 
-    [Command]
-    private void CmdSetAnimationTrigger(PlayerState state) {
-        RpcSetAnimationTrigger(state.ToString());
-    }
+    
 
     //[ClientRpc]
     //private void RpcChangePlayerState(PlayerState state) {
