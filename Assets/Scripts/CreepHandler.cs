@@ -20,7 +20,8 @@ public class CreepHandler : CreatureHandler {
     [SerializeField] private float _acquisitionRadius;
     [SerializeField] private float _attackRadius;
     [SerializeField] private List<Transform> Waypoints;
-    [SerializeField] private float _updateInterval = 0.5f;
+
+    private float _updateBehaviourInterval = 0.5f;
     //Taken from navmesh radius
     private float _hitboxRadius;
 
@@ -38,14 +39,14 @@ public class CreepHandler : CreatureHandler {
 
     private void Start() {
         if (isServer) {
-            StartCoroutine(CreepMainUpdateLoop(_updateInterval));
-            print("Started Coroutine from start");
+            StartCoroutine(CreepMainUpdateLoop(_updateBehaviourInterval));
+            //print("Started Coroutine from start");
         }
     }
     private void OnEnable() {
         if (isServer) {
-            StartCoroutine(CreepMainUpdateLoop(_updateInterval));
-            print("Started Coroutine from enable");
+            StartCoroutine(CreepMainUpdateLoop(_updateBehaviourInterval));
+            //print("Started Coroutine from enable");
         }
     }
 
@@ -63,7 +64,7 @@ public class CreepHandler : CreatureHandler {
     private IEnumerator CreepMainUpdateLoop(float interval) {
         while (true) {
             print("updateloop");
-            yield return new WaitForSeconds(_updateInterval);
+            yield return new WaitForSeconds(interval);
             SetTargetPosition();
         }
     }
@@ -86,7 +87,6 @@ public class CreepHandler : CreatureHandler {
 
     private void SetDestination(Vector3 pos) {
         _agent.SetDestination(pos);
-        //StartCoroutine(HasReached(gameObject));
         _agent.speed = _defaultCreepSpeed;
         CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
     }

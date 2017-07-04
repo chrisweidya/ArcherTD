@@ -8,20 +8,18 @@ public class CreepManager : NetworkBehaviour {
 
     public static CreepManager Instance;
     
-    [SerializeField] private Transform _legionCreepTargetPosTransform;
     [SerializeField] private GameObject _legionCreepPrefab;
     [SerializeField] private Transform _legionCreepsContainer;
     [SerializeField] private List<GameObject> _legionCreeps;
     private Stack<GameObject> _legionCreepsDead;
-
-    [SerializeField] private Transform _hellbourneCreepTargetPosTransform;
+    
     [SerializeField] private GameObject _hellbourneCreepPrefab;
     [SerializeField] private Transform _hellbourneCreepsContainer;
     [SerializeField] private List<GameObject> _hellbourneCreeps;
     private Stack<GameObject> _hellbourneCreepsDead;
 
-    [SerializeField] private int _creepsInBatch = 1;
-    [SerializeField] private float _creepSpawnSecs = 20f;
+    [SerializeField] private int _creepsInBatch;
+    [SerializeField] private float _creepSpawnSecs;
     [SerializeField] private float _creepIntervalSecs = 0.5f;
 
     public enum CreepType { Legion, Hellbourne};
