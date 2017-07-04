@@ -24,10 +24,9 @@ public class CreepHandler : CreatureHandler {
     private float _updateBehaviourInterval = 0.5f;
     //Taken from navmesh radius
     private float _hitboxRadius;
-
-    [SerializeField]
     private Vector3 _targetWaypoint;
     private int _waypointsReached = -1;
+    private List<GameObject> _enemyCreeps;
 
     private void Awake() {
         base.Awake();
@@ -39,6 +38,7 @@ public class CreepHandler : CreatureHandler {
 
     private void Start() {
         if (isServer) {
+            _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Legion);
             StartCoroutine(CreepMainUpdateLoop(_updateBehaviourInterval));
             //print("Started Coroutine from start");
         }
@@ -65,11 +65,16 @@ public class CreepHandler : CreatureHandler {
         while (true) {
             print("updateloop");
             yield return new WaitForSeconds(interval);
-            SetTargetPosition();
+            print(_enemyCreeps.Count);
+            MoveToWaypoint();
         }
     }
 
-    private void SetTargetPosition() {
+    private void AcquireTarget() {
+
+    }
+
+    private void MoveToWaypoint() {
         if(_waypointsReached == -1) {
             _targetWaypoint = Waypoints[++_waypointsReached].position;
             SetDestination(_targetWaypoint);
@@ -124,6 +129,5 @@ public class CreepHandler : CreatureHandler {
     }
 
     private void OnDrawGizmos() {
-
     }
 }

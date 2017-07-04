@@ -115,6 +115,7 @@
     <Compile Include="Assets\Scripts\TeleportPointManager.cs" />
     <Compile Include="Assets\Scripts\TowerHandler.cs" />
     <Compile Include="Assets\Scripts\UI\Fade.cs" />
+    <Compile Include="Assets\Scripts\Utility\Circle.cs" />
     <Compile Include="Assets\Scripts\Utility\Utility.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_LaserPointer.cs" />
