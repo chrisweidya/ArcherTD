@@ -8,28 +8,50 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(Animator))]
 
 public class CreepHandler : CreatureHandler {
-    [SerializeField] private float _defaultCreepSpeed = 3.5f;
-    [SerializeField] private CreepManager.CreepType _creepType;
-
     private NavMeshAgent _agent;
     private Vector3 _startPosition;
+    private HealthNetwork _healthNetwork;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger};
 
+    [SerializeField] private float _defaultCreepSpeed = 3.5f;
+    [SerializeField] private float _despawnTimeSecs = 3f;
+    [SerializeField] private CreepManager.CreepType _creepType;
     [SerializeField] private float _acquisitionRadius;
     [SerializeField] private float _attackRadius;
+    [SerializeField] private List<Transform> Waypoints;
+    [SerializeField] private float _updateInterval = 0.5f;
     //Taken from navmesh radius
     private float _hitboxRadius;
+
+    [SerializeField]
+    private Vector3 _targetWaypoint;
+    private int _waypointsReached = -1;
 
     private void Awake() {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
+        _healthNetwork = GetComponent<HealthNetwork>();
         _startPosition = transform.position;
         _hitboxRadius = _agent.radius;
     }
 
+    private void Start() {
+        if (isServer) {
+            StartCoroutine(CreepMainUpdateLoop(_updateInterval));
+            print("Started Coroutine from start");
+        }
+    }
+    private void OnEnable() {
+        if (isServer) {
+            StartCoroutine(CreepMainUpdateLoop(_updateInterval));
+            print("Started Coroutine from enable");
+        }
+    }
+
     private void OnDisable() {
         transform.position = _startPosition;
+        _waypointsReached = -1;
     }
 
     private void Update() {
@@ -38,32 +60,63 @@ public class CreepHandler : CreatureHandler {
         }
     }
 
-    public void SetDestination(Vector3 pos) {
-        _agent.SetDestination(pos);
-        StartCoroutine(HasReached(gameObject));
-        _agent.speed = _defaultCreepSpeed;
+    private IEnumerator CreepMainUpdateLoop(float interval) {
+        while (true) {
+            print("updateloop");
+            yield return new WaitForSeconds(_updateInterval);
+            SetTargetPosition();
+        }
     }
 
-    private IEnumerator HasReached(GameObject creepGO) {
-        while(_agent.pathPending) {
-            yield return new WaitForSeconds(0.1f);
+    private void SetTargetPosition() {
+        if(_waypointsReached == -1) {
+            _targetWaypoint = Waypoints[++_waypointsReached].position;
+            SetDestination(_targetWaypoint);
         }
-        while (_agent.remainingDistance > float.Epsilon) {
-            yield return new WaitForSeconds(0.2f);
+        else if (Utility.InRange(transform.position, _targetWaypoint, _acquisitionRadius)) {
+            _waypointsReached++;
+            if (_waypointsReached >= Waypoints.Count) {
+                Debug.LogError("Waypoint array exceeded");
+                return;
+            }
+            _targetWaypoint = Waypoints[_waypointsReached].position;
+            SetDestination(_targetWaypoint);
         }
-        CreepManager.Instance.ServerSetAnimationTrigger(creepGO, CreepAnimationTrigger.IdleTrigger);
-        yield return null;
+    }
+
+    private void SetDestination(Vector3 pos) {
+        _agent.SetDestination(pos);
+        //StartCoroutine(HasReached(gameObject));
+        _agent.speed = _defaultCreepSpeed;
+        CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
+    }
+
+    public GameObject Ressurect() {
+        _healthNetwork.ResetHealth();
+        CmdSetActive(true);
+        return gameObject;
     }
 
     public override void SetIsDead(bool isDead) {
+        if(!isServer) {
+            Debug.LogError("Non-server attempting to kill creeps");
+            return;
+        }
         base.SetIsDead(isDead);
-        CreepManager.Instance.SetDeath(gameObject);
-    }
+        SetAgentSpeed(0);
+        StopAllCoroutines();
+        CmdSetAnimationTrigger(CreepAnimationTrigger.DeathTrigger.ToString());
+        StartCoroutine(Despawn(_despawnTimeSecs));
+    }   
 
     public void SetAgentSpeed(float val) {
-        if (val == 0)
-            StopAllCoroutines();
         _agent.speed = val;
+    }
+
+    private IEnumerator Despawn(float secs) {
+        yield return new WaitForSeconds(secs);
+        CreepManager.Instance.AddInactiveCreepsToStackAfterDelay(gameObject, _creepType);
+        CmdSetActive(false);
     }
 
     public CreepManager.CreepType GetCreepType() {

@@ -22,7 +22,6 @@ public class CreepManager : NetworkBehaviour {
 
     [SerializeField] private int _creepsInBatch = 3;
     [SerializeField] private float _creepSpawnSecs = 20f;
-    [SerializeField] private float _despawnSecs = 3f;
 
     public enum CreepType { Legion, Hellbourne};
 
@@ -63,16 +62,6 @@ public class CreepManager : NetworkBehaviour {
             return;
         }
         GameObject creep = GetCreepGO(type);
-        if(type == CreepType.Legion)
-            SetCreepDestination(creep, _legionCreepTargetPosTransform.position);
-        else if(type == CreepType.Hellbourne)
-            SetCreepDestination(creep, _hellbourneCreepTargetPosTransform.position);
-    }
-    
-    private void SetCreepDestination(GameObject creep, Vector3 targetPos) {
-        CreepHandler handler = creep.GetComponent<CreepHandler>();
-        handler.SetDestination(targetPos);
-        ServerSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.RunTrigger);
     }
 
     private GameObject GetCreepGO(CreepType type) {
@@ -96,13 +85,10 @@ public class CreepManager : NetworkBehaviour {
         }
         if(creepDeadStack.Count == 0) {
             creep = CreateCreep(creepList, creepPrefab, parentTransform, type);
-            Debug.Log("New Creep " + creepDeadStack.Count);
         }
         else {
-            Debug.Log("Ressurect Creep " + creepDeadStack.Count);
             creep = creepDeadStack.Pop();
-            Debug.Log("afterpop " + creepDeadStack.Count + " " + creep);
-            creep = Resurrect(creep);
+            creep = creep.GetComponent<CreepHandler>().Ressurect();
         }
         return creep;
     }
@@ -111,45 +97,19 @@ public class CreepManager : NetworkBehaviour {
         GameObject creep = Instantiate(creepPrefab, parentTransform);
         creepList.Add(creep);
         NetworkServer.Spawn(creep);
-        creep = Resurrect(creep);
-
+        creep = creep.GetComponent<CreepHandler>().Ressurect();
         return creep;
     }
 
-    private GameObject Resurrect(GameObject creep) {
-        creep.GetComponent<HealthNetwork>().ResetHealth();
-        creep.SetActive(true);
-        creep.GetComponent<CreepHandler>().RpcSetActive(true);
-        return creep;
+    public void AddInactiveCreepsToStackAfterDelay(GameObject creep, CreepType creepType) {
+        if (creepType == CreepType.Legion)
+            StartCoroutine(AddInactiveCreepAfterDelay(creep, _legionCreepsDead, 2f));
+        else if (creepType == CreepType.Hellbourne)
+            StartCoroutine(AddInactiveCreepAfterDelay(creep, _hellbourneCreepsDead, 2f));
     }
 
-    private IEnumerator Unspawn(GameObject creep) {
-        yield return new WaitForSeconds(_despawnSecs);
-        //NetworkServer.UnSpawn(creep);
-        creep.SetActive(false);
-        creep.GetComponent<CreepHandler>().RpcSetActive(false);
-        if (creep.GetComponent<CreepHandler>().GetCreepType() == CreepType.Legion)
-            _legionCreepsDead.Push(creep);
-        else if (creep.GetComponent<CreepHandler>().GetCreepType() == CreepType.Hellbourne)
-            _hellbourneCreepsDead.Push(creep);
-    }
-
-    public void SetDeath(GameObject creep) {
-        if (!isServer) {
-            Debug.LogError("Set Death not called by server");
-            return;
-        }
-        CreepHandler creepHandler = creep.GetComponent<CreepHandler>();
-        creepHandler.SetAgentSpeed(0);
-        ServerSetAnimationTrigger(creep, CreepHandler.CreepAnimationTrigger.DeathTrigger);
-        StartCoroutine(Unspawn(creep));
-    }
-
-    public void ServerSetAnimationTrigger(GameObject creep, CreepHandler.CreepAnimationTrigger trigger) {
-        if (!isServer) {
-            Debug.LogError("Server creep animation trigger not called by server");
-            return;
-        }
-        creep.GetComponent<CreepHandler>().RpcSetAnimationTrigger(trigger.ToString());
+    private IEnumerator AddInactiveCreepAfterDelay(GameObject creep, Stack<GameObject> creepStack, float delaySecs) {
+        yield return new WaitForSeconds(delaySecs);
+        creepStack.Push(creep);
     }
 }

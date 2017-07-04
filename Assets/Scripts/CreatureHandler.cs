@@ -17,9 +17,19 @@ public class CreatureHandler : NetworkBehaviour {
             _animator = GetComponent<Animator>();
     }
 
+    [Command]
+    protected void CmdSetAnimationTrigger(string triggerString) {
+        RpcSetAnimationTrigger(triggerString);
+    }
+
     [ClientRpc]
     public void RpcSetAnimationTrigger(string triggerString) {
         _animator.SetTrigger(triggerString);
+    }
+
+    [Command]
+    protected void CmdSetActive(bool val) {
+        RpcSetActive(val);
     }
 
     [ClientRpc]
