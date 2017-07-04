@@ -20,8 +20,9 @@ public class CreepManager : NetworkBehaviour {
     [SerializeField] private List<GameObject> _hellbourneCreeps;
     private Stack<GameObject> _hellbourneCreepsDead;
 
-    [SerializeField] private int _creepsInBatch = 3;
+    [SerializeField] private int _creepsInBatch = 1;
     [SerializeField] private float _creepSpawnSecs = 20f;
+    [SerializeField] private float _creepIntervalSecs = 0.5f;
 
     public enum CreepType { Legion, Hellbourne};
 
@@ -34,9 +35,10 @@ public class CreepManager : NetworkBehaviour {
         _legionCreepsDead = new Stack<GameObject>();
         _hellbourneCreepsDead = new Stack<GameObject>();
     }
+
     private void Start() {
         if (isServer) {
-            StartCoroutine(CreepSpawner(_creepSpawnSecs, _creepsInBatch));
+            StartCoroutine(CreepSpawner(_creepSpawnSecs, _creepsInBatch, _creepIntervalSecs));
         }
     }
 
@@ -46,12 +48,13 @@ public class CreepManager : NetworkBehaviour {
         }
     }
 
-    private IEnumerator CreepSpawner(float secs, int numCreeps) {
+    private IEnumerator CreepSpawner(float betweenBatchSecs, int numCreeps, float intervalSecs) {
         while (true) {
-            yield return new WaitForSeconds(secs);
+            yield return new WaitForSeconds(betweenBatchSecs);
             for (int i = 0; i < numCreeps; i++) {
                 SpawnCreep(CreepType.Legion);
                 SpawnCreep(CreepType.Hellbourne);
+                yield return new WaitForSeconds(intervalSecs);
             }
         }
     }
@@ -101,15 +104,15 @@ public class CreepManager : NetworkBehaviour {
         return creep;
     }
 
-    public void AddInactiveCreepsToStackAfterDelay(GameObject creep, CreepType creepType) {
-        if (creepType == CreepType.Legion)
-            StartCoroutine(AddInactiveCreepAfterDelay(creep, _legionCreepsDead, 2f));
-        else if (creepType == CreepType.Hellbourne)
-            StartCoroutine(AddInactiveCreepAfterDelay(creep, _hellbourneCreepsDead, 2f));
-    }
-
     private IEnumerator AddInactiveCreepAfterDelay(GameObject creep, Stack<GameObject> creepStack, float delaySecs) {
         yield return new WaitForSeconds(delaySecs);
         creepStack.Push(creep);
+    }
+
+    public void AddInactiveCreepsToStackAfterDelay(GameObject creep, CreepType creepType) {
+        if(creepType == CreepType.Legion)
+            StartCoroutine(AddInactiveCreepAfterDelay(creep, _legionCreepsDead, 2f));
+        else if(creepType == CreepType.Hellbourne)
+            StartCoroutine(AddInactiveCreepAfterDelay(creep, _hellbourneCreepsDead, 2f));
     }
 }
