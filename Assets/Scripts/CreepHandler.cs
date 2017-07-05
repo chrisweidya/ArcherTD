@@ -86,7 +86,6 @@ public class CreepHandler : CreatureHandler {
         ChangeState(CreepState.Idle);
         if(_currentCoroutine != null)
             CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
-        //StopCoroutine(_currentCoroutine);
         MoveToCurrentWaypoint();
         _currentCoroutine = StartCoroutine(RunningCoroutine());
         yield return null;
