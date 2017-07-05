@@ -310,7 +310,6 @@ namespace Prototype.NetworkLobby
             for (int i = 0; i < Factions.Length; i++) {
                 if (!_factionInUse[i]) {
                     playerFaction = Factions[i];
-                    print(Factions[i]);
                     _factionInUse[i] = true;
                     break;
                 }

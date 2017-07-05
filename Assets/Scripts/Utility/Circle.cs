@@ -23,7 +23,7 @@ public class Circle : MonoBehaviour {
         _rb.isKinematic = true;
         _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationY;
         _cylinder.transform.parent = transform;
-        _cylinder.transform.localPosition = Vector3.zero;
+        _cylinder.transform.localPosition = new Vector3(0, 1f, 0);
         _cylinder.transform.localScale = new Vector3(radius, 0.01f, radius);
     }
 
