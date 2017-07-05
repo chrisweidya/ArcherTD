@@ -36,24 +36,25 @@ public class CreatureHandler : NetworkBehaviour {
     public void RpcSetActive(bool val) {
         gameObject.SetActive(val);
     }
-
+    
     public virtual void SetIsDead(bool isDead) {
         this.isDead = isDead;
+    }
+    
+    public void ResetDeath() {
+        isDead = false;
     }
 
     public bool GetIsDead() {
         return isDead;
     }
-    public void ResetDeath() {
-        isDead = false;
-    }
+
     private void OnIsDeadHook(bool dead) {
         isDead = dead;
         OnIsDead(dead);
     }
+
     public virtual void OnIsDead(bool isDead) {
 
     }
-
-
 }

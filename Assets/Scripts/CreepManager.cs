@@ -114,11 +114,11 @@ public class CreepManager : NetworkBehaviour {
             StartCoroutine(AddInactiveCreepAfterDelay(creep, _hellbourneCreepsDead, 2f));
     }
     
-    public List<GameObject> GetCreepList(CreepType type) {
+    public IList<GameObject> GetCreepList(CreepType type) {
         if (type == CreepType.Legion)
-            return _legionCreeps;
+            return _legionCreeps.AsReadOnly();
         else if (type == CreepType.Hellbourne)
-            return _hellbourneCreeps;
+            return _hellbourneCreeps.AsReadOnly();
         return null;
     }
 

@@ -13,6 +13,7 @@ public class CreepHandler : CreatureHandler {
     private HealthNetwork _healthNetwork;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger};
+    private enum CreepState {Attacking, Searching};
 
     [SerializeField] private float _defaultCreepSpeed = 3.5f;
     [SerializeField] private float _despawnTimeSecs = 3f;
@@ -26,7 +27,7 @@ public class CreepHandler : CreatureHandler {
     private float _hitboxRadius;
     private Vector3 _targetWaypoint;
     private int _waypointsReached = -1;
-    private List<GameObject> _enemyCreeps;
+    private IList<GameObject> _enemyCreeps;
 
     private void Awake() {
         base.Awake();
@@ -61,6 +62,10 @@ public class CreepHandler : CreatureHandler {
         }
     }
 
+    private void ChangeState(CreepState state) {
+
+    }
+
     private IEnumerator CreepMainUpdateLoop(float interval) {
         while (true) {
             print("updateloop");
@@ -71,7 +76,8 @@ public class CreepHandler : CreatureHandler {
     }
 
     private void AcquireTarget() {
-
+        for(int i=0; i<_enemyCreeps.Count; i++) {
+        }
     }
 
     private void MoveToWaypoint() {
@@ -107,6 +113,7 @@ public class CreepHandler : CreatureHandler {
             Debug.LogError("Non-server attempting to kill creeps");
             return;
         }
+        print("hi");
         base.SetIsDead(isDead);
         SetAgentSpeed(0);
         StopAllCoroutines();
