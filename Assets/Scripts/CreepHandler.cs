@@ -126,6 +126,7 @@ public class CreepHandler : CreatureHandler {
     private IEnumerator AttackingCoroutine() {
         print("Entered Attacking");
         StopAgent();
+        transform.LookAt(_targetEnemy.transform);
         ChangeState(CreepState.Attacking);
         while (true) {
             CmdSetAnimationTrigger(CreepAnimationTrigger.AttackTrigger.ToString());
