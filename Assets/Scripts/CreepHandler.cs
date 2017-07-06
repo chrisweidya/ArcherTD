@@ -5,12 +5,10 @@ using UnityEngine.AI;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Animator))]
 
 public class CreepHandler : CreatureHandler {
     private NavMeshAgent _agent;
     private Vector3 _startPosition;
-    private HealthNetwork _healthNetwork;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger, AttackTrigger};
     private enum CreepAnimationState { Idle, Attack, Run, Death}
@@ -18,6 +16,7 @@ public class CreepHandler : CreatureHandler {
 
     [SerializeField] private float _defaultCreepSpeed;
     [SerializeField] private float _attackIntervalSecs;
+    [SerializeField] private float _attackDamage;
     [SerializeField] private float _despawnTimeSecs;
     [SerializeField] private CreepManager.CreepType _creepType;
     [SerializeField] private float _acquisitionRadius;
@@ -196,6 +195,10 @@ public class CreepHandler : CreatureHandler {
 
     private void StopAgent() {
         _agent.isStopped = true;
+    }
+
+    private void DoDamage() {
+        CmdDoDamage(_targetEnemy, _attackDamage);
     }
 
     public GameObject Ressurect() {

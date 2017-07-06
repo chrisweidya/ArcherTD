@@ -4,6 +4,7 @@ using UnityEngine.Networking;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(HealthNetwork))]
 
 public class CreatureHandler : NetworkBehaviour {
     [SyncVar(hook = "OnIsDeadHook")]
@@ -11,10 +12,12 @@ public class CreatureHandler : NetworkBehaviour {
 
     [SerializeField]
     protected Animator _animator;
+    protected HealthNetwork _healthNetwork;
 
     protected void Awake() {
         if(_animator == null)
             _animator = GetComponent<Animator>();
+        _healthNetwork = GetComponent<HealthNetwork>();
     }
 
     [Command]
@@ -37,7 +40,28 @@ public class CreatureHandler : NetworkBehaviour {
     public void RpcSetActive(bool val) {
         gameObject.SetActive(val);
     }
-    
+
+    [Command]
+    public void CmdDoDamage(GameObject target, float amt) {
+        if (!isDead && !target.GetComponent<CreatureHandler>().GetIsDead())
+            target.GetComponent<CreatureHandler>().TakeDamage(amt);
+    }
+
+    [Command]
+    public void CmdDoDamageById(NetworkInstanceId id, float amt) {
+        CreatureHandler targetHandler = NetworkServer.FindLocalObject(id).GetComponent<CreatureHandler>();
+        if (!isDead && !targetHandler.GetIsDead())
+            targetHandler.TakeDamage(amt);
+    }
+
+    public void TakeDamage(float amt) {
+        if (!isServer)
+            Debug.LogError("Taking damage on client side.");
+        _healthNetwork.TakeDamage(amt);
+        if (_healthNetwork.GetHealth() <= 0)
+            SetIsDead(true);
+    }
+
     public virtual void SetIsDead(bool isDead) {
         this.isDead = isDead;
     }

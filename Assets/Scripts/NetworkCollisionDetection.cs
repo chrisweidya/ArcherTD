@@ -5,7 +5,7 @@ using UnityEngine;
 public class NetworkCollisionDetection : MonoBehaviour {
 
     private PlayerProperties playerProps;
-    private HealthNetwork health;
+    private CreatureHandler handler;
     private bool collided;
     public string team;
     GameObject parentGameObject;
@@ -27,17 +27,17 @@ public class NetworkCollisionDetection : MonoBehaviour {
         if (other.gameObject.layer == 8) {
 
             parentGameObject = other.gameObject.GetComponent<BodyPartScript>().ParentGameObject;
-            health = parentGameObject.GetComponent<HealthNetwork>();
-            if (health != null && team != parentGameObject.GetComponent<PlayerProperties>().GetTeam() && !collided) {
+            handler = parentGameObject.GetComponent<CreatureHandler>();
+            if (handler != null && team != parentGameObject.GetComponent<PlayerProperties>().GetTeam() && !collided) {
                 Debug.Log("Collsion Event");
-                EventManager.FireTakeDamage(13, health.netId);
+                EventManager.FireDoDamage(13, handler.netId);
                 collided = true;
             }
         }
        
 
     }
-
+    /*
     private void OnCollisionEnter(Collision collision)
     {
         //CmdReduceHealth(10);  
@@ -55,5 +55,6 @@ public class NetworkCollisionDetection : MonoBehaviour {
             collided = true;
         }
     }
+    */
 
 }

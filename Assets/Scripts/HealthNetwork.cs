@@ -9,27 +9,20 @@ public class HealthNetwork : NetworkBehaviour {
     [SerializeField] private float maxHealth;
 
     public HealthBarUI hpBar;
-    private PlayerProperties playerProps;
-
-    private void OnEnable()
-    {
-        EventManager.TakeDamageAction += ReduceHealth;
-    }
-
-    private void OnDisable()
-    {
-        EventManager.TakeDamageAction -= ReduceHealth;
-    }
 
     void Start () {
-        playerProps = GetComponent<PlayerProperties>();
 	}
 	
+    public void TakeDamage(float dmg) {
+        currentHealth -= dmg;
+    }
+
+    /*
     public void ReduceHealth(float dmg, NetworkInstanceId victimNetId)
     {
         if (isLocalPlayer) {
             print("minus" + victimNetId);
-            CmdReduceHealth(dmg, victimNetId, this.netId);
+            //CmdReduceHealth(dmg, victimNetId, this.netId);
         }
     }
 
@@ -49,9 +42,10 @@ public class HealthNetwork : NetworkBehaviour {
             }
         }
     }
-    
-    void OnHealthUpdate(float health)  {
-        Debug.Log("UI health " + health);
+    */
+
+    private void OnHealthUpdate(float health)  {
+        //Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health,maxHealth);
         currentHealth = health;
         Debug.Log("Rpc: healthLeft: " + currentHealth);
@@ -62,4 +56,7 @@ public class HealthNetwork : NetworkBehaviour {
         GetComponent<CreatureHandler>().ResetDeath();
     }
     
+    public float GetHealth() {
+        return currentHealth;
+    }
 }
