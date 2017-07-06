@@ -113,4 +113,8 @@ public class CreepManager : NetworkBehaviour {
         else if(creepType == CreepType.Hellbourne)
             StartCoroutine(AddInactiveCreepAfterDelay(creep, _hellbourneCreepsDead, 2f));
     }
+
+    public List<GameObject> ReturnLegionList() {
+        return _legionCreeps;
+    }
 }
