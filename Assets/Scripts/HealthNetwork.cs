@@ -5,11 +5,8 @@ using UnityEngine;
 
 public class HealthNetwork : NetworkBehaviour {
 
-    [SerializeField]
-    [SyncVar(hook = "OnHealthUpdate")]
-    private float currentHealth;
-    [SerializeField]
-    private float maxHealth;
+    [SerializeField][SyncVar(hook = "OnHealthUpdate")] private float currentHealth;
+    [SerializeField] private float maxHealth;
 
     public HealthBarUI hpBar;
     private PlayerProperties playerProps;
@@ -17,7 +14,6 @@ public class HealthNetwork : NetworkBehaviour {
     private void OnEnable()
     {
         EventManager.TakeDamageAction += ReduceHealth;
-
     }
 
     private void OnDisable()
@@ -54,8 +50,7 @@ public class HealthNetwork : NetworkBehaviour {
         }
     }
     
-    void OnHealthUpdate(float health)
-    {
+    void OnHealthUpdate(float health)  {
         Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health,maxHealth);
         currentHealth = health;

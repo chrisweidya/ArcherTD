@@ -10,12 +10,12 @@ public class CreepManager : NetworkBehaviour {
     
     [SerializeField] private GameObject _legionCreepPrefab;
     [SerializeField] private Transform _legionCreepsContainer;
-    [SerializeField] private List<GameObject> _legionCreeps;
+    [SerializeField] public List<GameObject> _legionCreeps;
     private Stack<GameObject> _legionCreepsDead;
     
     [SerializeField] private GameObject _hellbourneCreepPrefab;
     [SerializeField] private Transform _hellbourneCreepsContainer;
-    [SerializeField] private List<GameObject> _hellbourneCreeps;
+    [SerializeField] public List<GameObject> _hellbourneCreeps;
     private Stack<GameObject> _hellbourneCreepsDead;
 
     [SerializeField] private int _creepsInBatch;
@@ -51,7 +51,7 @@ public class CreepManager : NetworkBehaviour {
             yield return new WaitForSeconds(betweenBatchSecs);
             for (int i = 0; i < numCreeps; i++) {
                 SpawnCreep(CreepType.Legion);
-                SpawnCreep(CreepType.Hellbourne);
+                //SpawnCreep(CreepType.Hellbourne);
                 yield return new WaitForSeconds(intervalSecs);
             }
         }
@@ -113,8 +113,13 @@ public class CreepManager : NetworkBehaviour {
         else if(creepType == CreepType.Hellbourne)
             StartCoroutine(AddInactiveCreepAfterDelay(creep, _hellbourneCreepsDead, 2f));
     }
-
-    public List<GameObject> ReturnLegionList() {
-        return _legionCreeps;
+    
+    public IList<GameObject> GetCreepList(CreepType type) {
+        if (type == CreepType.Legion)
+            return _legionCreeps.AsReadOnly();
+        else if (type == CreepType.Hellbourne)
+            return _hellbourneCreeps.AsReadOnly();
+        return null;
     }
+
 }
