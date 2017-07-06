@@ -9,33 +9,24 @@ public class NetworkCollisionDetection : MonoBehaviour {
     private bool collided;
     public string team;
     GameObject parentGameObject;
-    // Use this for initialization
+
     void Start () {
         //playerProps = GetComponent<PlayerProperties>();
         collided = false;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.name);
         if (other.gameObject.layer == 8) {
-
             parentGameObject = other.gameObject.GetComponent<BodyPartScript>().ParentGameObject;
             handler = parentGameObject.GetComponent<CreatureHandler>();
             if (handler != null && team != parentGameObject.GetComponent<PlayerProperties>().GetTeam() && !collided) {
-                Debug.Log("Collsion Event");
+                //Debug.Log("Collsion Event");
                 EventManager.FireDoDamage(13, handler.netId);
                 collided = true;
             }
         }
-       
-
     }
     /*
     private void OnCollisionEnter(Collision collision)
@@ -56,5 +47,4 @@ public class NetworkCollisionDetection : MonoBehaviour {
         }
     }
     */
-
 }
