@@ -7,7 +7,7 @@ public class TowerHandler : CreatureHandler {
 
     //tower range
     private float towerRange = 3;
-
+    private float acquisitionRange = 4;
     //tower's current target
     private GameObject currentTarget;
 
@@ -18,15 +18,15 @@ public class TowerHandler : CreatureHandler {
     [SerializeField]
     private CreepManager creepManager;
     public bool isLegion;
-    private List<GameObject> creepList;
+    private IList<GameObject> creepList;
 
 
     void Start() {
         if (isLegion) {
-            creepList = creepManager.ReturnLegionList();
+            creepList = creepManager.GetCreepList(CreepManager.CreepType.Legion);
         }
         else {
-            creepList = creepManager.ReturnHellbourneList();
+            creepList = creepManager.GetCreepList(CreepManager.CreepType.Hellbourne);
         }
 	}
 	
@@ -37,24 +37,33 @@ public class TowerHandler : CreatureHandler {
 
 
     //check range of target and returns a bool
-    private bool CheckRange(Vector3 targetPos) {
+    private bool CheckRange(Vector3 targetPos, float range) {
 
-        if (Vector3.Distance(transform.position, targetPos) < towerRange) {
+        if (Vector3.Distance(transform.position, targetPos) < range) {
             return true;
-
         }
         return false;
     }
 
    private IEnumerable OuterScan() {
-
-        //find a suitable target in the list of creeps that is within tower range
-        foreach (GameObject go in creepList) {
-            if (CheckRange(go.transform.position)) {
-                currentTarget = go;
-                yield return null;
+        //find a suitable target in the list of creeps that is within tower range every second
+        while (true) {
+            if (currentTarget == null) {
+                foreach (GameObject go in creepList) {
+                    if (CheckRange(go.transform.position,acquisitionRange)) {
+                        currentTarget = go;
+                        yield return null;
+                    }
+                }
             }
+            yield return new WaitForSeconds(1.0f);
+        }        
+    }
+    private IEnumerable InnerScan() {
+        while (true) {
+
+            return null;
         }
-        yield return null;
+        
     }
 }
