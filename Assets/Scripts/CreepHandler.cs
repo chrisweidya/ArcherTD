@@ -125,6 +125,7 @@ public class CreepHandler : CreatureHandler {
 
     private IEnumerator AttackingCoroutine() {
         print("Entered Attacking");
+        StopAgent();
         ChangeState(CreepState.Attacking);
         while (true) {
             CmdSetAnimationTrigger(CreepAnimationTrigger.AttackTrigger.ToString());
@@ -173,6 +174,10 @@ public class CreepHandler : CreatureHandler {
     private void SetDestination(Vector3 pos) {
         _agent.SetDestination(pos);
         _agent.speed = _defaultCreepSpeed;
+    }
+
+    private void StopAgent() {
+        _agent.isStopped = true;
     }
 
     public GameObject Ressurect() {
