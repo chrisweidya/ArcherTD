@@ -26,7 +26,7 @@ public class CreatureHandler : NetworkBehaviour {
     }
 
     [ClientRpc]
-    public void RpcSetAnimationTrigger(string triggerString) {
+    private void RpcSetAnimationTrigger(string triggerString) {
         print("Anination trigger string:" + triggerString);
         _animator.SetTrigger(triggerString);
     }
@@ -37,24 +37,24 @@ public class CreatureHandler : NetworkBehaviour {
     }
 
     [ClientRpc]
-    public void RpcSetActive(bool val) {
+    private void RpcSetActive(bool val) {
         gameObject.SetActive(val);
     }
 
     [Command]
-    public void CmdDoDamage(GameObject target, float amt) {
+    protected void CmdDoDamage(GameObject target, float amt) {
         if (!isDead && !target.GetComponent<CreatureHandler>().GetIsDead())
             target.GetComponent<CreatureHandler>().TakeDamage(amt);
     }
 
     [Command]
-    public void CmdDoDamageById(NetworkInstanceId id, float amt) {
+    protected void CmdDoDamageById(NetworkInstanceId id, float amt) {
         CreatureHandler targetHandler = NetworkServer.FindLocalObject(id).GetComponent<CreatureHandler>();
         if (!isDead && !targetHandler.GetIsDead())
             targetHandler.TakeDamage(amt);
     }
 
-    public void TakeDamage(float amt) {
+    private void TakeDamage(float amt) {
         if (!isServer)
             Debug.LogError("Taking damage on client side.");
         _healthNetwork.TakeDamage(amt);
