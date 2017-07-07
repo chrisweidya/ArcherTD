@@ -23,13 +23,13 @@ public class EventManager : Singleton <EventManager> {
         }
     }
 
-    public delegate void TakeDamage(float dmg, NetworkInstanceId netId);
-    public static event TakeDamage TakeDamageAction;
-    public static void FireTakeDamage(float dmg, NetworkInstanceId netId)
+    public delegate void DoDamage(float dmg, NetworkInstanceId netId);
+    public static event DoDamage DoDamageAction;
+    public static void FireDoDamage(float dmg, NetworkInstanceId netId)
     {
-        if (TakeDamageAction != null)
+        if (DoDamageAction != null)
         {
-            TakeDamageAction(dmg, netId);
+            DoDamageAction(dmg, netId);
         }
     }
     

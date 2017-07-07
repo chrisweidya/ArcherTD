@@ -12,15 +12,10 @@ public class SpawnArrow : NetworkBehaviour {
     private int maxArrowCount;
 
     private void OnEnable() {
-        //print("Added create arrow event1");
-        //print(isLocalPlayer);
-        print("enabled arrow firing event");
         EventManager.CreateArrowAction += StartFireArrow;
     }
 
     private void OnDisable() {
-
-        print("disabled arrow firing event");
         EventManager.CreateArrowAction -= StartFireArrow;
     }
 

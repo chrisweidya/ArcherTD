@@ -20,10 +20,12 @@ public class PlayerHandler : CreatureHandler {
 
     private void OnEnable() {
         EventManager.ChangePlayerState += ChangeState;
+        EventManager.DoDamageAction += DoDamage;
     }
 
     private void OnDisable() {
         EventManager.ChangePlayerState -= ChangeState;
+        EventManager.DoDamageAction -= DoDamage;
     }
 
     private void Awake() {
@@ -49,7 +51,11 @@ public class PlayerHandler : CreatureHandler {
         //}
     }
 
-    
+    private void DoDamage(float dmg, NetworkInstanceId id) {
+        if(isLocalPlayer) {
+            CmdDoDamageById(id, dmg);
+        }
+    }
 
     //[ClientRpc]
     //private void RpcChangePlayerState(PlayerState state) {

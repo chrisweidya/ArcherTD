@@ -5,39 +5,30 @@ using UnityEngine;
 public class NetworkCollisionDetection : MonoBehaviour {
 
     private PlayerProperties playerProps;
-    private HealthNetwork health;
+    private CreatureHandler handler;
     private bool collided;
     public string team;
     GameObject parentGameObject;
-    // Use this for initialization
+
     void Start () {
         //playerProps = GetComponent<PlayerProperties>();
         collided = false;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.name);
         if (other.gameObject.layer == 8) {
-
             parentGameObject = other.gameObject.GetComponent<BodyPartScript>().ParentGameObject;
-            health = parentGameObject.GetComponent<HealthNetwork>();
-            if (health != null && team != parentGameObject.GetComponent<PlayerProperties>().GetTeam() && !collided) {
-                Debug.Log("Collsion Event");
-                EventManager.FireTakeDamage(13, health.netId);
+            handler = parentGameObject.GetComponent<CreatureHandler>();
+            if (handler != null && team != parentGameObject.GetComponent<PlayerProperties>().GetTeam() && !collided) {
+                //Debug.Log("Collsion Event");
+                EventManager.FireDoDamage(13, handler.netId);
                 collided = true;
             }
         }
-       
-
     }
-
+    /*
     private void OnCollisionEnter(Collision collision)
     {
         //CmdReduceHealth(10);  
@@ -55,5 +46,5 @@ public class NetworkCollisionDetection : MonoBehaviour {
             collided = true;
         }
     }
-
+    */
 }

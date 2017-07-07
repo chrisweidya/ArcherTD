@@ -5,18 +5,18 @@ using UnityEngine.AI;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Animator))]
 
 public class CreepHandler : CreatureHandler {
     private NavMeshAgent _agent;
     private Vector3 _startPosition;
-    private HealthNetwork _healthNetwork;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger, AttackTrigger};
+    private enum CreepAnimationState { Idle, Attack, Run, Death}
     private enum CreepState {Attacking, Searching, Running, Idle};
 
     [SerializeField] private float _defaultCreepSpeed;
     [SerializeField] private float _attackIntervalSecs;
+    [SerializeField] private float _attackDamage;
     [SerializeField] private float _despawnTimeSecs;
     [SerializeField] private CreepManager.CreepType _creepType;
     [SerializeField] private float _acquisitionRadius;
@@ -72,6 +72,17 @@ public class CreepHandler : CreatureHandler {
         }
     }
 
+    private void ChangeState(CreepState state, CreepAnimationState animState, CreepAnimationTrigger animTrigger) {
+        if(!_animator.GetCurrentAnimatorStateInfo(0).IsName(animState.ToString())) {
+            CmdSetAnimationTrigger(animTrigger.ToString());
+        }
+        if (_currentState == state) {
+            Debug.LogWarning("Trying to change to same state, not ideal behaviour OMEGALUL");
+        }
+        else
+            _currentState = state;
+    }
+
     private void ChangeState(CreepState state) {
         if (_currentState == state) {
             Debug.LogWarning("Trying to change to same state, not ideal behaviour OMEGALUL");
@@ -83,9 +94,7 @@ public class CreepHandler : CreatureHandler {
     //Does not loop
     private IEnumerator IdleCoroutine() {
         print("Entered Idle");
-        ChangeState(CreepState.Idle);
-        if(_currentCoroutine != null)
-            CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
+        ChangeState(CreepState.Idle, CreepAnimationState.Idle, CreepAnimationTrigger.IdleTrigger);
         MoveToCurrentWaypoint();
         _currentCoroutine = StartCoroutine(RunningCoroutine());
         yield return null;
@@ -93,8 +102,7 @@ public class CreepHandler : CreatureHandler {
 
     private IEnumerator RunningCoroutine() {
         print("Entered Running");
-        ChangeState(CreepState.Running);
-        CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
+        ChangeState(CreepState.Running, CreepAnimationState.Run, CreepAnimationTrigger.RunTrigger);
         while (true) {
             if (AcquireTarget()) {
                 _currentCoroutine = StartCoroutine(SearchingCoroutine());
@@ -108,7 +116,7 @@ public class CreepHandler : CreatureHandler {
 
     private IEnumerator SearchingCoroutine() {
         print("Entered Searching");
-        ChangeState(CreepState.Searching);
+        ChangeState(CreepState.Searching, CreepAnimationState.Run, CreepAnimationTrigger.RunTrigger);
         while (true) {
             if (IsTargetDead()) {
                 _currentCoroutine = StartCoroutine(IdleCoroutine());
@@ -126,8 +134,17 @@ public class CreepHandler : CreatureHandler {
     private IEnumerator AttackingCoroutine() {
         print("Entered Attacking");
         StopAgent();
-        ChangeState(CreepState.Attacking);
+        transform.LookAt(_targetEnemy.transform);
+        ChangeState(CreepState.Attacking, CreepAnimationState.Idle, CreepAnimationTrigger.IdleTrigger);
         while (true) {
+            if (IsTargetDead()) {
+                _currentCoroutine = StartCoroutine(IdleCoroutine());
+                break;
+            }
+            if (!Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
+                _currentCoroutine = StartCoroutine(SearchingCoroutine());
+                break;
+            }
             CmdSetAnimationTrigger(CreepAnimationTrigger.AttackTrigger.ToString());
             yield return new WaitForSeconds(_attackIntervalSecs);
         }
@@ -178,6 +195,10 @@ public class CreepHandler : CreatureHandler {
 
     private void StopAgent() {
         _agent.isStopped = true;
+    }
+
+    private void DoDamage() {
+        CmdDoDamage(_targetEnemy, _attackDamage);
     }
 
     public GameObject Ressurect() {
