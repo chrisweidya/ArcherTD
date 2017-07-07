@@ -51,7 +51,7 @@ public class CreepManager : NetworkBehaviour {
             yield return new WaitForSeconds(betweenBatchSecs);
             for (int i = 0; i < numCreeps; i++) {
                 //SpawnCreep(CreepType.Legion);
-                SpawnCreep(CreepType.Hellbourne);
+                //SpawnCreep(CreepType.Hellbourne);
                 yield return new WaitForSeconds(intervalSecs);
             }
         }
