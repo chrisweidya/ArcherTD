@@ -25,6 +25,13 @@ public class CreatureHandler : NetworkBehaviour {
         RpcSetAnimationTrigger(triggerString);
     }
 
+    [Command]
+    protected void CmdSetProtectedAnimationTrigger(string protectedState, string trigger) {
+        if (!_animator.GetCurrentAnimatorStateInfo(0).IsName(protectedState)) {
+            CmdSetAnimationTrigger(trigger);
+        }
+    }
+
     [ClientRpc]
     private void RpcSetAnimationTrigger(string triggerString) {
         print("Anination trigger string:" + triggerString);
