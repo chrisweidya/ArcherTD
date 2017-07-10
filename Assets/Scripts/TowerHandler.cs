@@ -7,7 +7,7 @@ public class TowerHandler : CreatureHandler {
 
 
     //tower range
-    private float towerRange = 10;
+    private float towerRange = 7;
     private float acquisitionRange = 4;
 
     private float acquisitionInterval = 1;
@@ -23,27 +23,30 @@ public class TowerHandler : CreatureHandler {
     private CreepManager creepManager;
     public bool isLegion;
     public string team;
-    private IList<GameObject> creepList;
+    private IList<GameObject> enemyCreepList;
 
     //tower firing point
     public Transform firingPoint;
     public GameObject TowerBullet;
 
+    //dmg
+    private float dmg;
+
     void Start() {
         if (team == "Legion") {
-            creepList = creepManager.GetCreepList(CreepManager.CreepType.Legion);
+            enemyCreepList = creepManager.GetCreepList(CreepManager.CreepType.Hellbourne);
         }
         else {
-            creepList = creepManager.GetCreepList(CreepManager.CreepType.Hellbourne);
+            enemyCreepList = creepManager.GetCreepList(CreepManager.CreepType.Legion);
         }
         if (isServer) {
             StartCoroutine(ScanForTargets(towerRange, scanInterval));
         }
     }
-	
-	void Update () {
-		
-	}
+
+    void Update() {
+
+    }
 
 
 
@@ -57,48 +60,60 @@ public class TowerHandler : CreatureHandler {
     }
 
     //scan for targets 
-   private IEnumerator ScanForTargets(float range, float seconds) {
+    private IEnumerator ScanForTargets(float range, float seconds) {
         //find a suitable target in the list of creeps that is within tower range every second
         while (true) {
             if (currentTargetScript == null || currentTargetScript.GetIsDead()) {
-                foreach (GameObject go in creepList) {
-                    if (CheckRange(go.transform.position,range)) {
+                foreach (GameObject go in enemyCreepList) {
+                    
+                    if (!go.GetComponent<CreepHandler>().GetIsDead() && CheckRange(go.transform.position, range)) {
                         currentTarget = go;
                         currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
                         StartCoroutine(AttackTarget());
                         Debug.Log("Current Target " + currentTarget);
-                        yield return null;
+                        break;
                     }
                 }
             }
             yield return new WaitForSeconds(seconds);
-        }        
+        }
     }
 
     private IEnumerator AttackTarget() {
 
         while (true) {
-            if (!currentTargetScript.GetIsDead()) {
+            Debug.Log(currentTargetScript);
+            if (!currentTargetScript.GetIsDead() && Utility.InRange(transform.position, currentTarget.transform.position, towerRange)) {
                 //attack function
-                RpcTowerAttack();
                 Debug.Log("Attacking current target");
+                RpcTowerAttack(currentTarget.transform.position);
+                
             }
             else {
+                currentTarget = null;
+                currentTargetScript = null;
                 StartCoroutine(ScanForTargets(towerRange, scanInterval));
                 Debug.Log("finding new target");
-                yield return null;
+                break;
             }
             yield return new WaitForSeconds(1.0f);
         }
     }
 
     [ClientRpc]
-    private void RpcTowerAttack() {
-
-        GameObject bullet = Instantiate(TowerBullet, firingPoint) as GameObject;
-        bullet.transform.LookAt(currentTarget.transform);
-        bullet.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 10);
-        bullet.GetComponent<NetworkCollisionDetection>().team = team;
+    private void RpcTowerAttack(Vector3 targetPos) {
+        Debug.Log("towerrpcshot");
+        GameObject bullet = Instantiate(TowerBullet, firingPoint.transform.position, firingPoint.transform.rotation) as GameObject;
+        bullet.transform.LookAt(targetPos);
+        bullet.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 20);
+        //bullet.GetComponent<NetworkCollisionDetection>().team = team;
+        bullet.GetComponent<LookAtPlayer>().target = currentTarget;
+        bullet.GetComponent<TowerProjectile>().towerParent = GetComponent<TowerHandler>();
     }
 
+    public void DoDamage() {
+        if (isServer) {
+            CmdDoDamage(currentTarget, dmg);
+        }
+    }
 }

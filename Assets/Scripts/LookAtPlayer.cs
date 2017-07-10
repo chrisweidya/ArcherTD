@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class LookAtPlayer : MonoBehaviour {
 
-    GameObject player;
+    public string  str;
+    public GameObject target;
 	// Use this for initialization
 	void Start () {
-        player = GameObject.Find("Player");
+        if(str != null)
+        target = GameObject.Find(str);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        gameObject.transform.LookAt(player.transform);
-	}
+        if (target != null) {
+            gameObject.transform.LookAt(target.transform);
+        }
+    }
 }
