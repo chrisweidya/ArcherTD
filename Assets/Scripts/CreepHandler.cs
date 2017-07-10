@@ -164,15 +164,28 @@ public class CreepHandler : CreatureHandler {
 
     private bool AcquireTarget() {
         print("Acquiring target...");
+        List<GameObject> possibleTargets = new List<GameObject>();
         for (int i=0; i<_enemyCreeps.Count; i++) {
             if(!_enemyCreeps[i].GetComponent<CreatureHandler>().GetIsDead()
-                && Utility.InRange(transform.position, _enemyCreeps[i].transform.position, _acquisitionRadius)) { 
-                _targetEnemy = _enemyCreeps[i];
-                print("target acquired");
-                return true;
+                && Utility.InRange(transform.position, _enemyCreeps[i].transform.position, _acquisitionRadius)) {
+                possibleTargets.Add(_enemyCreeps[i]);
+                print("target added");
             }
         }
-        return false;
+        if (possibleTargets.Count == 0)
+            return false;
+
+        float newTargetSqrDistance;
+        float currTargetSqrDistance = Vector3.SqrMagnitude(possibleTargets[0].transform.position - transform.position);
+        _targetEnemy = possibleTargets[0];
+        for(int i=1; i<possibleTargets.Count; i++) {
+            newTargetSqrDistance = Vector3.SqrMagnitude(possibleTargets[i].transform.position - transform.position);
+            if(newTargetSqrDistance < currTargetSqrDistance) {
+                currTargetSqrDistance = newTargetSqrDistance;
+                _targetEnemy = possibleTargets[i];
+            }
+        }
+        return true;
     }
 
     private bool ReachAndChangeWaypoint() {
