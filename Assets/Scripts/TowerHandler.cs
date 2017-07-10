@@ -32,6 +32,11 @@ public class TowerHandler : CreatureHandler {
     //dmg
     private float dmg;
 
+    //enum states
+    public enum TowerAnimationTrigger { IdleTrigger, AttackTrigger, DeathTrigger };
+    private enum TowerAnimationState { Idle, Attack,Deat};
+    public enum TowerState { Idling, Attacking,Dying};
+
     void Start() {
         if (team == "Legion") {
             enemyCreepList = creepManager.GetCreepList(CreepManager.CreepType.Hellbourne);
@@ -62,6 +67,7 @@ public class TowerHandler : CreatureHandler {
     //scan for targets 
     private IEnumerator ScanForTargets(float range, float seconds) {
         //find a suitable target in the list of creeps that is within tower range every second
+        CmdSetAnimationTrigger(TowerAnimationTrigger.IdleTrigger.ToString());
         while (true) {
             if (currentTargetScript == null || currentTargetScript.GetIsDead()) {
                 foreach (GameObject go in enemyCreepList) {
@@ -80,7 +86,7 @@ public class TowerHandler : CreatureHandler {
     }
 
     private IEnumerator AttackTarget() {
-
+        CmdSetAnimationTrigger(TowerAnimationTrigger.AttackTrigger.ToString());
         while (true) {
             Debug.Log(currentTargetScript);
             if (!currentTargetScript.GetIsDead() && Utility.InRange(transform.position, currentTarget.transform.position, towerRange)) {
@@ -108,12 +114,18 @@ public class TowerHandler : CreatureHandler {
         bullet.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 20);
         //bullet.GetComponent<NetworkCollisionDetection>().team = team;
         bullet.GetComponent<LookAtPlayer>().target = currentTarget;
-        bullet.GetComponent<TowerProjectile>().towerParent = GetComponent<TowerHandler>();
+        TowerProjectile tp = bullet.GetComponent<TowerProjectile>();
+        tp.towerParent = GetComponent<TowerHandler>();
+        tp.currentTarget = currentTarget;
     }
 
-    public void DoDamage() {
+    public void DoDamage(GameObject target) {
         if (isServer) {
-            CmdDoDamage(currentTarget, dmg);
+            CmdDoDamage(target, dmg);
         }
     }
+
+
+
+ 
 }
