@@ -119,9 +119,9 @@ public class TowerHandler : CreatureHandler {
         tp.currentTarget = currentTarget;
     }
 
-    public void DoDamage() {
+    public void DoDamage(GameObject target) {
         if (isServer) {
-            CmdDoDamage(currentTarget, dmg);
+            CmdDoDamage(target, dmg);
         }
     }
 

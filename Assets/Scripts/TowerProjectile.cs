@@ -18,7 +18,7 @@ public class TowerProjectile : MonoBehaviour {
 
     private void CheckForCollision() {
         if (Vector3.Distance(transform.position, currentTarget.transform.position) < 1) {
-            towerParent.DoDamage();
+            towerParent.DoDamage(currentTarget);
             Destroy(gameObject);
         }
     }
