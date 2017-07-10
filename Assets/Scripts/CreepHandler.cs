@@ -81,10 +81,19 @@ public class CreepHandler : CreatureHandler {
             _currentState = state;
     }
 
+    private void ChangeState(CreepState state) {
+        if (_currentState == state) {
+            Debug.LogWarning("Trying to change to same state, not ideal behaviour OMEGALUL");
+        }
+        else
+            _currentState = state;
+    }
+
     //Does not loop
     private IEnumerator IdleCoroutine() {
         print("Entered Idle");
-        ChangeState(CreepState.Idle, CreepAnimationState.Idle, CreepAnimationTrigger.IdleTrigger);
+        ChangeState(CreepState.Idle);
+        CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
         MoveToCurrentWaypoint();
         _currentCoroutine = StartCoroutine(RunningCoroutine());
         yield return null;
@@ -92,7 +101,8 @@ public class CreepHandler : CreatureHandler {
 
     private IEnumerator RunningCoroutine() {
         print("Entered Running");
-        ChangeState(CreepState.Running, CreepAnimationState.Run, CreepAnimationTrigger.RunTrigger);
+        ChangeState(CreepState.Running);
+        CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
         while (true) {
             if (AcquireTarget()) {
                 _currentCoroutine = StartCoroutine(SearchingCoroutine());
@@ -106,7 +116,8 @@ public class CreepHandler : CreatureHandler {
 
     private IEnumerator SearchingCoroutine() {
         print("Entered Searching");
-        ChangeState(CreepState.Searching, CreepAnimationState.Run, CreepAnimationTrigger.RunTrigger);
+        ChangeState(CreepState.Searching);
+        CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
         while (true) {
             if (IsTargetDead()) {
                 ResumeAgent();
@@ -126,7 +137,8 @@ public class CreepHandler : CreatureHandler {
         print("Entered Attacking");
         StopAgent();
         transform.LookAt(_targetEnemy.transform);
-        ChangeState(CreepState.Attacking, CreepAnimationState.Idle, CreepAnimationTrigger.IdleTrigger);
+        ChangeState(CreepState.Attacking);
+        CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
         while (true) {
             if (IsTargetDead()) {
                 ResumeAgent();
