@@ -10,4 +10,12 @@ public static class Utility {
         else
             return false;
     }
+
+    public static float InRangeGetDist(Vector3 position, Vector3 targetPosition, float range) {
+        float distance = Vector3.SqrMagnitude(targetPosition - position);
+        if (distance < range * range)
+            return distance;
+        else
+            return -1;
+    }
 }
