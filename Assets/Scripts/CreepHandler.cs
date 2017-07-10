@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 public class CreepHandler : CreatureHandler {
     private NavMeshAgent _agent;
     private Vector3 _startPosition;
+    private float _defaultRadius;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger, AttackTrigger};
     private enum CreepAnimationState { Idle, Attack, Run, Death}
@@ -26,26 +27,30 @@ public class CreepHandler : CreatureHandler {
 
     private float _updateBehaviourInterval = 0.5f;
     private float _hitboxRadius; //NavMeshAgent radius
+    private static float _closesDistanceSquared;
 
-    private Vector3 _targetWaypoint;
+    public Vector3 _targetWaypoint;
     private int _waypointsReached = 0;
     private IList<GameObject> _enemyCreeps;
     private List<GameObject> _possibleTargetCreeps;
     public GameObject _targetEnemy;
-    private CreepState _currentState = CreepState.Running;
+    public CreepState _currentState;
     private Coroutine _currentCoroutine;
+
+    public bool agentStopped = false;
+    public Vector3 currentTargetPos;
 
     private void Awake() {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
-        _healthNetwork = GetComponent<HealthNetwork>();
         _startPosition = transform.position;
-        _hitboxRadius = _agent.radius;
+        _defaultRadius = _agent.radius;
     }
 
     private void Start() {
         if (isServer) {
-            if(_creepType == CreepManager.CreepType.Hellbourne)
+            _closesDistanceSquared = _acquisitionRadius * _acquisitionRadius;
+            if (_creepType == CreepManager.CreepType.Hellbourne)
                 _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Legion);
             else if (_creepType == CreepManager.CreepType.Legion)
                 _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Hellbourne);
@@ -64,6 +69,8 @@ public class CreepHandler : CreatureHandler {
         transform.position = _startPosition;
         _waypointsReached = 0;
         _currentCoroutine = null;
+        _agent.radius = _defaultRadius;
+        //ResumeAgent();
     }
 
     private void Update() {
@@ -71,16 +78,7 @@ public class CreepHandler : CreatureHandler {
             SetIsDead(true);
         }
     }
-
-    private void ChangeState(CreepState state, CreepAnimationState animState, CreepAnimationTrigger animTrigger) {
-        CmdSetProtectedAnimationTrigger(animState.ToString(), animTrigger.ToString());
-        if (_currentState == state) {
-            Debug.LogWarning("Trying to change to same state, not ideal behaviour OMEGALUL");
-        }
-        else
-            _currentState = state;
-    }
-
+    
     private void ChangeState(CreepState state) {
         if (_currentState == state) {
             Debug.LogWarning("Trying to change to same state, not ideal behaviour OMEGALUL");
@@ -94,7 +92,6 @@ public class CreepHandler : CreatureHandler {
         print("Entered Idle");
         ChangeState(CreepState.Idle);
         CmdAnimationPlay(CreepAnimationState.Idle.ToString());
-        MoveToCurrentWaypoint();
         _currentCoroutine = StartCoroutine(RunningCoroutine());
         yield return null;
     }
@@ -103,13 +100,13 @@ public class CreepHandler : CreatureHandler {
         print("Entered Running");
         ChangeState(CreepState.Running);
         CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
+        MoveToCurrentWaypoint();
         while (true) {
+            ReachAndChangeWaypoint();
             if (AcquireTarget()) {
                 _currentCoroutine = StartCoroutine(SearchingCoroutine());
                 break;
             }
-            else 
-                ReachAndChangeWaypoint();
             yield return new WaitForSeconds(_updateBehaviourInterval);
         }
     }
@@ -120,7 +117,6 @@ public class CreepHandler : CreatureHandler {
         CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
         while (true) {
             if (IsTargetDead()) {
-                ResumeAgent();
                 _currentCoroutine = StartCoroutine(RunningCoroutine());
                 break;
             }
@@ -141,8 +137,8 @@ public class CreepHandler : CreatureHandler {
         CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
         while (true) {
             if (IsTargetDead() || !Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
-                ResumeAgent();
                 _targetEnemy = null;
+                ResumeAgent();
                 _currentCoroutine = StartCoroutine(RunningCoroutine());
                 break;
             }
@@ -161,27 +157,19 @@ public class CreepHandler : CreatureHandler {
 
     private bool AcquireTarget() {
         print("Acquiring target...");
-        List<GameObject> possibleTargets = new List<GameObject>();
+        float closestDistanceSqr = _closesDistanceSquared;
+        _targetEnemy = null;
         for (int i=0; i<_enemyCreeps.Count; i++) {
-            if(!_enemyCreeps[i].GetComponent<CreatureHandler>().GetIsDead()
-                && Utility.InRange(transform.position, _enemyCreeps[i].transform.position, _acquisitionRadius)) {
-                possibleTargets.Add(_enemyCreeps[i]);
-                print("target added");
+            if(!_enemyCreeps[i].GetComponent<CreatureHandler>().GetIsDead()) {
+                float currDistance = Vector3.SqrMagnitude(_enemyCreeps[i].transform.position - transform.position);
+                if (currDistance < closestDistanceSqr) {
+                    _targetEnemy = _enemyCreeps[i];
+                    closestDistanceSqr = currDistance;
+                }
             }
         }
-        if (possibleTargets.Count == 0)
+        if(_targetEnemy == null)
             return false;
-
-        float newTargetSqrDistance;
-        float currTargetSqrDistance = Vector3.SqrMagnitude(possibleTargets[0].transform.position - transform.position);
-        _targetEnemy = possibleTargets[0];
-        for(int i=1; i<possibleTargets.Count; i++) {
-            newTargetSqrDistance = Vector3.SqrMagnitude(possibleTargets[i].transform.position - transform.position);
-            if(newTargetSqrDistance < currTargetSqrDistance) {
-                currTargetSqrDistance = newTargetSqrDistance;
-                _targetEnemy = possibleTargets[i];
-            }
-        }
         return true;
     }
 
@@ -204,16 +192,19 @@ public class CreepHandler : CreatureHandler {
     }
 
     private void SetDestination(Vector3 pos) {
+        currentTargetPos = pos;
         _agent.SetDestination(pos);
         _agent.speed = _defaultCreepSpeed;
     }
 
     private void StopAgent() {
         _agent.isStopped = true;
+        agentStopped = true;
     }
 
     private void ResumeAgent() {
         _agent.isStopped = false;
+        agentStopped = false;
     }
 
     private void DoDamage() {
@@ -233,6 +224,7 @@ public class CreepHandler : CreatureHandler {
         }
         base.SetIsDead(isDead);
         SetAgentSpeed(0);
+        _agent.radius = 0.1f;
         StopAllCoroutines();
         CmdSetAnimationTrigger(CreepAnimationTrigger.DeathTrigger.ToString());
         StartCoroutine(Despawn(_despawnTimeSecs));
