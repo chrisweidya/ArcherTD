@@ -19,20 +19,20 @@ public class CreepHandler : CreatureHandler {
     [SerializeField] private float _attackDamage;
     [SerializeField] private float _despawnTimeSecs;
     [SerializeField] private CreepManager.CreepType _creepType;
+    [SerializeField] private float _waypointDetectionRadius;
     [SerializeField] private float _acquisitionRadius;
     [SerializeField] private float _attackRadius;
     [SerializeField] private List<Transform> Waypoints;
 
     private float _updateBehaviourInterval = 0.5f;
     private float _hitboxRadius; //NavMeshAgent radius
-    private float _waypointDetectionRadius = 5;
 
     private Vector3 _targetWaypoint;
     private int _waypointsReached = 0;
     private IList<GameObject> _enemyCreeps;
     private List<GameObject> _possibleTargetCreeps;
     public GameObject _targetEnemy;
-    public CreepState _currentState = CreepState.Running;
+    private CreepState _currentState = CreepState.Running;
     private Coroutine _currentCoroutine;
 
     private void Awake() {
@@ -93,7 +93,7 @@ public class CreepHandler : CreatureHandler {
     private IEnumerator IdleCoroutine() {
         print("Entered Idle");
         ChangeState(CreepState.Idle);
-        CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
+        CmdAnimationPlay(CreepAnimationState.Idle.ToString());
         MoveToCurrentWaypoint();
         _currentCoroutine = StartCoroutine(RunningCoroutine());
         yield return null;
