@@ -108,7 +108,9 @@ public class TowerHandler : CreatureHandler {
         bullet.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 20);
         //bullet.GetComponent<NetworkCollisionDetection>().team = team;
         bullet.GetComponent<LookAtPlayer>().target = currentTarget;
-        bullet.GetComponent<TowerProjectile>().towerParent = GetComponent<TowerHandler>();
+        TowerProjectile tp = bullet.GetComponent<TowerProjectile>();
+        tp.towerParent = GetComponent<TowerHandler>();
+        tp.currentTarget = currentTarget;
     }
 
     public void DoDamage() {
@@ -116,4 +118,6 @@ public class TowerHandler : CreatureHandler {
             CmdDoDamage(currentTarget, dmg);
         }
     }
+
+ 
 }
