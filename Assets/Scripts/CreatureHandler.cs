@@ -21,8 +21,20 @@ public class CreatureHandler : NetworkBehaviour {
     }
 
     [Command]
+    protected void CmdAnimationPlay(string name) {
+        _animator.Play(name);
+    }
+
+    [Command]
     protected void CmdSetAnimationTrigger(string triggerString) {
         RpcSetAnimationTrigger(triggerString);
+    }
+
+    [Command]
+    protected void CmdSetProtectedAnimationTrigger(string protectedState, string trigger) {
+        if (!_animator.GetCurrentAnimatorStateInfo(0).IsName(protectedState)) {
+            CmdSetAnimationTrigger(trigger);
+        }
     }
 
     [ClientRpc]

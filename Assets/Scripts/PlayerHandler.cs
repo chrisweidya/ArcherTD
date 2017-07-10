@@ -45,7 +45,7 @@ public class PlayerHandler : CreatureHandler {
     }
 
     private void ChangeState(PlayerState state, NetworkInstanceId netId) {
-        if(isLocalPlayer)
+        if(isLocalPlayer && this.netId == netId)
             //if (this.netId == netId && _playerState != state) {
             CmdSetAnimationTrigger(state.ToString());
         //}
@@ -75,7 +75,7 @@ public class PlayerHandler : CreatureHandler {
     public override void OnIsDead(bool isDead) {
         if (GetIsDead()) {
             transform.parent = null;
-            EventManager.FirePlayerStateChange(PlayerState.Death, this.netId);            
+            ChangeState(PlayerState.Death, this.netId);            
             EventManager.FireGameEnd(netId);
         }
     }
