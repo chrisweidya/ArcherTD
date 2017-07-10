@@ -140,13 +140,10 @@ public class CreepHandler : CreatureHandler {
         ChangeState(CreepState.Attacking);
         CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
         while (true) {
-            if (IsTargetDead()) {
+            if (IsTargetDead() || !Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
                 ResumeAgent();
+                _targetEnemy = null;
                 _currentCoroutine = StartCoroutine(RunningCoroutine());
-                break;
-            }
-            if (!Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
-                _currentCoroutine = StartCoroutine(SearchingCoroutine());
                 break;
             }
             CmdSetAnimationTrigger(CreepAnimationTrigger.AttackTrigger.ToString());
