@@ -114,18 +114,23 @@ public class CreepHandler : CreatureHandler {
     private IEnumerator SearchingCoroutine() {
         print("Entered Searching");
         ChangeState(CreepState.Searching);
-        CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
-        while (true) {
-            if (IsTargetDead()) {
-                _currentCoroutine = StartCoroutine(RunningCoroutine());
-                break;
+        if (Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
+            _currentCoroutine = StartCoroutine(AttackingCoroutine());
+        }
+        else {
+            CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
+            while (true) {
+                if (IsTargetDead()) {
+                    _currentCoroutine = StartCoroutine(RunningCoroutine());
+                    break;
+                }
+                if (Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
+                    _currentCoroutine = StartCoroutine(AttackingCoroutine());
+                    break;
+                }
+                SetDestination(_targetEnemy.transform.position);
+                yield return new WaitForSeconds(_updateBehaviourInterval);
             }
-            if (Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
-                _currentCoroutine = StartCoroutine(AttackingCoroutine());
-                break;
-            }
-            SetDestination(_targetEnemy.transform.position);
-            yield return new WaitForSeconds(_updateBehaviourInterval);
         }
     }
 
@@ -137,9 +142,14 @@ public class CreepHandler : CreatureHandler {
         CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
         while (true) {
             if (IsTargetDead() || !Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
-                _targetEnemy = null;
                 ResumeAgent();
-                _currentCoroutine = StartCoroutine(RunningCoroutine());
+                if (AcquireTarget()) {
+                    _currentCoroutine = StartCoroutine(SearchingCoroutine());
+                }
+                else {
+                    _targetEnemy = null;
+                    _currentCoroutine = StartCoroutine(RunningCoroutine());
+                }
                 break;
             }
             CmdSetAnimationTrigger(CreepAnimationTrigger.AttackTrigger.ToString());
