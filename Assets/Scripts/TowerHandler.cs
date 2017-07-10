@@ -32,6 +32,11 @@ public class TowerHandler : CreatureHandler {
     //dmg
     private float dmg;
 
+    //enum states
+    public enum TowerAnimationTrigger { IdleTrigger, AttackTrigger, DeathTrigger };
+    private enum TowerAnimationState { Idle, Attack,Deat};
+    public enum TowerState { Idling, Attacking,Dying};
+
     void Start() {
         if (team == "Legion") {
             enemyCreepList = creepManager.GetCreepList(CreepManager.CreepType.Hellbourne);
@@ -62,6 +67,7 @@ public class TowerHandler : CreatureHandler {
     //scan for targets 
     private IEnumerator ScanForTargets(float range, float seconds) {
         //find a suitable target in the list of creeps that is within tower range every second
+        CmdSetAnimationTrigger(TowerAnimationTrigger.IdleTrigger.ToString());
         while (true) {
             if (currentTargetScript == null || currentTargetScript.GetIsDead()) {
                 foreach (GameObject go in enemyCreepList) {
@@ -80,7 +86,7 @@ public class TowerHandler : CreatureHandler {
     }
 
     private IEnumerator AttackTarget() {
-
+        CmdSetAnimationTrigger(TowerAnimationTrigger.AttackTrigger.ToString());
         while (true) {
             Debug.Log(currentTargetScript);
             if (!currentTargetScript.GetIsDead() && Utility.InRange(transform.position, currentTarget.transform.position, towerRange)) {
@@ -118,6 +124,8 @@ public class TowerHandler : CreatureHandler {
             CmdDoDamage(currentTarget, dmg);
         }
     }
+
+
 
  
 }
