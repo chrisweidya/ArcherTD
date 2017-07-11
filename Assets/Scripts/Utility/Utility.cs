@@ -18,4 +18,17 @@ public static class Utility {
         else
             return -1;
     }
+
+    public static IEnumerator RotateLerp(GameObject obj, Quaternion curr, Vector3 targetPos, float secs) {
+        var originalTime = secs;
+        Vector3 relativePos = targetPos - obj.transform.position;
+        Quaternion lookRotation = Quaternion.LookRotation(relativePos);
+        Quaternion originalRotation = obj.transform.rotation;
+        while (secs > 0.0f) {
+            secs -= Time.deltaTime;
+            obj.transform.rotation = Quaternion.Lerp(originalRotation, lookRotation, 1 - (secs / originalTime));
+            yield return new WaitForEndOfFrame();
+        }
+        yield return null;
+    }
 }
