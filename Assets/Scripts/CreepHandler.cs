@@ -99,13 +99,17 @@ public class CreepHandler : CreatureHandler {
     private IEnumerator RunningCoroutine() {
         print("Entered Running");
         ChangeState(CreepState.Running);
+        if (AcquireTarget()) {
+            _currentCoroutine = StartCoroutine(SearchingCoroutine());
+            yield break;
+        }
         CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
         MoveToCurrentWaypoint();
         while (true) {
             ReachAndChangeWaypoint();
             if (AcquireTarget()) {
                 _currentCoroutine = StartCoroutine(SearchingCoroutine());
-                break;
+                yield break;
             }
             yield return new WaitForSeconds(_updateBehaviourInterval);
         }
@@ -116,21 +120,20 @@ public class CreepHandler : CreatureHandler {
         ChangeState(CreepState.Searching);
         if (Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
             _currentCoroutine = StartCoroutine(AttackingCoroutine());
+            yield break;
         }
-        else {
-            CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
-            while (true) {
-                if (IsTargetDead()) {
-                    _currentCoroutine = StartCoroutine(RunningCoroutine());
-                    break;
-                }
-                if (Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
-                    _currentCoroutine = StartCoroutine(AttackingCoroutine());
-                    break;
-                }
-                SetDestination(_targetEnemy.transform.position);
-                yield return new WaitForSeconds(_updateBehaviourInterval);
+        CmdSetAnimationTrigger(CreepAnimationTrigger.RunTrigger.ToString());
+        while (true) {
+            if (IsTargetDead()) {
+                _currentCoroutine = StartCoroutine(RunningCoroutine());
+                yield break;
             }
+            if (Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
+                _currentCoroutine = StartCoroutine(AttackingCoroutine());
+                yield break;
+            }
+            SetDestination(_targetEnemy.transform.position);
+            yield return new WaitForSeconds(_updateBehaviourInterval);
         }
     }
 
@@ -151,7 +154,7 @@ public class CreepHandler : CreatureHandler {
                     _targetEnemy = null;
                     _currentCoroutine = StartCoroutine(RunningCoroutine());
                 }
-                break;
+                yield break;
             }
             CmdSetAnimationTrigger(CreepAnimationTrigger.AttackTrigger.ToString());
             yield return new WaitForSeconds(_attackIntervalSecs);

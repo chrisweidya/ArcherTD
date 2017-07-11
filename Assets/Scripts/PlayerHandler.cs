@@ -7,6 +7,9 @@ using UnityEngine.Networking;
 public class PlayerHandler : CreatureHandler {
 
     public static NetworkInstanceId localWardenNetId;
+    public static GameObject localWardenGO;
+    public static NetworkInstanceId enemyWardenNetId;
+    public static GameObject enemyWardenGO;
 
     [SerializeField]
     private Vector3 _modelOffset = Vector3.zero;
@@ -41,6 +44,13 @@ public class PlayerHandler : CreatureHandler {
             }
             GameManager.SetLocalPlayerTeam(GetComponent<PlayerProperties>().GetTeam());
             localWardenNetId = netId;
+            localWardenGO = gameObject;
+            print(localWardenNetId);
+        }
+        else {
+            enemyWardenNetId = netId;
+            enemyWardenGO = gameObject;
+            print(enemyWardenNetId);
         }
     }
 
