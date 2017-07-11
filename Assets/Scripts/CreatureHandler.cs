@@ -13,6 +13,7 @@ public class CreatureHandler : NetworkBehaviour {
     [SerializeField]
     protected Animator _animator;
     protected HealthNetwork _healthNetwork;
+    protected float _radius;
 
     protected void Awake() {
         if(_animator == null)
@@ -93,5 +94,9 @@ public class CreatureHandler : NetworkBehaviour {
 
     public virtual void OnIsDead(bool isDead) {
 
+    }
+
+    public float GetRadius() {
+        return _radius;
     }
 }

@@ -12,8 +12,6 @@ public class TowerHandler : CreatureHandler {
 
     private float acquisitionInterval = 1;
     private float scanInterval = 0.5f;
-    [SerializeField]
-    private float radius;
     //tower's current target
     private GameObject currentTarget;
     private CreatureHandler currentTargetScript;
@@ -52,7 +50,8 @@ public class TowerHandler : CreatureHandler {
         if (isServer) {
             StartCoroutine(ScanForTargets(towerRange, scanInterval));
         }
-        radius = GetComponent<CapsuleCollider>().radius;
+        _radius = GetComponent<CapsuleCollider>().radius;
+        print(_radius + " fads");
         towerHandlerScript = this;
     }
 
@@ -128,8 +127,5 @@ public class TowerHandler : CreatureHandler {
             CmdDoDamage(target, dmg);
         }
     }
-
-
-
- 
+     
 }

@@ -27,8 +27,6 @@ public static class Utility {
             return -1;
     }
 
-
-
     public static IEnumerator RotateLerp(GameObject obj, Quaternion curr, Vector3 targetPos, float secs) {
         var originalTime = secs;
         Vector3 relativePos = targetPos - obj.transform.position;
