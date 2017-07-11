@@ -219,7 +219,8 @@ public class CreepHandler : CreatureHandler {
     }
 
     private void DoDamage() {
-        CmdDoDamage(_targetEnemy, _attackDamage);
+        if(isServer)
+            CmdDoDamage(_targetEnemy, _attackDamage);
     }
 
     public GameObject Ressurect() {
