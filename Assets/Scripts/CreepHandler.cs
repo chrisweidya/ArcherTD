@@ -168,7 +168,7 @@ public class CreepHandler : CreatureHandler {
     }
 
     private bool IsTargetDead() {
-        if (_targetEnemy.GetComponent<CreepHandler>().GetIsDead()) {
+        if (_targetEnemy.GetComponent<CreatureHandler>().GetIsDead()) {
             _targetEnemy = null;
             return true;
         }

@@ -30,6 +30,7 @@ public class TowerHandler : CreatureHandler {
     public GameObject TowerBullet;
 
     //dmg
+    [SerializeField]
     private float dmg = 20;
 
     //towerhandler script
