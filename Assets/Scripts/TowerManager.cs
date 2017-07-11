@@ -14,7 +14,7 @@ public class TowerManager : NetworkBehaviour {
     [SerializeField] private Transform _hellbourneTowerTransform;
     // Use this for initialization
     void Start() {
-
+        SpawnTowers();
     }
 
     // Update is called once per frame
@@ -23,6 +23,7 @@ public class TowerManager : NetworkBehaviour {
     }
 
     private void SpawnTowers() {
+
         NetworkServer.Spawn(Instantiate(_legionTowerPrefab, _legionTowerTransform));
         NetworkServer.Spawn(Instantiate(_hellbourneTowerPrefab, _hellbourneTowerTransform));
 

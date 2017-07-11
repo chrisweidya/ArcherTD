@@ -19,8 +19,6 @@ public class TowerHandler : CreatureHandler {
     private List<GameObject> CreepList;
 
     //getting a list of creeps from creep manager depending on faction
-    [SerializeField]
-    private CreepManager creepManager;
     public bool isLegion;
     public string team;
     private IList<GameObject> enemyCreepList;
@@ -41,13 +39,15 @@ public class TowerHandler : CreatureHandler {
     public enum TowerState { Idling, Attacking,Dying};
 
     void Start() {
-        if (team == "Legion") {
-            enemyCreepList = creepManager.GetCreepList(CreepManager.CreepType.Hellbourne);
-        }
-        else {
-            enemyCreepList = creepManager.GetCreepList(CreepManager.CreepType.Legion);
-        }
+     
         if (isServer) {
+            
+            if (team == "Legion") {
+                enemyCreepList = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Hellbourne);
+            }
+            else {
+                enemyCreepList = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Legion);
+            }
             StartCoroutine(ScanForTargets(towerRange, scanInterval));
         }
         _radius = GetComponent<CapsuleCollider>().radius;
