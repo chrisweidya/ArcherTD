@@ -32,7 +32,7 @@ public class CreepHandler : CreatureHandler {
     public Vector3 _targetWaypoint;
     private int _waypointsReached = 0;
     private IList<GameObject> _enemyCreeps;
-    private List<GameObject> _possibleTargetCreeps;
+    private GameObject _enemyTower;
     public GameObject _targetEnemy;
     public CreepState _currentState;
     private Coroutine _currentCoroutine;
@@ -50,10 +50,14 @@ public class CreepHandler : CreatureHandler {
     private void Start() {
         if (isServer) {
             _closesDistanceSquared = _acquisitionRadius * _acquisitionRadius;
-            if (_creepType == CreepManager.CreepType.Hellbourne)
+            if (_creepType == CreepManager.CreepType.Hellbourne) {
+                _enemyTower = CreepManager.Instance.GetTower(CreepManager.CreepType.Legion);
                 _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Legion);
-            else if (_creepType == CreepManager.CreepType.Legion)
+            }
+            else if (_creepType == CreepManager.CreepType.Legion) {
+                _enemyTower = CreepManager.Instance.GetTower(CreepManager.CreepType.Hellbourne);
                 _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Hellbourne);
+            }
             StartCoroutine(IdleCoroutine());
             //print("Started Coroutine from start");
         }
