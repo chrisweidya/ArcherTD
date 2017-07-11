@@ -125,4 +125,13 @@ public class CreepManager : NetworkBehaviour {
         return null;
     }
 
+    public GameObject GetTower(CreepType type) {
+        if (type == CreepType.Legion)
+            return _legionTower;
+        else if (type == CreepType.Hellbourne) {
+            return _hellbourneTower;
+        }
+        return null;
+    }
+
 }

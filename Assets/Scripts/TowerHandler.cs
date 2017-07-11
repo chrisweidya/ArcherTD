@@ -50,7 +50,9 @@ public class TowerHandler : CreatureHandler {
         if (isServer) {
             StartCoroutine(ScanForTargets(towerRange, scanInterval));
         }
-        towerHandlerScript = GetComponent<TowerHandler>();
+        _radius = GetComponent<CapsuleCollider>().radius;
+        print(_radius + " fads");
+        towerHandlerScript = this;
     }
 
     void Update() {
@@ -125,8 +127,5 @@ public class TowerHandler : CreatureHandler {
             CmdDoDamage(target, dmg);
         }
     }
-
-
-
- 
+     
 }

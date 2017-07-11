@@ -9,7 +9,6 @@ using UnityEngine.Networking;
 public class CreepHandler : CreatureHandler {
     private NavMeshAgent _agent;
     private Vector3 _startPosition;
-    private float _defaultRadius;
 
     public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger, AttackTrigger};
     private enum CreepAnimationState { Idle, Attack, Run, Death}
@@ -32,7 +31,7 @@ public class CreepHandler : CreatureHandler {
     public Vector3 _targetWaypoint;
     private int _waypointsReached = 0;
     private IList<GameObject> _enemyCreeps;
-    private List<GameObject> _possibleTargetCreeps;
+    private GameObject _enemyTower;
     public GameObject _targetEnemy;
     public CreepState _currentState;
     private Coroutine _currentCoroutine;
@@ -44,16 +43,20 @@ public class CreepHandler : CreatureHandler {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
         _startPosition = transform.position;
-        _defaultRadius = _agent.radius;
+        _radius = _agent.radius;
     }
 
     private void Start() {
         if (isServer) {
             _closesDistanceSquared = _acquisitionRadius * _acquisitionRadius;
-            if (_creepType == CreepManager.CreepType.Hellbourne)
+            if (_creepType == CreepManager.CreepType.Hellbourne) {
+                _enemyTower = CreepManager.Instance.GetTower(CreepManager.CreepType.Legion);
                 _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Legion);
-            else if (_creepType == CreepManager.CreepType.Legion)
+            }
+            else if (_creepType == CreepManager.CreepType.Legion) {
+                _enemyTower = CreepManager.Instance.GetTower(CreepManager.CreepType.Hellbourne);
                 _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Hellbourne);
+            }
             StartCoroutine(IdleCoroutine());
             //print("Started Coroutine from start");
         }
@@ -69,7 +72,7 @@ public class CreepHandler : CreatureHandler {
         transform.position = _startPosition;
         _waypointsReached = 0;
         _currentCoroutine = null;
-        _agent.radius = _defaultRadius;
+        _agent.radius = _radius;
         //ResumeAgent();
     }
 
@@ -118,7 +121,8 @@ public class CreepHandler : CreatureHandler {
     private IEnumerator SearchingCoroutine() {
         print("Entered Searching");
         ChangeState(CreepState.Searching);
-        if (Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
+        if (Utility.InRange(transform.position, _targetEnemy.transform.position, 
+            _attackRadius, _targetEnemy.GetComponent<CreatureHandler>().GetRadius())) {
             _currentCoroutine = StartCoroutine(AttackingCoroutine());
             yield break;
         }
@@ -128,7 +132,8 @@ public class CreepHandler : CreatureHandler {
                 _currentCoroutine = StartCoroutine(RunningCoroutine());
                 yield break;
             }
-            if (Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
+            if (Utility.InRange(transform.position, _targetEnemy.transform.position, 
+                _attackRadius, _targetEnemy.GetComponent<CreatureHandler>().GetRadius())) {
                 _currentCoroutine = StartCoroutine(AttackingCoroutine());
                 yield break;
             }
@@ -145,7 +150,8 @@ public class CreepHandler : CreatureHandler {
         ChangeState(CreepState.Attacking);
         CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
         while (true) {
-            if (IsTargetDead() || !Utility.InRange(transform.position, _targetEnemy.transform.position, _attackRadius)) {
+            if (IsTargetDead() || !Utility.InRange(transform.position, _targetEnemy.transform.position, 
+                _attackRadius, _targetEnemy.GetComponent<CreatureHandler>().GetRadius())) {
                 ResumeAgent();
                 if (AcquireTarget()) {
                     _currentCoroutine = StartCoroutine(SearchingCoroutine());
@@ -182,9 +188,15 @@ public class CreepHandler : CreatureHandler {
                 }
             }
         }
-        if(_targetEnemy == null)
-            return false;
-        return true;
+        if (_targetEnemy != null)
+            return true;
+        if (Utility.InRange(transform.position, _enemyTower.transform.position, 
+            _acquisitionRadius, _enemyTower.GetComponent<CreatureHandler>().GetRadius())) {
+            _targetEnemy = _enemyTower;
+        }
+        if (_targetEnemy != null)
+            return true;
+        return false;
     }
 
     private bool ReachAndChangeWaypoint() {

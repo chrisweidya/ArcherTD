@@ -11,6 +11,14 @@ public static class Utility {
             return false;
     }
 
+    public static bool InRange(Vector3 position, Vector3 targetPosition, float range, float targetOffsetRadius) {
+        float distance = Vector3.SqrMagnitude(targetPosition - position);
+        if (distance < (range + targetOffsetRadius) * (range + targetOffsetRadius))
+            return true;
+        else
+            return false;
+    }
+
     public static float InRangeGetDist(Vector3 position, Vector3 targetPosition, float range) {
         float distance = Vector3.SqrMagnitude(targetPosition - position);
         if (distance < range * range)
