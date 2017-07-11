@@ -7,7 +7,7 @@ public class TowerHandler : CreatureHandler {
 
 
     //tower range
-    private float towerRange = 7;
+    private float towerRange = 9;
     private float acquisitionRange = 4;
 
     private float acquisitionInterval = 1;
@@ -30,7 +30,10 @@ public class TowerHandler : CreatureHandler {
     public GameObject TowerBullet;
 
     //dmg
-    private float dmg;
+    private float dmg = 20;
+
+    //towerhandler script
+    private TowerHandler towerHandlerScript;
 
     //enum states
     public enum TowerAnimationTrigger { IdleTrigger, AttackTrigger, DeathTrigger };
@@ -47,6 +50,7 @@ public class TowerHandler : CreatureHandler {
         if (isServer) {
             StartCoroutine(ScanForTargets(towerRange, scanInterval));
         }
+        towerHandlerScript = GetComponent<TowerHandler>();
     }
 
     void Update() {
@@ -92,8 +96,7 @@ public class TowerHandler : CreatureHandler {
             if (!currentTargetScript.GetIsDead() && Utility.InRange(transform.position, currentTarget.transform.position, towerRange)) {
                 //attack function
                 Debug.Log("Attacking current target");
-                RpcTowerAttack(currentTarget.transform.position);
-                
+                RpcTowerAttack(currentTarget.transform.position, currentTarget);
             }
             else {
                 currentTarget = null;
@@ -103,24 +106,22 @@ public class TowerHandler : CreatureHandler {
                 break;
             }
             yield return new WaitForSeconds(1.0f);
+
         }
     }
 
     [ClientRpc]
-    private void RpcTowerAttack(Vector3 targetPos) {
+    private void RpcTowerAttack(Vector3 targetPos, GameObject target) {
         Debug.Log("towerrpcshot");
         GameObject bullet = Instantiate(TowerBullet, firingPoint.transform.position, firingPoint.transform.rotation) as GameObject;
-        bullet.transform.LookAt(targetPos);
-        bullet.GetComponent<Rigidbody>().AddForce(bullet.transform.forward * 20);
-        //bullet.GetComponent<NetworkCollisionDetection>().team = team;
-        bullet.GetComponent<LookAtPlayer>().target = currentTarget;
         TowerProjectile tp = bullet.GetComponent<TowerProjectile>();
-        tp.towerParent = GetComponent<TowerHandler>();
-        tp.currentTarget = currentTarget;
+        tp.towerParent = towerHandlerScript;
+        tp.currentTarget = target;
     }
 
     public void DoDamage(GameObject target) {
         if (isServer) {
+            Debug.Log("tower do damage to " + target);
             CmdDoDamage(target, dmg);
         }
     }

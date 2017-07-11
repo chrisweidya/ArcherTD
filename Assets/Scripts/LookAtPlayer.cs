@@ -16,6 +16,7 @@ public class LookAtPlayer : MonoBehaviour {
 	void Update () {
         if (target != null) {
             gameObject.transform.LookAt(target.transform);
+            Debug.Log("lookat" + target);
         }
     }
 }
