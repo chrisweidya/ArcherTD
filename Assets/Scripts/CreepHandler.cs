@@ -50,11 +50,11 @@ public class CreepHandler : CreatureHandler {
         if (isServer) {
             _closesDistanceSquared = _acquisitionRadius * _acquisitionRadius;
             if (_creepType == CreepManager.CreepType.Hellbourne) {
-                _enemyTower = CreepManager.Instance.GetTower(CreepManager.CreepType.Legion);
+                _enemyTower = TowerManager.Instance.GetTower(CreepManager.CreepType.Legion);
                 _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Legion);
             }
             else if (_creepType == CreepManager.CreepType.Legion) {
-                _enemyTower = CreepManager.Instance.GetTower(CreepManager.CreepType.Hellbourne);
+                _enemyTower = TowerManager.Instance.GetTower(CreepManager.CreepType.Hellbourne);
                 _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Hellbourne);
             }
             StartCoroutine(IdleCoroutine());
