@@ -7,7 +7,10 @@ using UnityEngine.AI;
 public class CreepManager : NetworkBehaviour {
 
     public static CreepManager Instance;
-    
+
+    [SerializeField] private GameObject _legionTower;
+    [SerializeField] private GameObject _hellbourneTower;
+
     [SerializeField] private GameObject _legionCreepPrefab;
     [SerializeField] private Transform _legionCreepsContainer;
     [SerializeField] public List<GameObject> _legionCreeps;
