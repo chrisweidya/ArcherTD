@@ -167,7 +167,7 @@ public class CreepHandler : CreatureHandler {
     }
 
     private bool AcquireTarget() {
-        print("Acquiring target...");
+        //print("Acquiring target...");
         float closestDistanceSqr = _closesDistanceSquared;
         _targetEnemy = null;
         for (int i=0; i<_enemyCreeps.Count; i++) {

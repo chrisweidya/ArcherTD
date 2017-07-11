@@ -39,7 +39,7 @@ public class CreatureHandler : NetworkBehaviour {
 
     [ClientRpc]
     private void RpcSetAnimationTrigger(string triggerString) {
-        print("Anination trigger string:" + triggerString);
+        //print("Anination trigger string:" + triggerString);
         _animator.SetTrigger(triggerString);
     }
 
