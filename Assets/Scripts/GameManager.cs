@@ -4,17 +4,17 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 
-public class GameManager : Singleton <GameManager> {
+public class GameManager : Singleton<GameManager> {
 
+    public enum Factions {Legion, Hellbourne};
     public static bool GameWon = false;
     private static NetworkConnection ServerConnection;
 
     private GameObject _cameraRigGO = null;
     private GameObject _cameraPlayer = null;
-    [SerializeField]
-    private string _currentScene;
+    [SerializeField] private string _currentScene;
 
-    private static string localPlayerTeam;
+    private static GameManager.Factions localPlayerFaction;
 
     protected override void Awake() {
         base.Awake();
@@ -77,12 +77,12 @@ public class GameManager : Singleton <GameManager> {
             return ServerConnection;
     }
 
-    public static void SetLocalPlayerTeam(string str) {
-        localPlayerTeam = str;
+    public static void SetLocalPlayerFaction(GameManager.Factions faction) {
+        localPlayerFaction = faction;
         GameObject.Find("TeleporterPointManager").GetComponent<TeleportPointManager>().TeleporterSetUp();
     }
 
-    public static string GetLocalPlayerTeam( ) {
-       return localPlayerTeam;
+    public static GameManager.Factions GetLocalPlayerFaction( ) {
+       return localPlayerFaction;
     }
 }

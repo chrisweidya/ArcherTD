@@ -12,12 +12,12 @@ public class TeleportPointManager : MonoBehaviour {
     }
     public void TeleporterSetUp() {
 
-        Debug.Log("teleport" + GameManager.GetLocalPlayerTeam());
+        Debug.Log("teleport" + GameManager.GetLocalPlayerFaction());
 
-        if (GameManager.GetLocalPlayerTeam() == "Hellbourne") {
+        if (GameManager.GetLocalPlayerFaction() == GameManager.Factions.Hellbourne) {
             hellborneTelePoints.SetActive(true);
         }
-        if (GameManager.GetLocalPlayerTeam() == "Legion") {
+        if (GameManager.GetLocalPlayerFaction() == GameManager.Factions.Legion) {
             legionTelePoints.SetActive(true);
         }
     }

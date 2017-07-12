@@ -12,7 +12,6 @@ namespace Prototype.NetworkLobby
     public class LobbyPlayer : NetworkLobbyPlayer
     {
         static Color[] Colors = new Color[] { Color.magenta, Color.red, Color.cyan, Color.blue, Color.green, Color.yellow };
-        static string[] Factions = new string[] { "Legion", "Hellbourne" };
         //used on server to avoid assigning the same color to two player
         static List<int> _colorInUse = new List<int>();
         static bool[] _factionInUse = new bool[] { false, false };
@@ -34,6 +33,8 @@ namespace Prototype.NetworkLobby
         public Color playerColor = Color.white;
         [SyncVar(hook = "OnMyFaction")]
         public string playerFaction = "";
+        [SyncVar(hook = "OnMyFactionEnum")]
+        public GameManager.Factions faction;
 
         public Color OddRowColor = new Color(250.0f / 255.0f, 250.0f / 255.0f, 250.0f / 255.0f, 1.0f);
         public Color EvenRowColor = new Color(180.0f / 255.0f, 180.0f / 255.0f, 180.0f / 255.0f, 1.0f);
@@ -70,6 +71,7 @@ namespace Prototype.NetworkLobby
             OnMyName(playerName);
             OnMyColor(playerColor);
             OnMyFaction(playerFaction);
+            OnMyFactionEnum(faction);
         }
 
         public override void OnStartAuthority()
@@ -208,6 +210,10 @@ namespace Prototype.NetworkLobby
             factionText.text = newFaction;
         }
 
+        public void OnMyFactionEnum(GameManager.Factions faction) {
+            this.faction = faction;
+        }
+
         //===== UI Handler
 
         //Note that those handler use Command function, as we need to change the value on the server not locally
@@ -307,13 +313,14 @@ namespace Prototype.NetworkLobby
         [Command]
         public void CmdFactionChange() 
         {
-            for (int i = 0; i < Factions.Length; i++) {
+            for (int i = 0; i < 2; i++) {
                 if (!_factionInUse[i]) {
-                    playerFaction = Factions[i];
+                    playerFaction = ((GameManager.Factions)i).ToString();
+                    faction = (GameManager.Factions)i;
                     _factionInUse[i] = true;
                     break;
                 }
-                if(i == Factions.Length - 1) {
+                if(i == 3) {
                     Debug.LogError("Error: More than 2 players not supported at the moment.");
                 }
             }
@@ -338,8 +345,8 @@ namespace Prototype.NetworkLobby
                     break;
                 }
             }
-            for (int i = 0; i < Factions.Length; i++) {
-                if(Factions[i] == playerFaction) {
+            for (int i = 0; i < 2; i++) {
+                if(((GameManager.Factions)i).ToString() == playerFaction) {
                     _factionInUse[i] = false;
                 }
             }

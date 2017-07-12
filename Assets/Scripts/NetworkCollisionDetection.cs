@@ -7,7 +7,7 @@ public class NetworkCollisionDetection : MonoBehaviour {
     private PlayerProperties playerProps;
     private CreatureHandler handler;
     private bool collided;
-    public string team;
+    public GameManager.Factions faction;
     GameObject parentGameObject;
 
     void Start () {
@@ -21,7 +21,7 @@ public class NetworkCollisionDetection : MonoBehaviour {
         if (other.gameObject.layer == 8) {
             parentGameObject = other.gameObject.GetComponent<BodyPartScript>().ParentGameObject;
             handler = parentGameObject.GetComponent<CreatureHandler>();
-            if (handler != null && team != parentGameObject.GetComponent<PlayerProperties>().GetTeam() && !collided) {
+            if (handler != null && faction != parentGameObject.GetComponent<PlayerProperties>().GetFaction() && !collided) {
                 //Debug.Log("Collsion Event");
                 EventManager.FireDoDamage(13, handler.netId);
                 collided = true;

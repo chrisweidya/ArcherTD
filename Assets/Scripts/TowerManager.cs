@@ -36,10 +36,10 @@ public class TowerManager : NetworkBehaviour {
         NetworkServer.Spawn(_hellbourneTowerGO);
     }
 
-    public GameObject GetTower(CreepManager.CreepType type) {
-        if (type == CreepManager.CreepType.Legion)
+    public GameObject GetTower(GameManager.Factions type) {
+        if (type == GameManager.Factions.Legion)
             return _legionTowerGO;
-        else if (type == CreepManager.CreepType.Hellbourne) {
+        else if (type == GameManager.Factions.Hellbourne) {
             return _hellbourneTowerGO;
         }
         return null;

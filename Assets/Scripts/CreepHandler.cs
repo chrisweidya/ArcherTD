@@ -18,7 +18,7 @@ public class CreepHandler : CreatureHandler {
     [SerializeField] private float _attackIntervalSecs;
     [SerializeField] private float _attackDamage;
     [SerializeField] private float _despawnTimeSecs;
-    [SerializeField] private CreepManager.CreepType _creepType;
+    [SerializeField] private GameManager.Factions _creepType;
     [SerializeField] private float _waypointDetectionRadius;
     [SerializeField] private float _acquisitionRadius;
     [SerializeField] private float _attackRadius;
@@ -50,13 +50,15 @@ public class CreepHandler : CreatureHandler {
     private void Start() {
         if (isServer) {
             _closesDistanceSquared = _acquisitionRadius * _acquisitionRadius;
-            if (_creepType == CreepManager.CreepType.Hellbourne) {
-                _enemyTower = TowerManager.Instance.GetTower(CreepManager.CreepType.Legion);
-                _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Legion);
+            if (_creepType == GameManager.Factions.Hellbourne) {
+                _enemyTower = TowerManager.Instance.GetTower(GameManager.Factions.Legion);
+                _enemyCreeps = CreepManager.Instance.GetCreepList(GameManager.Factions.Legion);
+                _enemyHero = PlayerManager.Instance.GetHero(GameManager.Factions.Legion);
             }
-            else if (_creepType == CreepManager.CreepType.Legion) {
-                _enemyTower = TowerManager.Instance.GetTower(CreepManager.CreepType.Hellbourne);
-                _enemyCreeps = CreepManager.Instance.GetCreepList(CreepManager.CreepType.Hellbourne);
+            else if (_creepType == GameManager.Factions.Legion) {
+                _enemyTower = TowerManager.Instance.GetTower(GameManager.Factions.Hellbourne);
+                _enemyCreeps = CreepManager.Instance.GetCreepList(GameManager.Factions.Hellbourne);
+                _enemyHero = PlayerManager.Instance.GetHero(GameManager.Factions.Hellbourne);
             }
             StartCoroutine(IdleCoroutine());
             //print("Started Coroutine from start");
@@ -194,8 +196,8 @@ public class CreepHandler : CreatureHandler {
         if (IsAliveAndInRange(gameObject, _enemyTower, _acquisitionRadius)) {
             _targetEnemy = _enemyTower;
         }
-        if (IsAliveAndInRange(gameObject, PlayerHandler.enemyWardenGO, _acquisitionRadius)) {
-            _targetEnemy = PlayerHandler.enemyWardenGO;
+        if (IsAliveAndInRange(gameObject, _enemyHero, _acquisitionRadius)) {
+            _targetEnemy = _enemyHero;
         }
         if (_targetEnemy != null)
             return true;
@@ -278,7 +280,7 @@ public class CreepHandler : CreatureHandler {
         CmdSetActive(false);
     }
 
-    public CreepManager.CreepType GetCreepType() {
+    public GameManager.Factions GetCreepType() {
         return _creepType;
     }
 

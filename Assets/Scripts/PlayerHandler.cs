@@ -5,16 +5,10 @@ using UnityEngine.Networking;
 
 
 public class PlayerHandler : CreatureHandler {
-
     public static NetworkInstanceId localWardenNetId;
-    public static GameObject localWardenGO;
-    public static NetworkInstanceId enemyWardenNetId;
-    public static GameObject enemyWardenGO;
-
-    [SerializeField]
-    private Vector3 _modelOffset = Vector3.zero;
-    [SerializeField]
-    private List<Renderer> _modelRenderers = new List<Renderer>();
+    
+    [SerializeField] private Vector3 _modelOffset = Vector3.zero;
+    [SerializeField] private List<Renderer> _modelRenderers = new List<Renderer>();
 
     public enum PlayerState { Stand, BowPulled, BowReleased, Death}
     private PlayerState _playerState = PlayerState.Stand;
@@ -43,16 +37,10 @@ public class PlayerHandler : CreatureHandler {
             foreach (Renderer r in _modelRenderers) {
                 r.enabled = false;
             }
-            GameManager.SetLocalPlayerTeam(GetComponent<PlayerProperties>().GetTeam());
             localWardenNetId = netId;
-            localWardenGO = gameObject;
-            print(localWardenNetId);
+            GameManager.SetLocalPlayerFaction(GetComponent<PlayerProperties>().GetFaction());
         }
-        else {
-            enemyWardenNetId = netId;
-            enemyWardenGO = gameObject;
-            print(enemyWardenNetId);
-        }
+        PlayerManager.Instance.SetHeroOnce(gameObject, GetComponent<PlayerProperties>().GetFaction(), netId);
         _radius = GetComponent<CapsuleCollider>().radius;
     }
 

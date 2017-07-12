@@ -5,8 +5,7 @@ using UnityEngine.Networking;
 
 public class PlayerProperties : NetworkBehaviour {
     [SyncVar]
-    [SerializeField]
-    private string team;
+    [SerializeField] private GameManager.Factions faction;
 
 	// Use this for initialization
 	void Start () {
@@ -18,11 +17,11 @@ public class PlayerProperties : NetworkBehaviour {
 		
 	}
 
-    public void SetTeam(string team) {
-        this.team = team;
+    public void SetFaction(GameManager.Factions faction) {
+        this.faction = faction;
     }
 
-    public string GetTeam() {
-        return team;
+    public GameManager.Factions GetFaction() {
+        return faction;
     }
 }

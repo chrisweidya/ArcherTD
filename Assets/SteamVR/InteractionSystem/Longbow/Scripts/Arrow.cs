@@ -189,7 +189,7 @@ namespace Valve.VR.InteractionSystem
            
             if (pProps != null) {
 
-                if (GetComponent<NetworkCollisionDetection>().team != pProps.GetTeam()) {
+                if (GetComponent<NetworkCollisionDetection>().faction != pProps.GetFaction()) {
                     Destroy(glintParticle);
 
                     inFlight = false;
