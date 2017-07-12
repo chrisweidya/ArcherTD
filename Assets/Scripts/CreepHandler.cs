@@ -10,9 +10,9 @@ public class CreepHandler : CreatureHandler {
     private NavMeshAgent _agent;
     private Vector3 _startPosition;
 
-    public enum CreepAnimationTrigger {RunTrigger, IdleTrigger, DeathTrigger, AttackTrigger};
-    private enum CreepAnimationState { Idle, Attack, Run, Death}
-    public enum CreepState {Attacking, Searching, Running, Idle};
+    public enum CreepAnimationTrigger { RunTrigger, IdleTrigger, DeathTrigger, AttackTrigger };
+    private enum CreepAnimationState { Idle, Attack, Run, Death }
+    public enum CreepState { Attacking, Searching, Running, Idle };
 
     [SerializeField] private float _defaultCreepSpeed;
     [SerializeField] private float _attackIntervalSecs;
@@ -32,6 +32,7 @@ public class CreepHandler : CreatureHandler {
     private int _waypointsReached = 0;
     private IList<GameObject> _enemyCreeps;
     private GameObject _enemyTower;
+    private GameObject _enemyHero;
     public GameObject _targetEnemy;
     public CreepState _currentState;
     private Coroutine _currentCoroutine;
@@ -61,6 +62,7 @@ public class CreepHandler : CreatureHandler {
             //print("Started Coroutine from start");
         }
     }
+
     private void OnEnable() {
         if (isServer) {
             StartCoroutine(IdleCoroutine());
@@ -81,7 +83,7 @@ public class CreepHandler : CreatureHandler {
             SetIsDead(true);
         }
     }
-    
+
     private void ChangeState(CreepState state) {
         if (_currentState == state) {
             Debug.LogWarning("Trying to change to same state, not ideal behaviour OMEGALUL");
@@ -121,7 +123,7 @@ public class CreepHandler : CreatureHandler {
     private IEnumerator SearchingCoroutine() {
         print("Entered Searching");
         ChangeState(CreepState.Searching);
-        if (Utility.InRange(transform.position, _targetEnemy.transform.position, 
+        if (Utility.InRange(transform.position, _targetEnemy.transform.position,
             _attackRadius, _targetEnemy.GetComponent<CreatureHandler>().GetRadius())) {
             _currentCoroutine = StartCoroutine(AttackingCoroutine());
             yield break;
@@ -132,7 +134,7 @@ public class CreepHandler : CreatureHandler {
                 _currentCoroutine = StartCoroutine(RunningCoroutine());
                 yield break;
             }
-            if (Utility.InRange(transform.position, _targetEnemy.transform.position, 
+            if (Utility.InRange(transform.position, _targetEnemy.transform.position,
                 _attackRadius, _targetEnemy.GetComponent<CreatureHandler>().GetRadius())) {
                 _currentCoroutine = StartCoroutine(AttackingCoroutine());
                 yield break;
@@ -150,8 +152,7 @@ public class CreepHandler : CreatureHandler {
         ChangeState(CreepState.Attacking);
         CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
         while (true) {
-            if (IsTargetDead() || !Utility.InRange(transform.position, _targetEnemy.transform.position, 
-                _attackRadius, _targetEnemy.GetComponent<CreatureHandler>().GetRadius())) {
+            if (!IsAliveAndInRange(gameObject, _targetEnemy, _attackRadius)) {
                 ResumeAgent();
                 if (AcquireTarget()) {
                     _currentCoroutine = StartCoroutine(SearchingCoroutine());
@@ -179,8 +180,8 @@ public class CreepHandler : CreatureHandler {
         //print("Acquiring target...");
         float closestDistanceSqr = _closesDistanceSquared;
         _targetEnemy = null;
-        for (int i=0; i<_enemyCreeps.Count; i++) {
-            if(!_enemyCreeps[i].GetComponent<CreatureHandler>().GetIsDead()) {
+        for (int i = 0; i < _enemyCreeps.Count; i++) {
+            if (!_enemyCreeps[i].GetComponent<CreatureHandler>().GetIsDead()) {
                 float currDistance = Vector3.SqrMagnitude(_enemyCreeps[i].transform.position - transform.position);
                 if (currDistance < closestDistanceSqr) {
                     _targetEnemy = _enemyCreeps[i];
@@ -190,13 +191,23 @@ public class CreepHandler : CreatureHandler {
         }
         if (_targetEnemy != null)
             return true;
-        if (Utility.InRange(transform.position, _enemyTower.transform.position, 
-            _acquisitionRadius, _enemyTower.GetComponent<CreatureHandler>().GetRadius())) {
+        if (IsAliveAndInRange(gameObject, _enemyTower, _acquisitionRadius)) {
             _targetEnemy = _enemyTower;
+        }
+        if (IsAliveAndInRange(gameObject, PlayerHandler.enemyWardenGO, _acquisitionRadius)) {
+            _targetEnemy = PlayerHandler.enemyWardenGO;
         }
         if (_targetEnemy != null)
             return true;
         return false;
+    }
+
+    private bool IsAliveAndInRange(GameObject currGO, GameObject targetGO, float range) {
+        if (targetGO.GetComponent<CreatureHandler>().GetIsDead() || !Utility.InRange(currGO.transform.position, targetGO.transform.position,
+            range, targetGO.GetComponent<CreatureHandler>().GetRadius())) {
+            return false;
+        }
+        return true;
     }
 
     private bool ReachAndChangeWaypoint() {

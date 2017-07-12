@@ -17,9 +17,10 @@ public class PlayerHandler : CreatureHandler {
     private List<Renderer> _modelRenderers = new List<Renderer>();
 
     public enum PlayerState { Stand, BowPulled, BowReleased, Death}
-
     private PlayerState _playerState = PlayerState.Stand;
 
+    public string debugServer;
+    public string debugIsLocal;
 
     private void OnEnable() {
         EventManager.ChangePlayerState += ChangeState;
@@ -67,22 +68,7 @@ public class PlayerHandler : CreatureHandler {
             CmdDoDamageById(id, dmg);
         }
     }
-
-    //[ClientRpc]
-    //private void RpcChangePlayerState(PlayerState state) {
-    //    _playerState = state;
-    //    RpcSetAnimationTrigger(state.ToString());
-    //}
- 
-    //public void PlayerSetIsDead(bool isDead) {
-    //    this.isDead = isDead;
-    //    base.SetIsDead(isDead);
-    //}
-
-    //public bool PlayerGetIsDead() {
-    //    return base.GetIsDead();
-    //}
-
+    
     public override void OnIsDead(bool isDead) {
         if (GetIsDead()) {
             transform.parent = null;
