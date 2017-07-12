@@ -52,6 +52,7 @@ public class PlayerHandler : CreatureHandler {
             enemyWardenGO = gameObject;
             print(enemyWardenNetId);
         }
+        _radius = GetComponent<CapsuleCollider>().radius;
     }
 
     private void ChangeState(PlayerState state, NetworkInstanceId netId) {
