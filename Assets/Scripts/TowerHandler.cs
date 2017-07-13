@@ -47,9 +47,11 @@ public class TowerHandler : CreatureHandler {
             
             if (team == "Legion") {
                 enemyCreepList = CreepManager.Instance.GetCreepList(GameManager.Factions.Hellbourne);
+                enemyPlayer = PlayerManager.Instance.GetHero(GameManager.Factions.Hellbourne);
             }
             else {
                 enemyCreepList = CreepManager.Instance.GetCreepList(GameManager.Factions.Legion);
+                enemyPlayer = PlayerManager.Instance.GetHero(GameManager.Factions.Legion);
             }
             StartCoroutine(ScanForTargets(towerRange, scanInterval));
         }
