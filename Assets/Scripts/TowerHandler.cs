@@ -91,13 +91,13 @@ public class TowerHandler : CreatureHandler {
                         yield break;
                     }
                 }
-                //if (CheckRange(enemyPlayer.transform.position, range)) {
-                //    currentTarget = enemyPlayer;
-                //    currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
-                //    StartCoroutine(AttackTarget());
-                //    Debug.Log("Targeting Enemy Player");
-                //    yield break;
-                //}
+                if (CheckRange(enemyPlayer.transform.position, range)) {
+                    currentTarget = enemyPlayer;
+                    currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
+                    StartCoroutine(AttackTarget());
+                    Debug.Log("Targeting Enemy Player");
+                    yield break;
+                }
             }
             yield return new WaitForSeconds(seconds);
         }
