@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class DisableOnWin : MonoBehaviour {
+public class DisableOnDeath : MonoBehaviour {
 
     [SerializeField]
     private List<GameObject> _objects = new List<GameObject>();
 
     private void OnEnable() {
-        EventManager.GameEndAction += DisableObjects;
+        EventManager.PlayerDeathAction += DisableObjects;
     }
 
     private void OnDisable() {
-        EventManager.GameEndAction -= DisableObjects;
+        EventManager.PlayerDeathAction -= DisableObjects;
     }
 
-    private void DisableObjects(NetworkInstanceId id) {
+    private void DisableObjects(NetworkInstanceId id, bool death) {
         if(PlayerHandler.localWardenNetId == id) {
             print("reached");
             for(int i = 0; i < _objects.Count; i++) {
-                print("disabled");
-                _objects[i].SetActive(false);
+                _objects[i].SetActive(!death);
             }
         }
     }
