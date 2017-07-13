@@ -18,6 +18,8 @@ public class TowerHandler : CreatureHandler {
     //list of creeps to check for range within tower
     private List<GameObject> CreepList;
 
+    private GameObject enemyPlayer;
+
     //getting a list of creeps from creep manager depending on faction
     public bool isLegion;
     public string team;
@@ -84,9 +86,16 @@ public class TowerHandler : CreatureHandler {
                         currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
                         StartCoroutine(AttackTarget());
                         Debug.Log("Current Target " + currentTarget);
-                        break;
+                        yield break;
                     }
                 }
+                //if (CheckRange(enemyPlayer.transform.position, range)) {
+                //    currentTarget = enemyPlayer;
+                //    currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
+                //    StartCoroutine(AttackTarget());
+                //    Debug.Log("Targeting Enemy Player");
+                //    yield break;
+                //}
             }
             yield return new WaitForSeconds(seconds);
         }
