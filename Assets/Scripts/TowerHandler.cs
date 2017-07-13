@@ -7,7 +7,7 @@ public class TowerHandler : CreatureHandler {
 
 
     //tower range
-    private float towerRange = 13;
+    private float towerRange = 50;
     private float acquisitionRange = 4;
 
     private float acquisitionInterval = 1;
@@ -32,7 +32,7 @@ public class TowerHandler : CreatureHandler {
 
     //dmg
     [SerializeField]
-    private float dmg = 20;
+    private float dmg = 1;
 
     //towerhandler script
     private TowerHandler towerHandlerScript;
@@ -79,7 +79,6 @@ public class TowerHandler : CreatureHandler {
     //scan for targets 
     private IEnumerator ScanForTargets(float range, float seconds) {
         //find a suitable target in the list of creeps that is within tower range every second
-        //CmdSetAnimationTrigger(TowerAnimationTrigger.IdleTrigger.ToString());
         while (true) {
             if (currentTargetScript == null || currentTargetScript.GetIsDead()) {
                 foreach (GameObject go in enemyCreepList) {
@@ -117,6 +116,7 @@ public class TowerHandler : CreatureHandler {
                 currentTarget = null;
                 currentTargetScript = null;
                 StartCoroutine(ScanForTargets(towerRange, scanInterval));
+                CmdSetAnimationTrigger(TowerAnimationTrigger.IdleTrigger.ToString());
                 Debug.Log("finding new target");
                 break;
             }
