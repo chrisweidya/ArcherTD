@@ -22,20 +22,29 @@ public class CreatureHandler : NetworkBehaviour {
     }
 
     [Command]
+    protected void CmdAnimationPlayWithLayer(string name, int layer) {
+        print("animation paly");
+        RpcAnimationPlayWithLayer(name, layer);
+    }
+
+    [ClientRpc]
+    protected void RpcAnimationPlayWithLayer(string name, int layer) {
+        _animator.Play(name, layer);
+    }
+
+    [Command]
     protected void CmdAnimationPlay(string name) {
+        RpcAnimationPlay(name);
+    }
+
+    [ClientRpc]
+    protected void RpcAnimationPlay(string name) {
         _animator.Play(name);
     }
 
     [Command]
     protected void CmdSetAnimationTrigger(string triggerString) {
         RpcSetAnimationTrigger(triggerString);
-    }
-
-    [Command]
-    protected void CmdSetProtectedAnimationTrigger(string protectedState, string trigger) {
-        if (!_animator.GetCurrentAnimatorStateInfo(0).IsName(protectedState)) {
-            CmdSetAnimationTrigger(trigger);
-        }
     }
 
     [ClientRpc]

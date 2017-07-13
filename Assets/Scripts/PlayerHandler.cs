@@ -9,12 +9,15 @@ public class PlayerHandler : CreatureHandler {
     
     [SerializeField] private Vector3 _modelOffset = Vector3.zero;
     [SerializeField] private List<Renderer> _modelRenderers = new List<Renderer>();
+    [SerializeField] private float _respawnTimeSecs;
 
-    public enum PlayerState { Stand, BowPulled, BowReleased, Death}
+    public enum PlayerState { Stand, BowPulled, BowReleased, Death};
+    private enum PlayerAnimationTrigger { Stand, BowPulled, BowReleased, Death};
+    private enum PlayerAnimationState { Stand, Death};
+    private enum PlayerAnimationLayer { BaseLayer, AttackLayer};
     private PlayerState _playerState = PlayerState.Stand;
 
-    public string debugServer;
-    public string debugIsLocal;
+    public GameManager.Factions faction;
 
     private void OnEnable() {
         EventManager.ChangePlayerState += ChangeState;
@@ -31,24 +34,30 @@ public class PlayerHandler : CreatureHandler {
     }
 
     private void Start() {
-        if (isLocalPlayer) {
-            GameManager.Instance.AssignCamera(transform.gameObject);
-            transform.localPosition = _modelOffset;
-            foreach (Renderer r in _modelRenderers) {
-                r.enabled = false;
+        if (GameManager.Instance.GetCurrentSceneName() == GameManager.Scenes.MatchMaking.ToString()) {
+            faction = GetComponent<PlayerProperties>().GetFaction();
+            if (isLocalPlayer) {
+                Spawn();
+                foreach (Renderer r in _modelRenderers) {
+                    r.enabled = false;
+                }
+                localWardenNetId = netId;
+                GameManager.SetLocalPlayerFaction(faction);
             }
-            localWardenNetId = netId;
-            GameManager.SetLocalPlayerFaction(GetComponent<PlayerProperties>().GetFaction());
+            PlayerManager.Instance.SetHeroOnce(gameObject, faction, netId);
+            _radius = GetComponent<CapsuleCollider>().radius;
         }
-        PlayerManager.Instance.SetHeroOnce(gameObject, GetComponent<PlayerProperties>().GetFaction(), netId);
-        _radius = GetComponent<CapsuleCollider>().radius;
+    }
+
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.P) && isLocalPlayer) {
+            DoDamage(99999, netId);
+        }
     }
 
     private void ChangeState(PlayerState state, NetworkInstanceId netId) {
         if(isLocalPlayer && this.netId == netId)
-            //if (this.netId == netId && _playerState != state) {
             CmdSetAnimationTrigger(state.ToString());
-        //}
     }
 
     private void DoDamage(float dmg, NetworkInstanceId id) {
@@ -57,11 +66,40 @@ public class PlayerHandler : CreatureHandler {
         }
     }
     
+    //client local player
+    private void Spawn() {
+        GameManager.Instance.AssignCamera(transform.gameObject, PlayerManager.Instance.GetSpawnPosition(faction));
+        transform.localPosition = _modelOffset;
+        EventManager.FirePlayerDeath(netId, false);
+        CmdAnimationPlayWithLayer(PlayerAnimationState.Stand.ToString(), (int)PlayerAnimationLayer.BaseLayer);
+        CmdAnimationPlayWithLayer(PlayerAnimationState.Stand.ToString(), (int)PlayerAnimationLayer.AttackLayer);
+    }
+
+    //Server
+    private IEnumerator Respawn(float secs) {
+        yield return new WaitForSeconds(secs);
+        _healthNetwork.ResetHealth();
+        SetIsDead(false);
+    }
+
+    //Server
+    public override void SetIsDead(bool isDead) {
+        base.SetIsDead(isDead);
+        if (isDead) {
+            CmdSetAnimationTrigger(PlayerAnimationTrigger.Death.ToString());
+            StartCoroutine(Respawn(5));
+        }
+    }
+
+    //Client local player
     public override void OnIsDead(bool isDead) {
-        if (GetIsDead()) {
-            transform.parent = null;
-            ChangeState(PlayerState.Death, this.netId);            
-            EventManager.FireGameEnd(netId);
+        if (isLocalPlayer) {
+            if (GetIsDead()) {
+                transform.parent = null;
+                EventManager.FirePlayerDeath(netId, true);
+            }
+            else
+                Spawn();
         }
     }
 }

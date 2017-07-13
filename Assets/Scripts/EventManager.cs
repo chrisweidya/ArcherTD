@@ -32,7 +32,16 @@ public class EventManager : Singleton <EventManager> {
             DoDamageAction(dmg, netId);
         }
     }
-    
+
+    public delegate void PlayerDeath(NetworkInstanceId deadNetId, bool isDead);
+    public static event PlayerDeath PlayerDeathAction;
+    public static void FirePlayerDeath(NetworkInstanceId deadNetId, bool isDead) {
+        if (PlayerDeathAction != null && !GameManager.GameWon) {
+            PlayerDeathAction(deadNetId, isDead);
+            //GameManager.GameWon = true;   
+        }
+    }
+
     public delegate void GameEnd(NetworkInstanceId winnerId);
     public static event GameEnd GameEndAction;
     public static void FireGameEnd(NetworkInstanceId winnerId) {

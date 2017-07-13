@@ -7,10 +7,12 @@ public class PlayerManager : NetworkBehaviour {
 
     public static PlayerManager Instance;
 
-    [SerializeField] private GameObject _legionHeroGO;
-    [SerializeField] private NetworkInstanceId _legionHeroNetId;
-    [SerializeField] private GameObject _hellbourneHeroGO;
-    [SerializeField] private NetworkInstanceId _hellbourneHeroNetId;
+    private GameObject _legionHeroGO;
+    private NetworkInstanceId _legionHeroNetId;
+    [SerializeField] private Transform _legionSpawnPoint;
+    private GameObject _hellbourneHeroGO;
+    private NetworkInstanceId _hellbourneHeroNetId;
+    [SerializeField] private Transform _hellbourneSpawnPoint;
 
     private void Awake() {
         if (Instance != null) {
@@ -49,5 +51,15 @@ public class PlayerManager : NetworkBehaviour {
             return _hellbourneHeroGO;
         }
         return null;
+    }
+
+    public Vector3 GetSpawnPosition(GameManager.Factions type) {
+        if (type == GameManager.Factions.Legion) {
+            return _legionSpawnPoint.position;
+        }
+        else if(type == GameManager.Factions.Hellbourne) {
+            return _hellbourneSpawnPoint.position;
+        }
+        return Vector3.zero;
     }
 }

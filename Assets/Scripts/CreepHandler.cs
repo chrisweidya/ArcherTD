@@ -251,6 +251,12 @@ public class CreepHandler : CreatureHandler {
             CmdDoDamage(_targetEnemy, _attackDamage);
     }
 
+    private IEnumerator Despawn(float secs) {
+        yield return new WaitForSeconds(secs);
+        CreepManager.Instance.AddInactiveCreepsToStackAfterDelay(gameObject, _creepType);
+        CmdSetActive(false);
+    }
+
     public GameObject Ressurect() {
         _healthNetwork.ResetHealth();
         CmdSetActive(true);
@@ -274,11 +280,6 @@ public class CreepHandler : CreatureHandler {
         _agent.speed = val;
     }
 
-    private IEnumerator Despawn(float secs) {
-        yield return new WaitForSeconds(secs);
-        CreepManager.Instance.AddInactiveCreepsToStackAfterDelay(gameObject, _creepType);
-        CmdSetActive(false);
-    }
 
     public GameManager.Factions GetCreepType() {
         return _creepType;

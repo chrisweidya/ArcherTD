@@ -6,10 +6,7 @@ public class TeleportPointManager : MonoBehaviour {
     private string factionName;
     public GameObject legionTelePoints;
     public GameObject hellborneTelePoints;
-	// Use this for initialization
-	void Start () {
-       
-    }
+
     public void TeleporterSetUp() {
 
         Debug.Log("teleport" + GameManager.GetLocalPlayerFaction());
@@ -20,9 +17,5 @@ public class TeleportPointManager : MonoBehaviour {
         if (GameManager.GetLocalPlayerFaction() == GameManager.Factions.Legion) {
             legionTelePoints.SetActive(true);
         }
-    }
-	// Update is called once per frame
-	void Update () {
-        
     }
 }
