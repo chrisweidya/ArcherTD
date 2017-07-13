@@ -22,8 +22,6 @@ public class CreepManager : NetworkBehaviour {
     [SerializeField] private float _creepSpawnSecs;
     [SerializeField] private float _creepIntervalSecs = 0.5f;
 
-    public enum CreepType { Legion, Hellbourne};
-
     private void Awake() {
         if(Instance != null) {
             Debug.LogWarning("Attempting to instantiate another CreepManager instance.");
@@ -42,7 +40,7 @@ public class CreepManager : NetworkBehaviour {
 
 	void Update () {
         if (isServer && Input.GetKeyDown(KeyCode.K)) {
-            SpawnCreep(CreepType.Legion);
+            SpawnCreep(GameManager.Factions.Legion);
         }
     }
 
@@ -50,14 +48,14 @@ public class CreepManager : NetworkBehaviour {
         while (true) {
             yield return new WaitForSeconds(betweenBatchSecs);
             for (int i = 0; i < numCreeps; i++) {
-                SpawnCreep(CreepType.Legion);
-                //SpawnCreep(CreepType.Hellbourne);
+                SpawnCreep(GameManager.Factions.Legion);
+                //SpawnCreep(GameManager.Factions.Hellbourne);
                 yield return new WaitForSeconds(intervalSecs);
             }
         }
     }
     
-    private void SpawnCreep(CreepType type) {
+    private void SpawnCreep(GameManager.Factions type) {
         if(!isServer) {
             Debug.LogError("Only Server can spawn creeps.");
             return;
@@ -65,20 +63,20 @@ public class CreepManager : NetworkBehaviour {
         GameObject creep = GetCreepGO(type);
     }
 
-    private GameObject GetCreepGO(CreepType type) {
+    private GameObject GetCreepGO(GameManager.Factions type) {
         Stack<GameObject> creepDeadStack = _legionCreepsDead;
         List<GameObject> creepList = _legionCreeps;
         GameObject creepPrefab = _legionCreepPrefab;
         Transform parentTransform = _legionCreepsContainer;
         GameObject creep = null;
 
-        if(type == CreepType.Legion) {
+        if(type == GameManager.Factions.Legion) {
             creepDeadStack = _legionCreepsDead;
             creepPrefab = _legionCreepPrefab;
             creepList = _legionCreeps;
             parentTransform = _legionCreepsContainer;
         }
-        else if(type == CreepType.Hellbourne) {
+        else if(type == GameManager.Factions.Hellbourne) {
             creepDeadStack = _hellbourneCreepsDead;
             creepPrefab = _hellbourneCreepPrefab;
             creepList = _hellbourneCreeps;
@@ -94,7 +92,7 @@ public class CreepManager : NetworkBehaviour {
         return creep;
     }
 
-    private GameObject CreateCreep(List<GameObject> creepList, GameObject creepPrefab, Transform parentTransform, CreepType type) {
+    private GameObject CreateCreep(List<GameObject> creepList, GameObject creepPrefab, Transform parentTransform, GameManager.Factions type) {
         GameObject creep = Instantiate(creepPrefab, parentTransform);
         creepList.Add(creep);
         NetworkServer.Spawn(creep);
@@ -107,17 +105,17 @@ public class CreepManager : NetworkBehaviour {
         creepStack.Push(creep);
     }
 
-    public void AddInactiveCreepsToStackAfterDelay(GameObject creep, CreepType creepType) {
-        if(creepType == CreepType.Legion)
+    public void AddInactiveCreepsToStackAfterDelay(GameObject creep, GameManager.Factions creepType) {
+        if(creepType == GameManager.Factions.Legion)
             StartCoroutine(AddInactiveCreepAfterDelay(creep, _legionCreepsDead, 2f));
-        else if(creepType == CreepType.Hellbourne)
+        else if(creepType == GameManager.Factions.Hellbourne)
             StartCoroutine(AddInactiveCreepAfterDelay(creep, _hellbourneCreepsDead, 2f));
     }
     
-    public IList<GameObject> GetCreepList(CreepType type) {
-        if (type == CreepType.Legion)
+    public IList<GameObject> GetCreepList(GameManager.Factions type) {
+        if (type == GameManager.Factions.Legion)
             return _legionCreeps.AsReadOnly();
-        else if (type == CreepType.Hellbourne)
+        else if (type == GameManager.Factions.Hellbourne)
             return _hellbourneCreeps.AsReadOnly();
         return null;
     }

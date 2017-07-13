@@ -9,7 +9,7 @@ namespace Prototype.NetworkLobby {
         public override void OnLobbyServerSceneLoadedForPlayer(NetworkManager manager, GameObject lobbyPlayer, GameObject gamePlayer) {
             LobbyPlayer lobby = lobbyPlayer.GetComponent<LobbyPlayer>();
             PlayerProperties playerProperties = gamePlayer.GetComponent<PlayerProperties>();
-            playerProperties.SetTeam(lobby.playerFaction);
+            playerProperties.SetFaction(lobby.faction);
         }
     }
 }
