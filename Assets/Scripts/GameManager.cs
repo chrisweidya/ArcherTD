@@ -31,11 +31,16 @@ public class GameManager : Singleton<GameManager> {
     }
 
     private void OnSceneLoad(Scene scene, LoadSceneMode mode) {
-        print("Scene Loaded.");
-        _cameraRigGO = GameObject.Find("Player");
-        if (_cameraRigGO == null)
-            print("Vive camera not found!");
         _currentScene = SceneManager.GetActiveScene().name;
+        print("Scene Loaded.");
+        if (_currentScene == Scenes.MatchMaking.ToString()) {
+            _cameraRigGO = GameObject.Find("Player");
+            GameObject steamVRObj = _cameraRigGO.transform.Find("SteamVRObjects").gameObject;
+            if (steamVRObj.activeSelf == false) {
+                print("Vive camera not found!");
+                _cameraRigGO = GameObject.Find("PlayerDummy");
+            }
+        }
     }
 
     private void SetCameraPos(Vector3 pos) {
@@ -48,7 +53,7 @@ public class GameManager : Singleton<GameManager> {
         player.transform.parent = _cameraRigGO.transform.Find("SteamVRObjects/VRCamera");
         if(player.transform.parent == null) {
             print("VR Camera not found, Vive not connected? Fallback.");
-            player.transform.parent = _cameraRigGO.transform.Find("NoSteamVRFallbackObjects/FallbackObjects");
+            player.transform.parent = _cameraRigGO.transform;
         }
         player.transform.position = player.transform.parent.position;
         player.transform.rotation = player.transform.parent.rotation;
