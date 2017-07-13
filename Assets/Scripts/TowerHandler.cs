@@ -7,17 +7,18 @@ public class TowerHandler : CreatureHandler {
 
 
     //tower range
-    private float towerRange = 9;
+    private float towerRange = 13;
     private float acquisitionRange = 4;
 
     private float acquisitionInterval = 1;
     private float scanInterval = 0.5f;
     //tower's current target
+    [SerializeField]
     private GameObject currentTarget;
     private CreatureHandler currentTargetScript;
     //list of creeps to check for range within tower
     private List<GameObject> CreepList;
-
+    [SerializeField]
     private GameObject enemyPlayer;
 
     //getting a list of creeps from creep manager depending on faction
@@ -37,8 +38,8 @@ public class TowerHandler : CreatureHandler {
     private TowerHandler towerHandlerScript;
 
     //enum states
-    public enum TowerAnimationTrigger { IdleTrigger, AttackTrigger, DeathTrigger };
-    private enum TowerAnimationState { Idle, Attack,Deat};
+    public enum TowerAnimationTrigger { IdleTrigger, AttackTrigger, DeathTrigger};
+    private enum TowerAnimationState { Idle, Attack,Death};
     public enum TowerState { Idling, Attacking,Dying};
 
     void Start() {
@@ -78,7 +79,7 @@ public class TowerHandler : CreatureHandler {
     //scan for targets 
     private IEnumerator ScanForTargets(float range, float seconds) {
         //find a suitable target in the list of creeps that is within tower range every second
-        CmdSetAnimationTrigger(TowerAnimationTrigger.IdleTrigger.ToString());
+        //CmdSetAnimationTrigger(TowerAnimationTrigger.IdleTrigger.ToString());
         while (true) {
             if (currentTargetScript == null || currentTargetScript.GetIsDead()) {
                 foreach (GameObject go in enemyCreepList) {
@@ -91,7 +92,7 @@ public class TowerHandler : CreatureHandler {
                         yield break;
                     }
                 }
-                if (CheckRange(enemyPlayer.transform.position, range)) {
+                if (!enemyPlayer.GetComponent<CreatureHandler>().GetIsDead() && CheckRange(enemyPlayer.transform.position, range)) {
                     currentTarget = enemyPlayer;
                     currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
                     StartCoroutine(AttackTarget());
