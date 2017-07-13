@@ -87,7 +87,7 @@ public class PlayerHandler : CreatureHandler {
         base.SetIsDead(isDead);
         if (isDead) {
             CmdSetAnimationTrigger(PlayerAnimationTrigger.Death.ToString());
-            StartCoroutine(Respawn(5));
+            StartCoroutine(Respawn(_respawnTimeSecs));
         }
     }
 
