@@ -154,7 +154,7 @@ public class CreepHandler : CreatureHandler {
         ChangeState(CreepState.Attacking);
         CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());
         while (true) {
-            if (!IsAliveAndInRange(gameObject, _targetEnemy, _attackRadius)) {
+            if (!Utility.IsAliveAndInRange(gameObject, _targetEnemy, _attackRadius)) {
                 ResumeAgent();
                 if (AcquireTarget()) {
                     _currentCoroutine = StartCoroutine(SearchingCoroutine());
@@ -193,10 +193,10 @@ public class CreepHandler : CreatureHandler {
         }
         if (_targetEnemy != null)
             return true;
-        if (IsAliveAndInRange(gameObject, _enemyTower, _acquisitionRadius)) {
+        if (Utility.IsAliveAndInRange(gameObject, _enemyTower, _acquisitionRadius)) {
             _targetEnemy = _enemyTower;
         }
-        if (IsAliveAndInRange(gameObject, _enemyHero, _acquisitionRadius)) {
+        if (Utility.IsAliveAndInRange(gameObject, _enemyHero, _acquisitionRadius)) {
             _targetEnemy = _enemyHero;
         }
         if (_targetEnemy != null)
@@ -204,13 +204,7 @@ public class CreepHandler : CreatureHandler {
         return false;
     }
 
-    private bool IsAliveAndInRange(GameObject currGO, GameObject targetGO, float range) {
-        if (targetGO.GetComponent<CreatureHandler>().GetIsDead() || !Utility.InRange(currGO.transform.position, targetGO.transform.position,
-            range, targetGO.GetComponent<CreatureHandler>().GetRadius())) {
-            return false;
-        }
-        return true;
-    }
+
 
     private bool ReachAndChangeWaypoint() {
         if(Utility.InRange(transform.position, _targetWaypoint, _waypointDetectionRadius)) {

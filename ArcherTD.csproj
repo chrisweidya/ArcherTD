@@ -98,7 +98,6 @@
     <Compile Include="Assets\Scripts\CreepMovementNetworkTest.cs" />
     <Compile Include="Assets\Scripts\CreepStats.cs" />
     <Compile Include="Assets\Scripts\DisableOnDeath.cs" />
-    <Compile Include="Assets\Scripts\Enums.cs" />
     <Compile Include="Assets\Scripts\EventManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\HealthBarUI.cs" />

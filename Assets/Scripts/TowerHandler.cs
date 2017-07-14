@@ -7,19 +7,17 @@ public class TowerHandler : CreatureHandler {
 
 
     //tower range
-    private float towerRange = 50;
+    [SerializeField] private float towerRange;
     private float acquisitionRange = 4;
 
     private float acquisitionInterval = 1;
     private float scanInterval = 0.5f;
     //tower's current target
-    [SerializeField]
-    private GameObject currentTarget;
+    [SerializeField] private GameObject currentTarget;
     private CreatureHandler currentTargetScript;
     //list of creeps to check for range within tower
     private List<GameObject> CreepList;
-    [SerializeField]
-    private GameObject enemyPlayer;
+    [SerializeField] private GameObject enemyPlayer;
 
     //getting a list of creeps from creep manager depending on faction
     public bool isLegion;
@@ -42,10 +40,17 @@ public class TowerHandler : CreatureHandler {
     private enum TowerAnimationState { Idle, Attack,Death};
     public enum TowerState { Idling, Attacking,Dying};
 
-    void Start() {
-     
-        if (isServer) {
-            
+    void Start() {     
+        if (isServer) { 
+            StartCoroutine(Initialize());
+        }
+        _radius = GetComponent<CapsuleCollider>().radius;
+        print(_radius + " fads");
+        towerHandlerScript = this;
+    }
+
+    private IEnumerator Initialize() {
+        while (true) {
             if (team == "Legion") {
                 enemyCreepList = CreepManager.Instance.GetCreepList(GameManager.Factions.Hellbourne);
                 enemyPlayer = PlayerManager.Instance.GetHero(GameManager.Factions.Hellbourne);
@@ -54,36 +59,24 @@ public class TowerHandler : CreatureHandler {
                 enemyCreepList = CreepManager.Instance.GetCreepList(GameManager.Factions.Legion);
                 enemyPlayer = PlayerManager.Instance.GetHero(GameManager.Factions.Legion);
             }
-            StartCoroutine(ScanForTargets(towerRange, scanInterval));
+            if (enemyCreepList != null && enemyPlayer != null)
+                break;
+            yield return new WaitForSeconds(0.2f);
         }
-        _radius = GetComponent<CapsuleCollider>().radius;
-        print(_radius + " fads");
-        towerHandlerScript = this;
-    }
-
-    void Update() {
-
-    }
-
-
-
-    //check range of target and returns a bool
-    private bool CheckRange(Vector3 targetPos, float range) {
-
-        if (Vector3.Distance(transform.position, targetPos) < range) {
-            return true;
-        }
-        return false;
+        StartCoroutine(ScanForTargets(towerRange, scanInterval));
+        yield return null;
     }
 
     //scan for targets 
     private IEnumerator ScanForTargets(float range, float seconds) {
         //find a suitable target in the list of creeps that is within tower range every second
         while (true) {
+            print("hi1");
             if (currentTargetScript == null || currentTargetScript.GetIsDead()) {
+                print("hiq");
                 foreach (GameObject go in enemyCreepList) {
-                    
-                    if (!go.GetComponent<CreepHandler>().GetIsDead() && CheckRange(go.transform.position, range)) {
+                    print("hi3");
+                    if (Utility.IsAliveAndInRange(gameObject, go, range)) {
                         currentTarget = go;
                         currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
                         StartCoroutine(AttackTarget());
@@ -91,7 +84,8 @@ public class TowerHandler : CreatureHandler {
                         yield break;
                     }
                 }
-                if (!enemyPlayer.GetComponent<CreatureHandler>().GetIsDead() && CheckRange(enemyPlayer.transform.position, range)) {
+                print("hi4");
+                if (Utility.IsAliveAndInRange(gameObject, enemyPlayer, range)) {
                     currentTarget = enemyPlayer;
                     currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
                     StartCoroutine(AttackTarget());
@@ -107,7 +101,7 @@ public class TowerHandler : CreatureHandler {
         CmdSetAnimationTrigger(TowerAnimationTrigger.AttackTrigger.ToString());
         while (true) {
             Debug.Log(currentTargetScript);
-            if (!currentTargetScript.GetIsDead() && Utility.InRange(transform.position, currentTarget.transform.position, towerRange)) {
+            if (Utility.IsAliveAndInRange(gameObject, currentTarget, towerRange)) {
                 //attack function
                 Debug.Log("Attacking current target");
                 RpcTowerAttack(currentTarget.transform.position, currentTarget);

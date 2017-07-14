@@ -17,9 +17,11 @@ public class PlayerManager : NetworkBehaviour {
     private void Awake() {
         if (Instance != null) {
             Debug.LogWarning("Attempting to instantiate another PlayerManager instance.");
+            Destroy(this);
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start() {
@@ -27,6 +29,7 @@ public class PlayerManager : NetworkBehaviour {
 
     public void SetHeroOnce(GameObject obj, GameManager.Factions faction, NetworkInstanceId id) {
         if (faction == GameManager.Factions.Legion) {
+            print("set hero le");
             if (_legionHeroGO != null) {
                 Debug.LogError("Attempting to set hero more than once.");
                 return;
@@ -35,6 +38,7 @@ public class PlayerManager : NetworkBehaviour {
             _legionHeroGO = obj;
         }
         else if (faction == GameManager.Factions.Hellbourne) {
+            print("set hero he");
             if (_hellbourneHeroGO != null) {
                 Debug.LogError("Attempting to set hero more than once.");
                 return;

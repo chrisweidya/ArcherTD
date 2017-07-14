@@ -39,4 +39,12 @@ public static class Utility {
         }
         yield return null;
     }
+
+    public static bool IsAliveAndInRange(GameObject currGO, GameObject targetGO, float range) {
+        if (targetGO.GetComponent<CreatureHandler>().GetIsDead() || !InRange(currGO.transform.position, targetGO.transform.position,
+            range, targetGO.GetComponent<CreatureHandler>().GetRadius())) {
+            return false;
+        }
+        return true;
+    }
 }
