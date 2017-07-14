@@ -24,7 +24,7 @@ public class CreepHandler : CreatureHandler {
     [SerializeField] private float _attackRadius;
     [SerializeField] private List<Transform> Waypoints;
 
-    private float _updateBehaviourInterval = 0.5f;
+    private float _updateBehaviourInterval = 0.25f;
     private float _hitboxRadius; //NavMeshAgent radius
     private static float _closesDistanceSquared;
 

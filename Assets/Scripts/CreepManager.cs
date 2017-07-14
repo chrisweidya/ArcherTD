@@ -48,7 +48,7 @@ public class CreepManager : NetworkBehaviour {
         while (true) {
             yield return new WaitForSeconds(betweenBatchSecs);
             for (int i = 0; i < numCreeps; i++) {
-                //SpawnCreep(GameManager.Factions.Legion);
+                SpawnCreep(GameManager.Factions.Legion);
                 SpawnCreep(GameManager.Factions.Hellbourne);
                 yield return new WaitForSeconds(intervalSecs);
             }
