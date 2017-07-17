@@ -11,7 +11,7 @@ public class NetworkCollisionDetection : MonoBehaviour {
     private bool collided;
     public GameManager.Factions faction;
     GameObject parentGameObject;
-
+    private CreatureHandler creatureHandler;
     void Start () {
         //playerProps = GetComponent<PlayerProperties>();
         collided = false;
@@ -26,27 +26,25 @@ public class NetworkCollisionDetection : MonoBehaviour {
             if (handler != null && faction != parentGameObject.GetComponent<PlayerProperties>().GetFaction() && !collided) {
                 //Debug.Log("Collsion Event");
                 EventManager.FireDoDamage(damage, handler.netId);
+                creatureHandler = parentGameObject.GetComponent<CreatureHandler>();
                 collided = true;
+                StartCoroutine(DestroyArrowOnIsDead());
             }
         }
     }
-    /*
-    private void OnCollisionEnter(Collision collision)
-    {
-        //CmdReduceHealth(10);  
-        //if (collision.gameObject.tag == "Avatar")
-        //{
-        //    Debug.Log(playerProps.GetTeam()+gameObject.name + " got collided by " + collision.gameObject.name);
-        //    EventManager.FireTakeDamage(13,playerProps.GetTeam());
-        //}
-        Debug.Log("Collision with " + collision.gameObject.name);
-        health = collision.gameObject.GetComponent<HealthNetwork>();
-        if (health != null && !collided)
-        {
-            Debug.Log("Collsion Event");
-            EventManager.FireTakeDamage(13, health.netId);
-            collided = true;
+
+    private IEnumerator DestroyArrowOnIsDead() {
+
+        while (true) {
+
+            if (creatureHandler.GetIsDead()) {
+                yield return new WaitForSeconds(1.5f);
+                Destroy(gameObject);
+                yield break;
+            }
+            yield return new WaitForSeconds(1.5f);
         }
+
+
     }
-    */
 }

@@ -191,7 +191,7 @@ namespace Valve.VR.InteractionSystem
 
                 if (GetComponent<NetworkCollisionDetection>().faction != pProps.GetFaction()) {
                     Destroy(glintParticle);
-
+                    Debug.Log("Stick into target " + other.gameObject.name);
                     inFlight = false;
 
                     shaftRB.velocity = Vector3.zero;
