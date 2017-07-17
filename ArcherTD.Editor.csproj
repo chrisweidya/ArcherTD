@@ -137,6 +137,7 @@
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Snow.shader" />
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Water.shader" />
     <None Include="Assets\Fonts\OpenSans\License!.txt" />
+    <None Include="Assets\Haunted_Swamp\Shaders\AlphaSelfIllum_NoFog.shader" />
     <None Include="Assets\Lobby\Documentation.txt" />
     <None Include="Assets\Lobby\Instruction.txt" />
     <None Include="Assets\SteamVR\InteractionSystem\Core\Shaders\SeeThru.shader" />
