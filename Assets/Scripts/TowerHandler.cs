@@ -30,7 +30,7 @@ public class TowerHandler : CreatureHandler {
 
     //dmg
     [SerializeField]
-    private float dmg = 1;
+    private float dmg = 15;
 
     //towerhandler script
     private TowerHandler towerHandlerScript;

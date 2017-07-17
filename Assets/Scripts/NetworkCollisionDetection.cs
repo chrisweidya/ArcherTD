@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class NetworkCollisionDetection : MonoBehaviour {
 
+    [SerializeField]
+    private float damage;
     private PlayerProperties playerProps;
     private CreatureHandler handler;
     private bool collided;
@@ -23,7 +25,7 @@ public class NetworkCollisionDetection : MonoBehaviour {
             handler = parentGameObject.GetComponent<CreatureHandler>();
             if (handler != null && faction != parentGameObject.GetComponent<PlayerProperties>().GetFaction() && !collided) {
                 //Debug.Log("Collsion Event");
-                EventManager.FireDoDamage(13, handler.netId);
+                EventManager.FireDoDamage(damage, handler.netId);
                 collided = true;
             }
         }
