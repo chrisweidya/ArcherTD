@@ -34,7 +34,7 @@ namespace Valve.VR.InteractionSystem
 		public float teleportFadeTime = 0.1f;
 		public float meshFadeTime = 0.2f;
 
-		public float arcDistance = 100.0f;
+		public float arcDistance = 30.0f;
 
 		[Header( "Effects" )]
 		public Transform onActivateObjectTransform;
