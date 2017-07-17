@@ -137,7 +137,6 @@
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Snow.shader" />
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Water.shader" />
     <None Include="Assets\Fonts\OpenSans\License!.txt" />
-    <None Include="Assets\Haunted_Swamp\Shaders\AlphaSelfIllum_NoFog.shader" />
     <None Include="Assets\Lobby\Documentation.txt" />
     <None Include="Assets\Lobby\Instruction.txt" />
     <None Include="Assets\SteamVR\InteractionSystem\Core\Shaders\SeeThru.shader" />
@@ -152,6 +151,7 @@
     <None Include="Assets\SteamVR\Resources\SteamVR_SphericalProjection.shader" />
     <None Include="Assets\SteamVR\readme.txt" />
     <None Include="Assets\Underworld\Standard Assets\Environment\Water (Basic)\Shaders\FXWaterBasic.shader" />
+    <None Include="Assets\sky5X\README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
