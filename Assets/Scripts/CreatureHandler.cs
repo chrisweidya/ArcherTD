@@ -76,6 +76,7 @@ public class CreatureHandler : NetworkBehaviour {
             targetHandler.TakeDamage(amt);
     }
 
+    //Server
     private void TakeDamage(float amt) {
         if (!isServer)
             Debug.LogError("Taking damage on client side.");

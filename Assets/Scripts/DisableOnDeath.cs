@@ -17,7 +17,7 @@ public class DisableOnDeath : MonoBehaviour {
     }
 
     private void DisableObjects(NetworkInstanceId id, bool death) {
-        if(PlayerHandler.localWardenNetId == id) {
+        if(PlayerHandler.LocalWardenNetId == id) {
             print("reached");
             for(int i = 0; i < _objects.Count; i++) {
                 _objects[i].SetActive(!death);

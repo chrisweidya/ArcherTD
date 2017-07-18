@@ -8,14 +8,16 @@ public class TowerManager : NetworkBehaviour {
     public static TowerManager Instance;
 
     [SerializeField] private GameObject _legionTowerPrefab;
-    [SerializeField] private GameObject _hellbourneTowerPrefab;    
+    [SerializeField] private GameObject _hellbourneTowerPrefab;
+    [SerializeField] private GameObject _legionTowerDeadPrefab;
+    [SerializeField] private GameObject _hellbourneTowerDeadPrefab;
     [SerializeField] private Transform _legionTowerTransform;
     [SerializeField] private Transform _hellbourneTowerTransform;
 
-    [SerializeField]
-    private GameObject _legionTowerGO;
-    [SerializeField]
-    private GameObject _hellbourneTowerGO;
+    [SerializeField] private GameObject _legionTowerGO;
+    [SerializeField] private GameObject _hellbourneTowerGO;
+    [SerializeField] private GameObject _legionTowerDeadGO;
+    [SerializeField] private GameObject _hellbourneTowerDeadGO;
 
     private void Awake() {
         if (Instance != null) {
@@ -34,6 +36,19 @@ public class TowerManager : NetworkBehaviour {
         _hellbourneTowerGO = Instantiate(_hellbourneTowerPrefab, _hellbourneTowerTransform);
         NetworkServer.Spawn(_legionTowerGO);
         NetworkServer.Spawn(_hellbourneTowerGO);
+    }
+
+    public void DeadTower(GameManager.Factions faction) {
+        if (faction == GameManager.Factions.Legion) {
+            _legionTowerDeadGO = Instantiate(_legionTowerDeadPrefab, _legionTowerTransform);
+            NetworkServer.Spawn(_legionTowerDeadGO);
+            NetworkServer.Destroy(_legionTowerGO);
+        }
+        else if(faction == GameManager.Factions.Hellbourne) {
+            _hellbourneTowerDeadGO = Instantiate(_hellbourneTowerPrefab, _hellbourneTowerTransform);
+            NetworkServer.Spawn(_hellbourneTowerDeadGO);
+            NetworkServer.Destroy(_hellbourneTowerDeadGO);
+        }
     }
 
     public GameObject GetTower(GameManager.Factions type) {

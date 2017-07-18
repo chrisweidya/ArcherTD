@@ -42,9 +42,9 @@ public class EventManager : Singleton <EventManager> {
         }
     }
 
-    public delegate void GameEnd(NetworkInstanceId winnerId);
+    public delegate void GameEnd(GameManager.Factions faction);
     public static event GameEnd GameEndAction;
-    public static void FireGameEnd(NetworkInstanceId winnerId) {
+    public static void FireGameEnd(GameManager.Factions winnerId) {
         if (GameEndAction != null && !GameManager.GameWon) {
             GameEndAction(winnerId);
             GameManager.GameWon = true;
