@@ -47,8 +47,9 @@ public class TowerManager : NetworkBehaviour {
         else if(faction == GameManager.Factions.Hellbourne) {
             _hellbourneTowerDeadGO = Instantiate(_hellbourneTowerPrefab, _hellbourneTowerTransform);
             NetworkServer.Spawn(_hellbourneTowerDeadGO);
-            NetworkServer.Destroy(_hellbourneTowerDeadGO);
+            NetworkServer.Destroy(_hellbourneTowerGO);
         }
+        EventManager.FireGameEnd(faction);
     }
 
     public GameObject GetTower(GameManager.Factions type) {
