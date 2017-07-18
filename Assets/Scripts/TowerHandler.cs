@@ -45,7 +45,6 @@ public class TowerHandler : CreatureHandler {
             StartCoroutine(Initialize());
         }
         _radius = GetComponent<CapsuleCollider>().radius;
-        print(_radius + " fads");
         towerHandlerScript = this;
     }
 
@@ -71,25 +70,19 @@ public class TowerHandler : CreatureHandler {
     private IEnumerator ScanForTargets(float range, float seconds) {
         //find a suitable target in the list of creeps that is within tower range every second
         while (true) {
-            print("hi1");
             if (currentTargetScript == null || currentTargetScript.GetIsDead()) {
-                print("hiq");
                 foreach (GameObject go in enemyCreepList) {
-                    print("hi3");
                     if (Utility.IsAliveAndInRange(gameObject, go, range)) {
                         currentTarget = go;
                         currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
                         StartCoroutine(AttackTarget());
-                        Debug.Log("Current Target " + currentTarget);
                         yield break;
                     }
                 }
-                print("hi4");
                 if (Utility.IsAliveAndInRange(gameObject, enemyPlayer, range)) {
                     currentTarget = enemyPlayer;
                     currentTargetScript = currentTarget.GetComponent<CreatureHandler>();
                     StartCoroutine(AttackTarget());
-                    Debug.Log("Targeting Enemy Player");
                     yield break;
                 }
             }
@@ -103,7 +96,6 @@ public class TowerHandler : CreatureHandler {
             Debug.Log(currentTargetScript);
             if (Utility.IsAliveAndInRange(gameObject, currentTarget, towerRange)) {
                 //attack function
-                Debug.Log("Attacking current target");
                 RpcTowerAttack(currentTarget.transform.position, currentTarget);
             }
             else {
@@ -111,7 +103,6 @@ public class TowerHandler : CreatureHandler {
                 currentTargetScript = null;
                 StartCoroutine(ScanForTargets(towerRange, scanInterval));
                 CmdSetAnimationTrigger(TowerAnimationTrigger.IdleTrigger.ToString());
-                Debug.Log("finding new target");
                 break;
             }
             yield return new WaitForSeconds(1.0f);
@@ -121,7 +112,6 @@ public class TowerHandler : CreatureHandler {
 
     [ClientRpc]
     private void RpcTowerAttack(Vector3 targetPos, GameObject target) {
-        Debug.Log("towerrpcshot");
         GameObject bullet = Instantiate(TowerBullet, firingPoint.transform.position, firingPoint.transform.rotation) as GameObject;
         TowerProjectile tp = bullet.GetComponent<TowerProjectile>();
         tp.towerParent = towerHandlerScript;
@@ -130,7 +120,6 @@ public class TowerHandler : CreatureHandler {
 
     public void DoDamage(GameObject target) {
         if (isServer) {
-            Debug.Log("tower do damage to " + target);
             CmdDoDamage(target, dmg);
         }
     }
