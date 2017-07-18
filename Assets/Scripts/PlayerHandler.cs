@@ -88,7 +88,9 @@ public class PlayerHandler : CreatureHandler {
     public override void SetIsDead(bool isDead) {
         base.SetIsDead(isDead);
         if (isDead) {
-            CmdSetAnimationTrigger(PlayerAnimationTrigger.Death.ToString());
+
+            CmdAnimationPlayWithLayer(PlayerAnimationState.Death.ToString(), (int)PlayerAnimationLayer.BaseLayer);
+            CmdAnimationPlayWithLayer(PlayerAnimationState.Death.ToString(), (int)PlayerAnimationLayer.AttackLayer);
             StartCoroutine(Respawn(_respawnTimeSecs));
         }
     }
