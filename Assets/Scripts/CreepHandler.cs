@@ -17,6 +17,8 @@ public class CreepHandler : CreatureHandler {
     [SerializeField] private float _defaultCreepSpeed;
     [SerializeField] private float _attackIntervalSecs;
     [SerializeField] private float _attackDamage;
+    [SerializeField] private float _creepAttackDamage;
+    [SerializeField] private float _towerAttackDamage;
     [SerializeField] private float _despawnTimeSecs;
     [SerializeField] private GameManager.Factions _creepType;
     [SerializeField] private float _waypointDetectionRadius;
@@ -187,6 +189,7 @@ public class CreepHandler : CreatureHandler {
                 float currDistance = Vector3.SqrMagnitude(_enemyCreeps[i].transform.position - transform.position);
                 if (currDistance < closestDistanceSqr) {
                     _targetEnemy = _enemyCreeps[i];
+                    _attackDamage = _creepAttackDamage;
                     closestDistanceSqr = currDistance;
                 }
             }
@@ -195,9 +198,11 @@ public class CreepHandler : CreatureHandler {
             return true;
         if (Utility.IsAliveAndInRange(gameObject, _enemyTower, _acquisitionRadius)) {
             _targetEnemy = _enemyTower;
+            _attackDamage = _towerAttackDamage;
         }
         if (Utility.IsAliveAndInRange(gameObject, _enemyHero, _acquisitionRadius)) {
             _targetEnemy = _enemyHero;
+            _attackDamage = _creepAttackDamage;
         }
         if (_targetEnemy != null)
             return true;

@@ -100,6 +100,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		void OnCollisionEnter( Collision collision )
 		{
+            Debug.Log("OnCollisionEnterArrow");
 			if ( inFlight )
 			{
                 Debug.Log("Collided with " + collision.gameObject.name);

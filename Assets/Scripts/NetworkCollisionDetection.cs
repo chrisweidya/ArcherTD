@@ -6,6 +6,8 @@ public class NetworkCollisionDetection : MonoBehaviour {
 
     [SerializeField]
     private float damage;
+    [SerializeField]
+    private float towerDamage;
     private PlayerProperties playerProps;
     private CreatureHandler handler;
     private bool collided;
@@ -25,7 +27,12 @@ public class NetworkCollisionDetection : MonoBehaviour {
             handler = parentGameObject.GetComponent<CreatureHandler>();
             if (handler != null && faction != parentGameObject.GetComponent<PlayerProperties>().GetFaction() && !collided) {
                 //Debug.Log("Collsion Event");
-                EventManager.FireDoDamage(damage, handler.netId);
+                if (other.GetComponent<TowerHandler>() != null) {
+                    EventManager.FireDoDamage(towerDamage, handler.netId);
+                }
+                else {
+                    EventManager.FireDoDamage(damage, handler.netId);
+                } 
                 creatureHandler = parentGameObject.GetComponent<CreatureHandler>();
                 collided = true;
                 StartCoroutine(DestroyArrowOnIsDead());
