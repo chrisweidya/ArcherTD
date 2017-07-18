@@ -51,6 +51,9 @@ public class TowerHandler : CreatureHandler {
         if(Input.GetKeyDown(KeyCode.T) && GetComponentInChildren<PlayerProperties>().GetFaction() == GameManager.Factions.Legion) {
             CmdDoDamage(gameObject, 9999999);
         }
+        if (Input.GetKeyDown(KeyCode.Y) && GetComponentInChildren<PlayerProperties>().GetFaction() == GameManager.Factions.Hellbourne) {
+            CmdDoDamage(gameObject, 9999999);
+        }
     }
 
     private IEnumerator Initialize() {
@@ -120,15 +123,7 @@ public class TowerHandler : CreatureHandler {
         base.SetIsDead(isDead);
         TowerManager.Instance.DeadTower(GetComponent<PlayerProperties>().GetFaction());
     }
-
-    [ClientRpc]
-    private void RpcTowerDestroyed(GameManager.Factions faction) {
-        if(!oneTowerDestroyed) {
-            EventManager.FireGameEnd(faction);
-            oneTowerDestroyed = true;
-        }
-    }
-
+    
     [ClientRpc]
     private void RpcTowerAttack(Vector3 targetPos, GameObject target) {
         GameObject bullet = Instantiate(TowerBullet, firingPoint.transform.position, firingPoint.transform.rotation) as GameObject;
