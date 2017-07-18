@@ -9,6 +9,7 @@ using System.Collections;
 
 public class CameraFacing : MonoBehaviour
 {
+    /*
 	public Camera cameraToLookAt;
 	void Awake() {
 		cameraToLookAt = Camera.main; }
@@ -18,4 +19,5 @@ public class CameraFacing : MonoBehaviour
 		v.x = v.z = 0.0f;
 		transform.LookAt(cameraToLookAt.transform.position - v); 
 	}
+    */
 }

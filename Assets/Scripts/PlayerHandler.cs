@@ -5,7 +5,8 @@ using UnityEngine.Networking;
 
 
 public class PlayerHandler : CreatureHandler {
-    public static NetworkInstanceId localWardenNetId;
+    public static NetworkInstanceId LocalWardenNetId;
+    public static GameManager.Factions LocalFaction;
     
     [SerializeField] private Vector3 _modelOffset = Vector3.zero;
     [SerializeField] private List<Renderer> _modelRenderers = new List<Renderer>();
@@ -37,11 +38,12 @@ public class PlayerHandler : CreatureHandler {
         if (GameManager.Instance.GetCurrentSceneName() == GameManager.Scenes.MatchMaking.ToString()) {
             faction = GetComponent<PlayerProperties>().GetFaction();
             if (isLocalPlayer) {
+                LocalFaction = faction;
                 Spawn();
                 foreach (Renderer r in _modelRenderers) {
                     r.enabled = false;
                 }
-                localWardenNetId = netId;
+                LocalWardenNetId = netId;
                 GameManager.SetLocalPlayerFaction(faction);
             }
             PlayerManager.Instance.SetHeroOnce(gameObject, faction, netId);

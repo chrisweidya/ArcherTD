@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 using UnityEngine;
 
 public class TowerHandler : CreatureHandler {
-
+    private static bool oneTowerDestroyed = false;
 
     //tower range
     [SerializeField] private float towerRange;
@@ -21,7 +21,6 @@ public class TowerHandler : CreatureHandler {
 
     //getting a list of creeps from creep manager depending on faction
     public bool isLegion;
-    public string team;
     private IList<GameObject> enemyCreepList;
 
     //tower firing point
@@ -48,9 +47,15 @@ public class TowerHandler : CreatureHandler {
         towerHandlerScript = this;
     }
 
+    private void Update() {
+        if(Input.GetKeyDown(KeyCode.T) && GetComponentInChildren<PlayerProperties>().GetFaction() == GameManager.Factions.Legion) {
+            CmdDoDamage(gameObject, 9999999);
+        }
+    }
+
     private IEnumerator Initialize() {
         while (true) {
-            if (team == "Legion") {
+            if (GetComponent<PlayerProperties>().GetFaction() == GameManager.Factions.Legion) {
                 enemyCreepList = CreepManager.Instance.GetCreepList(GameManager.Factions.Hellbourne);
                 enemyPlayer = PlayerManager.Instance.GetHero(GameManager.Factions.Hellbourne);
             }
@@ -107,6 +112,20 @@ public class TowerHandler : CreatureHandler {
             }
             yield return new WaitForSeconds(1.0f);
 
+        }
+    }
+
+    //Server
+    public override void SetIsDead(bool isDead) {
+        base.SetIsDead(isDead);
+        TowerManager.Instance.DeadTower(GetComponent<PlayerProperties>().GetFaction());
+    }
+
+    [ClientRpc]
+    private void RpcTowerDestroyed(GameManager.Factions faction) {
+        if(!oneTowerDestroyed) {
+            EventManager.FireGameEnd(faction);
+            oneTowerDestroyed = true;
         }
     }
 
