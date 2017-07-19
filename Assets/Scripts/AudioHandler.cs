@@ -8,7 +8,6 @@ public class AudioHandler : MonoBehaviour {
     [SerializeField]
     private List<AudioClip> audioClipList;
 
-    private AudioClip clip;
 	// Use this for initialization
 	void Start () {
 		
@@ -23,7 +22,7 @@ public class AudioHandler : MonoBehaviour {
     private void searchForAudio(string s) {
         foreach (AudioClip c in audioClipList) {
             if (c.name == s) {
-                clip = c;
+                audioSource.clip = c;
                 break;
             }
         }   
@@ -32,11 +31,11 @@ public class AudioHandler : MonoBehaviour {
     //play the desired audio
     public void PlayAudio(string audioName) {
         //update audio if its not the same as the current audioclip
-        if (clip.name != audioName) {
+        if (audioSource.clip == null || audioSource.clip.name != audioName) {
             searchForAudio(audioName);
         }
         //play current audioclip
-        if (clip != null) {
+        if (audioSource.clip != null) {
             audioSource.Play();
         }
         else {
