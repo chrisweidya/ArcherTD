@@ -27,8 +27,9 @@ public class AudioAmbienceHandler : MonoBehaviour {
     private IEnumerator RandomAmbience() {
 
         while (true) {
-            source.Play();
             yield return new WaitForSeconds(Random.Range(minRange, maxRange));
+            source.Play();
+            
         }
        
     }
