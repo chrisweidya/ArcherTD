@@ -47,4 +47,23 @@ public static class Utility {
         }
         return true;
     }
+
+    /*
+    private static IEnumerator Bob(GameObject obj, bool upwards) {
+        Vector3 _startPos = obj.transform.position;
+        Vector3 _bobTargetPos;
+        if (upwards)
+            _bobTargetPos = new Vector3(_startPos.x, _startPos.y + 4, _startPos.z);
+        else
+            _bobTargetPos = new Vector3(_startPos.x, _startPos.y - 4, _startPos.z);
+        float _startTime = Time.time;
+        float fracJourney = (Time.time - _startTime) / 2;
+        while (fracJourney < 1) {
+            fracJourney = (Time.time - _startTime) /2;
+            obj.transform.position = Vector3.Lerp(_startPos, _bobTargetPos, fracJourney);
+            yield return new WaitForEndOfFrame();
+        }
+        StartCoroutine(Bob(obj, !upwards));
+    }
+    */
 }

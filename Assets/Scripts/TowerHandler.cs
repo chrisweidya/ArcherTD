@@ -120,8 +120,11 @@ public class TowerHandler : CreatureHandler {
 
     //Server
     public override void SetIsDead(bool isDead) {
-        base.SetIsDead(isDead);
-        TowerManager.Instance.DeadTower(GetComponent<PlayerProperties>().GetFaction());
+        if (!oneTowerDestroyed) {
+            base.SetIsDead(isDead);
+            TowerManager.Instance.DeadTower(GetComponent<PlayerProperties>().GetFaction());
+            oneTowerDestroyed = true;
+        }
     }
     
     [ClientRpc]
@@ -137,5 +140,9 @@ public class TowerHandler : CreatureHandler {
             CmdDoDamage(target, dmg);
         }
     }
-     
+
+    public override void OnIsDead(bool isDead) {
+        base.OnIsDead(isDead);
+        EventManager.FireGameEnd(GetComponent<PlayerProperties>().GetFaction());
+    }
 }
