@@ -42,14 +42,15 @@ public class TowerManager : NetworkBehaviour {
         if (faction == GameManager.Factions.Legion) {
             _legionTowerDeadGO = Instantiate(_legionTowerDeadPrefab, _legionTowerTransform);
             NetworkServer.Spawn(_legionTowerDeadGO);
-            NetworkServer.Destroy(_legionTowerGO);
+            //NetworkServer.UnSpawn(_legionTowerGO);
+            _legionTowerGO.GetComponent<CreatureHandler>().CmdSetActive(false);
         }
         else if(faction == GameManager.Factions.Hellbourne) {
             _hellbourneTowerDeadGO = Instantiate(_hellbourneTowerPrefab, _hellbourneTowerTransform);
             NetworkServer.Spawn(_hellbourneTowerDeadGO);
-            NetworkServer.Destroy(_hellbourneTowerGO);
+            //NetworkServer.UnSpawn(_hellbourneTowerGO);
+            _hellbourneTowerGO.GetComponent<CreatureHandler>().CmdSetActive(false);
         }
-        EventManager.FireGameEnd(faction);
     }
 
     public GameObject GetTower(GameManager.Factions type) {

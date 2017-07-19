@@ -108,7 +108,6 @@
     <Compile Include="Assets\Scripts\HealthNetwork.cs" />
     <Compile Include="Assets\Scripts\LookAtPlayer.cs" />
     <Compile Include="Assets\Scripts\NetworkCollisionDetection.cs" />
-    <Compile Include="Assets\Scripts\NetworkStartup.cs" />
     <Compile Include="Assets\Scripts\PlayerHandler.cs" />
     <Compile Include="Assets\Scripts\PlayerHook.cs" />
     <Compile Include="Assets\Scripts\PlayerManager.cs" />
@@ -165,9 +164,13 @@
     <Compile Include="Assets\Scripts\TowerManager.cs" />
     <Compile Include="Assets\Scripts\TowerProjectile.cs" />
     <Compile Include="Assets\Scripts\UI\Fade.cs" />
+    <Compile Include="Assets\Scripts\Utility\AdjustLight.cs" />
     <Compile Include="Assets\Scripts\Utility\Circle.cs" />
+    <Compile Include="Assets\Scripts\Utility\LerpAnimator.cs" />
+    <Compile Include="Assets\Scripts\Utility\MoveLerp.cs" />
     <Compile Include="Assets\Scripts\Utility\Utility.cs" />
     <Compile Include="Assets\Scripts\Utility\Vignette.cs" />
+    <Compile Include="Assets\Scripts\WorldSpaceUI.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_LaserPointer.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_Teleporter.cs" />
@@ -336,6 +339,7 @@
     <None Include="Assets\SteamVR\Resources\SteamVR_Fade.shader" />
     <None Include="Assets\SteamVR\Resources\SteamVR_SphericalProjection.shader" />
     <None Include="Assets\SteamVR\readme.txt" />
+    <None Include="Assets\UI\$AlphaSelfIllum.shader" />
     <None Include="Assets\Underworld\Standard Assets\Environment\Water (Basic)\Shaders\FXWaterBasic.shader" />
     <None Include="Assets\sky5X\README.txt" />
   </ItemGroup>

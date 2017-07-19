@@ -54,7 +54,7 @@ public class CreatureHandler : NetworkBehaviour {
     }
 
     [Command]
-    protected void CmdSetActive(bool val) {
+    public void CmdSetActive(bool val) {
         RpcSetActive(val);
     }
 
