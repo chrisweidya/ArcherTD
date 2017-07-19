@@ -29,8 +29,9 @@ public class TowerHandler : CreatureHandler {
 
     //dmg
     [SerializeField]
-    private float dmg = 15;
-
+    private float dmg;
+    [SerializeField]
+    private float playerDmg; 
     //towerhandler script
     private TowerHandler towerHandlerScript;
 
@@ -137,7 +138,12 @@ public class TowerHandler : CreatureHandler {
 
     public void DoDamage(GameObject target) {
         if (isServer) {
-            CmdDoDamage(target, dmg);
+            if (target.GetComponent<CreepHandler>() == null) {
+                CmdDoDamage(target, playerDmg);
+            }
+            else {
+                CmdDoDamage(target, dmg);
+            }
         }
     }
 
