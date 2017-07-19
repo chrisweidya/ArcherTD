@@ -202,7 +202,7 @@ public class CreepHandler : CreatureHandler {
         }
         if (Utility.IsAliveAndInRange(gameObject, _enemyHero, _acquisitionRadius)) {
             _targetEnemy = _enemyHero;
-            _attackDamage = _creepAttackDamage;
+            _attackDamage = _towerAttackDamage;
         }
         if (_targetEnemy != null)
             return true;
