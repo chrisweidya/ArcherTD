@@ -40,12 +40,20 @@ public class TowerHandler : CreatureHandler {
     private enum TowerAnimationState { Idle, Attack,Death};
     public enum TowerState { Idling, Attacking,Dying};
 
-    void Start() {     
+    private void Start() {     
         if (isServer) { 
             StartCoroutine(Initialize());
         }
         _radius = GetComponent<CapsuleCollider>().radius;
         towerHandlerScript = this;
+    }
+
+    private void OnEnable() {
+        EventManager.GameEndAction += StopCoroutinesOnGameEnd;
+    }
+
+    private void OnDisable() {
+        EventManager.GameEndAction -= StopCoroutinesOnGameEnd;
     }
 
     private void Update() {
@@ -117,6 +125,12 @@ public class TowerHandler : CreatureHandler {
             yield return new WaitForSeconds(1.0f);
 
         }
+    }
+
+    private void StopCoroutinesOnGameEnd(GameManager.Factions faction) {
+        if (!isServer)
+            return;
+        StopAllCoroutines();
     }
 
     //Server

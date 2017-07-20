@@ -68,13 +68,14 @@ public class CreepHandler : CreatureHandler {
     }
 
     private void OnEnable() {
+        EventManager.GameEndAction += StopCoroutinesOnGameEnd;
         if (isServer) {
             StartCoroutine(IdleCoroutine());
-            //print("Started Coroutine from enable");
         }
     }
 
     private void OnDisable() {
+        EventManager.GameEndAction -= StopCoroutinesOnGameEnd;
         transform.position = _startPosition;
         _waypointsReached = 0;
         _currentCoroutine = null;
@@ -273,7 +274,14 @@ public class CreepHandler : CreatureHandler {
         StopAllCoroutines();
         CmdSetAnimationTrigger(CreepAnimationTrigger.DeathTrigger.ToString());
         StartCoroutine(Despawn(_despawnTimeSecs));
-    }   
+    }
+
+    private void StopCoroutinesOnGameEnd(GameManager.Factions faction) {
+        if (!isServer)
+            return;
+        StopAllCoroutines();
+        StopAgent();
+    }
 
     public void SetAgentSpeed(float val) {
         _agent.speed = val;

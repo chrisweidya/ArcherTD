@@ -10,8 +10,7 @@ public class CreatureHandler : NetworkBehaviour {
     [SyncVar(hook = "OnIsDeadHook")]
     private bool isDead = false;
 
-    [SerializeField]
-    protected Animator _animator;
+    [SerializeField] protected Animator _animator;
     protected HealthNetwork _healthNetwork;
     protected float _radius;
 
@@ -109,4 +108,5 @@ public class CreatureHandler : NetworkBehaviour {
     public float GetRadius() {
         return _radius;
     }
+    
 }
