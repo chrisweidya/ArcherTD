@@ -41,6 +41,10 @@ public static class Utility {
     }
 
     public static bool IsAliveAndInRange(GameObject currGO, GameObject targetGO, float range) {
+        if(targetGO == null) {
+            Debug.LogWarning("Target obj is null");
+            return false;
+        }
         if (targetGO.GetComponent<CreatureHandler>().GetIsDead() || !InRange(currGO.transform.position, targetGO.transform.position,
             range, targetGO.GetComponent<CreatureHandler>().GetRadius())) {
             return false;

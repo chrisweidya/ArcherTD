@@ -9,11 +9,13 @@ public class AdjustLight : MonoBehaviour {
     [Range(0, 2)] [SerializeField] float winLightIntensity;
     [Range(0, 2)] [SerializeField] float loseLightIntensity;
     [SerializeField] Material skybox;
+    private float _originalIntensity;
 
     private Light _light;
     
     private void Awake() {
         _light = GetComponent<Light>();
+        _originalIntensity = _light.intensity;
     }
 
     private void OnEnable() {
@@ -22,6 +24,8 @@ public class AdjustLight : MonoBehaviour {
 
     private void OnDisable() {
         EventManager.GameEndAction -= AdjustLights;
+        if(skybox)
+            skybox.SetFloat("_Exposure", _originalIntensity);
     }
 
     private void AdjustLights(GameManager.Factions faction) {
