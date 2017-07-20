@@ -167,7 +167,6 @@ namespace Valve.VR.InteractionSystem
 				if ( canStick )
 				{
 					StickInTarget( collision, travelledFrames < 2 );
-                    Debug.Log("stick in target");
 				}
 
 				// Player Collision Check (self hit)
