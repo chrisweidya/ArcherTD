@@ -45,7 +45,8 @@ public class HealthNetwork : NetworkBehaviour {
     */
 
     private void OnHealthUpdate(float health)  {
-        //Debug.Log("UI health " + health);
+        if (health < currentHealth)
+            EventManager.FireTakeDamageUIEffect();
         hpBar.SetHealthBar(health,maxHealth);
         currentHealth = health;
     }
