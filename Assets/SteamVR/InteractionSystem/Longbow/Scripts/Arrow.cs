@@ -100,14 +100,11 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		void OnCollisionEnter( Collision collision )
 		{
-            Debug.Log("OnCollisionEnterArrow" + inFlight);
 			if ( inFlight )
 			{
-                Debug.Log("Collided with " + collision.gameObject.name);
 
                 Rigidbody rb = GetComponent<Rigidbody>();
 				float rbSpeed = rb.velocity.sqrMagnitude;
-                Debug.Log(rbSpeed);
 				bool canStick = ( targetPhysMaterial != null && collision.collider.sharedMaterial == targetPhysMaterial && rbSpeed > 0.2f );
 				bool hitBalloon = collision.collider.gameObject.GetComponent<Balloon>() != null;
                 Debug.Log(canStick);
@@ -120,7 +117,6 @@ namespace Valve.VR.InteractionSystem
 					Vector3 reflfectDir = Vector3.Reflect( arrowHeadRB.velocity, collision.contacts[0].normal );
 					arrowHeadRB.velocity = reflfectDir * 0.25f;
 					shaftRB.velocity = reflfectDir * 0.25f;
-                    Debug.Log("can stick is false");
 					travelledFrames = 0;
 					return;
 				}
