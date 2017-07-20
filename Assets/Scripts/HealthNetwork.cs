@@ -45,7 +45,7 @@ public class HealthNetwork : NetworkBehaviour {
     */
 
     private void OnHealthUpdate(float health)  {
-        if (health < currentHealth)
+        if (health < currentHealth && netId == PlayerHandler.LocalWardenNetId)
             EventManager.FireTakeDamageUIEffect();
         hpBar.SetHealthBar(health,maxHealth);
         currentHealth = health;
