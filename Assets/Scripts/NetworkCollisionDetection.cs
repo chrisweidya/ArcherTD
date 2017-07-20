@@ -21,7 +21,6 @@ public class NetworkCollisionDetection : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.name);
         if (other.gameObject.layer == 8) {
             parentGameObject = other.gameObject.GetComponent<BodyPartScript>().ParentGameObject;
             handler = parentGameObject.GetComponent<CreatureHandler>();
@@ -32,7 +31,8 @@ public class NetworkCollisionDetection : MonoBehaviour {
                 }
                 else {
                     EventManager.FireDoDamage(damage, handler.netId);
-                } 
+                }
+                Debug.Log("collided with " + other.gameObject.name);
                 creatureHandler = parentGameObject.GetComponent<CreatureHandler>();
                 collided = true;
                 StartCoroutine(DestroyArrowOnIsDead());
