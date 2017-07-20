@@ -21,11 +21,14 @@ public class NetworkCollisionDetection : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
+        if (faction != PlayerHandler.LocalFaction)
+            return;
         if (other.gameObject.layer == 8) {
             parentGameObject = other.gameObject.GetComponent<BodyPartScript>().ParentGameObject;
             handler = parentGameObject.GetComponent<CreatureHandler>();
             if (handler != null && faction != parentGameObject.GetComponent<PlayerProperties>().GetFaction() && !collided) {
                 //Debug.Log("Collsion Event");
+                collided = true;
                 if (other.GetComponent<TowerHandler>() != null) {
                     EventManager.FireDoDamage(towerDamage, handler.netId);
                 }
@@ -34,7 +37,6 @@ public class NetworkCollisionDetection : MonoBehaviour {
                 }
                 Debug.Log("collided with " + other.gameObject.name);
                 creatureHandler = parentGameObject.GetComponent<CreatureHandler>();
-                collided = true;
                 StartCoroutine(DestroyArrowOnIsDead());
             }
         }

@@ -240,6 +240,9 @@ namespace Valve.VR.InteractionSystem
             //teleport cooldown
             if (teleTimer > 0) {
                 teleTimer -= Time.deltaTime;
+                if(teleTimer <=0) {
+                    EventManager.FireDisplayTeleportIcon(true);
+                }
             }
 
 
@@ -911,6 +914,7 @@ namespace Valve.VR.InteractionSystem
 
             //teleport cooldown
             teleTimer = teleCD;
+            EventManager.FireDisplayTeleportIcon(false);
 		}
 
 
