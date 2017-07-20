@@ -32,6 +32,14 @@ public class CreepManager : NetworkBehaviour {
         _hellbourneCreepsDead = new Stack<GameObject>();
     }
 
+    private void OnEnable() {
+        EventManager.GameEndAction += StopCoroutinesOnGameEnd;
+    }
+
+    private void OnDisable() {
+        EventManager.GameEndAction -= StopCoroutinesOnGameEnd;
+    }
+
     private void Start() {
         if (isServer) {
             StartCoroutine(CreepSpawner(_creepSpawnSecs, _creepsInBatch, _creepIntervalSecs));
@@ -103,6 +111,13 @@ public class CreepManager : NetworkBehaviour {
     private IEnumerator AddInactiveCreepAfterDelay(GameObject creep, Stack<GameObject> creepStack, float delaySecs) {
         yield return new WaitForSeconds(delaySecs);
         creepStack.Push(creep);
+    }
+
+    //Server
+    private void StopCoroutinesOnGameEnd(GameManager.Factions faction) {
+        if (!isServer)
+            return;
+        StopAllCoroutines();
     }
 
     public void AddInactiveCreepsToStackAfterDelay(GameObject creep, GameManager.Factions creepType) {

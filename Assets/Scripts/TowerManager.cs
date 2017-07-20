@@ -27,7 +27,7 @@ public class TowerManager : NetworkBehaviour {
         Instance = this;
     }
 
-    void Start() {
+    private void Start() {
         SpawnTowers();
     }
 
