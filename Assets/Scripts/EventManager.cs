@@ -59,17 +59,16 @@ public class EventManager : Singleton <EventManager> {
         }
     }
 
+    public delegate void TakeDamageUI();
+    public static event TakeDamageUI TakeDamageUIEffect;
+    public static void FireTakeDamageUIEffect() {
+        if (TakeDamageUIEffect != null) {
+            TakeDamageUIEffect();
+        }
+    }
+
     protected override void Awake() {
         base.Awake();
     }
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+   
 }
