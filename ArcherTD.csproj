@@ -164,6 +164,7 @@
     <Compile Include="Assets\Scripts\TowerManager.cs" />
     <Compile Include="Assets\Scripts\TowerProjectile.cs" />
     <Compile Include="Assets\Scripts\UI\Fade.cs" />
+    <Compile Include="Assets\Scripts\UI\TeleportIconDisplay.cs" />
     <Compile Include="Assets\Scripts\Utility\AdjustLight.cs" />
     <Compile Include="Assets\Scripts\Utility\Circle.cs" />
     <Compile Include="Assets\Scripts\Utility\LerpAnimator.cs" />

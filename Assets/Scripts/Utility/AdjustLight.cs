@@ -30,10 +30,10 @@ public class AdjustLight : MonoBehaviour {
 
     private void AdjustLights(GameManager.Factions faction) {
         if(PlayerHandler.LocalFaction == faction) {
-            StartCoroutine(ChangeIntensity(true));
+            StartCoroutine(ChangeIntensity(false));
         }
         else {
-            StartCoroutine(ChangeIntensity(false));
+            StartCoroutine(ChangeIntensity(true));
         }
     }
 

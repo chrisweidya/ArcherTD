@@ -46,7 +46,8 @@ public class PlayerHandler : CreatureHandler {
                 LocalWardenNetId = netId;
                 GameManager.SetLocalPlayerFaction(faction);
             }
-            PlayerManager.Instance.SetHeroOnce(gameObject, faction, netId);
+            if(isServer)
+                PlayerManager.Instance.SetHeroOnce(gameObject, faction, netId);
             _radius = GetComponent<CapsuleCollider>().radius;
         }
     }

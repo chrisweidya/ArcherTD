@@ -51,6 +51,14 @@ public class EventManager : Singleton <EventManager> {
         }
     }
 
+    public delegate void DisplayIcon(bool val);
+    public static event DisplayIcon DisplayTeleportIcon;
+    public static void FireDisplayTeleportIcon(bool val) {
+        if(DisplayTeleportIcon != null) {
+            DisplayTeleportIcon(val);
+        }
+    }
+
     protected override void Awake() {
         base.Awake();
     }
