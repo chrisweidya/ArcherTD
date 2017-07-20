@@ -30,8 +30,8 @@ namespace Valve.VR.InteractionSystem
 
 		public PlaySound hitGroundSound;
 
-		private bool inFlight;
-		private bool released;
+		public bool inFlight;
+		public bool released;
 		private bool hasSpreadFire = false;
 
 		private int travelledFrames = 0;
@@ -63,7 +63,7 @@ namespace Valve.VR.InteractionSystem
 		{
 			inFlight = true;
 			released = true;
-
+            Debug.Log("arrowReleased");
 			airReleaseSound.Play();
 
 			if ( glintParticle != null )
@@ -100,16 +100,17 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		void OnCollisionEnter( Collision collision )
 		{
-            Debug.Log("OnCollisionEnterArrow");
+            Debug.Log("OnCollisionEnterArrow" + inFlight);
 			if ( inFlight )
 			{
                 Debug.Log("Collided with " + collision.gameObject.name);
 
                 Rigidbody rb = GetComponent<Rigidbody>();
 				float rbSpeed = rb.velocity.sqrMagnitude;
+                Debug.Log(rbSpeed);
 				bool canStick = ( targetPhysMaterial != null && collision.collider.sharedMaterial == targetPhysMaterial && rbSpeed > 0.2f );
 				bool hitBalloon = collision.collider.gameObject.GetComponent<Balloon>() != null;
-
+                Debug.Log(canStick);
 				if ( travelledFrames < 2 && !canStick )
 				{
 					// Reset transform but halve your velocity
@@ -119,7 +120,7 @@ namespace Valve.VR.InteractionSystem
 					Vector3 reflfectDir = Vector3.Reflect( arrowHeadRB.velocity, collision.contacts[0].normal );
 					arrowHeadRB.velocity = reflfectDir * 0.25f;
 					shaftRB.velocity = reflfectDir * 0.25f;
-
+                    Debug.Log("can stick is false");
 					travelledFrames = 0;
 					return;
 				}
@@ -170,6 +171,7 @@ namespace Valve.VR.InteractionSystem
 				if ( canStick )
 				{
 					StickInTarget( collision, travelledFrames < 2 );
+                    Debug.Log("stick in target");
 				}
 
 				// Player Collision Check (self hit)

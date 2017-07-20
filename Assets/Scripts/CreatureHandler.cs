@@ -23,7 +23,6 @@ public class CreatureHandler : NetworkBehaviour {
 
     [Command]
     protected void CmdAnimationPlayWithLayer(string name, int layer) {
-        print("animation paly");
         RpcAnimationPlayWithLayer(name, layer);
     }
 
@@ -49,7 +48,6 @@ public class CreatureHandler : NetworkBehaviour {
 
     [ClientRpc]
     private void RpcSetAnimationTrigger(string triggerString) {
-        print("Anination trigger string:" + triggerString);
         _animator.SetTrigger(triggerString);
     }
 

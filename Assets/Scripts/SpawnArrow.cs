@@ -46,7 +46,7 @@ public class SpawnArrow : NetworkBehaviour {
 
         ArrowScript.arrowHeadRB.AddForce(forward * force, ForceMode.VelocityChange);
         ArrowScript.arrowHeadRB.AddTorque(forward * 10);
-
+        ArrowScript.ArrowReleased(0.0f);
         EventManager.FirePlayerStateChange(PlayerHandler.PlayerState.BowReleased, this.netId);
 
         arrowList.Add(ArrowGO);

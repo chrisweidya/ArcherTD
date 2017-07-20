@@ -48,7 +48,6 @@ public class HealthNetwork : NetworkBehaviour {
         //Debug.Log("UI health " + health);
         hpBar.SetHealthBar(health,maxHealth);
         currentHealth = health;
-        Debug.Log("Rpc: healthLeft: " + currentHealth);
     }
 
     public void ResetHealth() {

@@ -98,7 +98,6 @@ public class CreepHandler : CreatureHandler {
 
     //Does not loop
     private IEnumerator IdleCoroutine() {
-        print("Entered Idle");
         ChangeState(CreepState.Idle);
         CmdAnimationPlay(CreepAnimationState.Idle.ToString());
         _currentCoroutine = StartCoroutine(RunningCoroutine());
@@ -106,7 +105,6 @@ public class CreepHandler : CreatureHandler {
     }
 
     private IEnumerator RunningCoroutine() {
-        print("Entered Running");
         ChangeState(CreepState.Running);
         if (AcquireTarget()) {
             _currentCoroutine = StartCoroutine(SearchingCoroutine());
@@ -125,7 +123,6 @@ public class CreepHandler : CreatureHandler {
     }
 
     private IEnumerator SearchingCoroutine() {
-        print("Entered Searching");
         ChangeState(CreepState.Searching);
         if (Utility.InRange(transform.position, _targetEnemy.transform.position,
             _attackRadius, _targetEnemy.GetComponent<CreatureHandler>().GetRadius())) {
@@ -149,7 +146,6 @@ public class CreepHandler : CreatureHandler {
     }
 
     private IEnumerator AttackingCoroutine() {
-        print("Entered Attacking");
         StopAgent();
         //transform.LookAt(_targetEnemy.transform);
         StartCoroutine(Utility.RotateLerp(gameObject, gameObject.transform.rotation, _targetEnemy.transform.position, 0.5f));

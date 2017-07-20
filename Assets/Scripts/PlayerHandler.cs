@@ -70,7 +70,6 @@ public class PlayerHandler : CreatureHandler {
     
     //client local player
     private void Spawn() {
-        Debug.Log(gameObject);
         Vector3 pos;
         GameManager.Instance.AssignCamera(transform.gameObject, PlayerManager.Instance.GetSpawnPosition(faction));
         transform.localPosition = _modelOffset;

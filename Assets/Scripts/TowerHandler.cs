@@ -102,7 +102,6 @@ public class TowerHandler : CreatureHandler {
     private IEnumerator AttackTarget() {
         CmdSetAnimationTrigger(TowerAnimationTrigger.AttackTrigger.ToString());
         while (true) {
-            Debug.Log(currentTargetScript);
             if (Utility.IsAliveAndInRange(gameObject, currentTarget, towerRange)) {
                 //attack function
                 RpcTowerAttack(currentTarget.transform.position, currentTarget);
