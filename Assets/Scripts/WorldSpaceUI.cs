@@ -26,12 +26,12 @@ public class WorldSpaceUI : MonoBehaviour {
 
     private void EnableGameEndUI(GameManager.Factions faction) {
         if(PlayerHandler.LocalFaction == faction) {
-            foreach(GameObject go in _victoryDisplayGO) {
+            foreach(GameObject go in _defeatDisplayGO) {
                 go.SetActive(true);
             }
         }
         else {
-            foreach(GameObject go in _defeatDisplayGO) {
+            foreach(GameObject go in _victoryDisplayGO) {
                 go.SetActive(true);
             }
         }
