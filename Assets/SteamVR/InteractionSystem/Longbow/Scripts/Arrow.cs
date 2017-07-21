@@ -189,7 +189,7 @@ namespace Valve.VR.InteractionSystem
 
                 if (GetComponent<NetworkCollisionDetection>().faction != pProps.GetFaction()) {
                     Destroy(glintParticle);
-                    Debug.Log("Stick into target " + other.gameObject.name);
+                    Debug.Log("Trigger/Stick into target " + other.gameObject.name);
                     inFlight = false;
 
                     shaftRB.velocity = Vector3.zero;
@@ -260,7 +260,7 @@ namespace Valve.VR.InteractionSystem
 
 			hitTargetSound.Play();
 
-
+            Debug.Log("StickInTarget()");
 			// If the hit item has a parent, dock an empty object to that
 			// this fixes an issue with scaling hierarchy. I suspect this is not sustainable for a large object / scaling hierarchy.
 			scaleParentObject = new GameObject( "Arrow Scale Parent" );
