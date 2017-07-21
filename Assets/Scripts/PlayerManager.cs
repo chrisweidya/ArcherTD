@@ -38,7 +38,6 @@ public class PlayerManager : NetworkBehaviour {
             _legionHeroGO = obj;
         }
         else if (faction == GameManager.Factions.Hellbourne) {
-            print("set hero he");
             if (_hellbourneHeroGO != null) {
                 Debug.LogError("Attempting to set hero more than once.");
                 return;

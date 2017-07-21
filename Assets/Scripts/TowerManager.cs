@@ -46,7 +46,7 @@ public class TowerManager : NetworkBehaviour {
             _legionTowerGO.GetComponent<CreatureHandler>().CmdSetActive(false);
         }
         else if(faction == GameManager.Factions.Hellbourne) {
-            _hellbourneTowerDeadGO = Instantiate(_hellbourneTowerPrefab, _hellbourneTowerTransform);
+            _hellbourneTowerDeadGO = Instantiate(_hellbourneTowerDeadPrefab, _hellbourneTowerTransform);
             NetworkServer.Spawn(_hellbourneTowerDeadGO);
             //NetworkServer.UnSpawn(_hellbourneTowerGO);
             _hellbourneTowerGO.GetComponent<CreatureHandler>().CmdSetActive(false);
