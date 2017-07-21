@@ -14,9 +14,11 @@ public class NetworkCollisionDetection : MonoBehaviour {
     public GameManager.Factions faction;
     GameObject parentGameObject;
     private CreatureHandler creatureHandler;
+    private AudioHandler audioHandler;
     void Start () {
         //playerProps = GetComponent<PlayerProperties>();
         collided = false;
+        audioHandler = GetComponent<AudioHandler>();
 	}
 
     private void OnTriggerEnter(Collider other)
@@ -31,8 +33,16 @@ public class NetworkCollisionDetection : MonoBehaviour {
                 collided = true;
                 if (other.GetComponent<TowerHandler>() != null) {
                     EventManager.FireDoDamage(towerDamage, handler.netId);
+                    audioHandler.PlayAudio("ArrowOnTower");
                 }
                 else {
+                    if (other.GetComponent<CreepHandler>() != null) {
+                        audioHandler.PlayAudio("ArrowOnCreep");
+                    }
+                    else {
+                        audioHandler.PlayAudio("ArrowOnHero");
+
+                    }
                     EventManager.FireDoDamage(damage, handler.netId);
                 }
                 Debug.Log("collided with " + other.gameObject.name);

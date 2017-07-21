@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 public class PlayerHandler : CreatureHandler {
     public static NetworkInstanceId LocalWardenNetId;
     public static GameManager.Factions LocalFaction;
-    public static float RespawnTimeSecs = 10;
+    public static float RespawnTimeSecs = 12;
     
     [SerializeField] private Vector3 _modelOffset = Vector3.zero;
     [SerializeField] private List<Renderer> _modelRenderers = new List<Renderer>();
