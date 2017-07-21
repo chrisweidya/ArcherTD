@@ -165,6 +165,7 @@
     <Compile Include="Assets\SteamVR\Editor\SteamVR_Update.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\EffectExamples\Shared\Shaders\SurfaceShader_VC.shader" />
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Lava.shader" />
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Moss.shader" />
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Sand.shader" />

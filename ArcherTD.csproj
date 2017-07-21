@@ -78,6 +78,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\DecalDestroyer.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\GunAim.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\GunShoot.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\ParticleExamples.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\ParticleMenu.cs" />
     <Compile Include="Assets\Laterns and candles\scripts\CameraFacing.cs" />
     <Compile Include="Assets\Laterns and candles\scripts\ExtendedFlycam.cs" />
     <Compile Include="Assets\Lobby\Scripts\DraggablePanel.cs" />
@@ -279,6 +284,7 @@
     <Compile Include="Assets\Underworld\Standard Assets\Environment\Water (Basic)\Scripts\WaterBasic.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\EffectExamples\Shared\Shaders\SurfaceShader_VC.shader" />
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Lava.shader" />
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Moss.shader" />
     <None Include="Assets\EnviromentEffectsShaders\Shaders\Sand.shader" />
