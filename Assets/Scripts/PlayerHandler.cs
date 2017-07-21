@@ -7,10 +7,10 @@ using UnityEngine.Networking;
 public class PlayerHandler : CreatureHandler {
     public static NetworkInstanceId LocalWardenNetId;
     public static GameManager.Factions LocalFaction;
+    public static float RespawnTimeSecs = 10;
     
     [SerializeField] private Vector3 _modelOffset = Vector3.zero;
     [SerializeField] private List<Renderer> _modelRenderers = new List<Renderer>();
-    [SerializeField] private float _respawnTimeSecs;
 
     public enum PlayerState { Stand, BowPulled, BowReleased, Death};
     private enum PlayerAnimationTrigger { Stand, BowPulled, BowReleased, Death};
@@ -71,12 +71,14 @@ public class PlayerHandler : CreatureHandler {
     
     //client local player
     private void Spawn() {
-        Vector3 pos;
+        print("fdasf1");
         GameManager.Instance.AssignCamera(transform.gameObject, PlayerManager.Instance.GetSpawnPosition(faction));
+        print("fdasf2");
         transform.localPosition = _modelOffset;
         EventManager.FirePlayerDeath(netId, false);
         CmdAnimationPlayWithLayer(PlayerAnimationState.Stand.ToString(), (int)PlayerAnimationLayer.BaseLayer);
         CmdAnimationPlayWithLayer(PlayerAnimationState.Stand.ToString(), (int)PlayerAnimationLayer.AttackLayer);
+        print("fdasf3");
     }
 
     //Server
@@ -93,7 +95,7 @@ public class PlayerHandler : CreatureHandler {
 
             CmdAnimationPlayWithLayer(PlayerAnimationState.Death.ToString(), (int)PlayerAnimationLayer.BaseLayer);
             CmdAnimationPlayWithLayer(PlayerAnimationState.Death.ToString(), (int)PlayerAnimationLayer.AttackLayer);
-            StartCoroutine(Respawn(_respawnTimeSecs));
+            StartCoroutine(Respawn(RespawnTimeSecs));
         }
     }
 

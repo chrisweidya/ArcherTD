@@ -39,6 +39,13 @@ public class Fade : MonoBehaviour {
         }
 	}
 
+    public void StartFadeIn(float time) {
+        if (!_fading) {
+            fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 1);
+            StartCoroutine(StartFade(0, FadeType.In, time, null));
+        }
+    }
+
     public void StartFadeOut(float time, string nextScene) {
         if (!_fading) {
             fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 0);
