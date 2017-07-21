@@ -108,10 +108,11 @@ public class TowerHandler : CreatureHandler {
     }
 
     private IEnumerator AttackTarget() {
-        CmdSetAnimationTrigger(TowerAnimationTrigger.AttackTrigger.ToString());
+        
         while (true) {
             if (Utility.IsAliveAndInRange(gameObject, currentTarget, towerRange)) {
                 //attack function
+                CmdSetAnimationTrigger(TowerAnimationTrigger.AttackTrigger.ToString());
                 RpcTowerAttack(currentTarget.transform.position, currentTarget);
             }
             else {
@@ -121,7 +122,7 @@ public class TowerHandler : CreatureHandler {
                 CmdSetAnimationTrigger(TowerAnimationTrigger.IdleTrigger.ToString());
                 break;
             }
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(2.0f);
 
         }
     }
