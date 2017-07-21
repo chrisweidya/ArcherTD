@@ -164,6 +164,7 @@
     <Compile Include="Assets\Scripts\TowerManager.cs" />
     <Compile Include="Assets\Scripts\TowerProjectile.cs" />
     <Compile Include="Assets\Scripts\UI\BloodEffect.cs" />
+    <Compile Include="Assets\Scripts\UI\CameraFilterSwap.cs" />
     <Compile Include="Assets\Scripts\UI\Fade.cs" />
     <Compile Include="Assets\Scripts\UI\TeleportIconDisplay.cs" />
     <Compile Include="Assets\Scripts\Utility\AdjustLight.cs" />

@@ -36,7 +36,7 @@ public class BloodEffect : MonoBehaviour {
         while(Time.time < endTime) {
             fraction = 1 - (Time.time - startTime) / _fadeTime;
             _bloodSpriteRenderer.color = new Color(_bloodSpriteRenderer.color.r, _bloodSpriteRenderer.color.g, _bloodSpriteRenderer.color.b, fraction);
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForEndOfFrame();
         }
     }
 }
