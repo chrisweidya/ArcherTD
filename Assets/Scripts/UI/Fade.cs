@@ -40,19 +40,18 @@ public class Fade : MonoBehaviour {
 	}
 
     public void StartFadeIn(float time) {
-        if (!_fading) {
-            fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 1);
-            StartCoroutine(StartFade(0, FadeType.In, time, null));
-        }
+        StopAllCoroutines();
+        fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 1);
+        StartCoroutine(StartFade(0, FadeType.In, time, null));
     }
 
     public void StartFadeOut(float time, string nextScene) {
+        StopAllCoroutines();
         fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 0);
         StartCoroutine(StartFade(1, FadeType.Out, time, nextScene));
     }
 	
     private IEnumerator StartFade(float targetAlpha, FadeType type, float time, string nextScene) {
-        StopAllCoroutines();
         float currAlpha = fadeImage.color.a;
         yield return new WaitForSeconds(1);
 
