@@ -20,6 +20,19 @@ public class PlayerHandler : CreatureHandler {
 
     public GameManager.Factions faction;
 
+    [SerializeField]
+    private float baseTowerDamage;
+    [SerializeField]
+    private float baseCreatureDamage;
+    [SerializeField]
+    private float towerDamage;
+    [SerializeField]
+    private float creatureDamage;
+
+    private float incrementPercentage = 0.1f;
+    private float currentIncrement = 1;
+    private float maxIncrement = 3f;
+
     private void OnEnable() {
         EventManager.ChangePlayerState += ChangeState;
         EventManager.DoDamageAction += DoDamage;
@@ -50,6 +63,8 @@ public class PlayerHandler : CreatureHandler {
                 PlayerManager.Instance.SetHeroOnce(gameObject, faction, netId);
             _radius = GetComponent<CapsuleCollider>().radius;
         }
+        towerDamage = baseTowerDamage;
+        creatureDamage = baseCreatureDamage;
     }
 
     private void Update() {
@@ -109,5 +124,20 @@ public class PlayerHandler : CreatureHandler {
             else
                 Spawn();
         }
+    }
+
+    public float GetTowerDamage() {
+        return towerDamage;
+    }
+    public float GetCreatureDamage() {
+        return creatureDamage;
+    }
+    public void PowerGain() {
+        if (currentIncrement < maxIncrement) {
+            currentIncrement += incrementPercentage;
+            towerDamage = baseTowerDamage * currentIncrement;
+            creatureDamage = baseCreatureDamage * currentIncrement;
+        }
+        Debug.Log("towerDamage " + towerDamage + " creature damage " + creatureDamage);
     }
 }

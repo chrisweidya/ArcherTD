@@ -36,6 +36,7 @@ public class SpawnArrow : NetworkBehaviour {
         GameObject ArrowGO = Instantiate(ArrowPrefab, position, rotation);
         Valve.VR.InteractionSystem.Arrow ArrowScript = ArrowGO.GetComponent<Valve.VR.InteractionSystem.Arrow>();
         ArrowGO.GetComponent<NetworkCollisionDetection>().faction = GetComponent<PlayerProperties>().GetFaction();
+        ArrowGO.GetComponent<NetworkCollisionDetection>().InitialiseArrowDamage(gameObject);
         ArrowScript.shaftRB.isKinematic = false;
         ArrowScript.shaftRB.useGravity = true;
         ArrowScript.shaftRB.transform.GetComponent<BoxCollider>().enabled = true;

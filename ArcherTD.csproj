@@ -111,6 +111,7 @@
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\HealthBarUI.cs" />
     <Compile Include="Assets\Scripts\HealthNetwork.cs" />
+    <Compile Include="Assets\Scripts\KillReward.cs" />
     <Compile Include="Assets\Scripts\LookAtPlayer.cs" />
     <Compile Include="Assets\Scripts\NetworkCollisionDetection.cs" />
     <Compile Include="Assets\Scripts\PlayerHandler.cs" />

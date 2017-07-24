@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class NetworkCollisionDetection : MonoBehaviour {
 
-    [SerializeField]
     private float damage;
-    [SerializeField]
     private float towerDamage;
     private PlayerProperties playerProps;
     private CreatureHandler handler;
@@ -41,11 +39,9 @@ public class NetworkCollisionDetection : MonoBehaviour {
                     }
                     else {
                         audioHandler.PlayAudio("ArrowOnHero");
-
                     }
                     EventManager.FireDoDamage(damage, handler.netId);
                 }
-                Debug.Log("collided with " + other.gameObject.name);
                 creatureHandler = parentGameObject.GetComponent<CreatureHandler>();
                 StartCoroutine(DestroyArrowOnIsDead());
             }
@@ -65,5 +61,11 @@ public class NetworkCollisionDetection : MonoBehaviour {
         }
 
 
+    }
+
+    public void InitialiseArrowDamage(GameObject owner) {
+
+        towerDamage = owner.GetComponent<PlayerHandler>().GetTowerDamage();
+        damage = owner.GetComponent<PlayerHandler>().GetCreatureDamage();
     }
 }

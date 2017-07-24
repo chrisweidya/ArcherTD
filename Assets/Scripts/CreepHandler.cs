@@ -42,6 +42,8 @@ public class CreepHandler : CreatureHandler {
     public bool agentStopped = false;
     public Vector3 currentTargetPos;
 
+    [SerializeField]
+    private KillReward killReward;
     private void Awake() {
         base.Awake();
         _agent = GetComponent<NavMeshAgent>();
@@ -270,6 +272,11 @@ public class CreepHandler : CreatureHandler {
         StopAllCoroutines();
         CmdSetAnimationTrigger(CreepAnimationTrigger.DeathTrigger.ToString());
         StartCoroutine(Despawn(_despawnTimeSecs));
+        Debug.Log("creep died by " +GetLastHitBy());
+        if (GetLastHitBy() == _enemyHero) {
+            Debug.Log("Creep is killed by hero");
+            killReward.Reward(_enemyHero);
+        }
     }
 
     private void StopCoroutinesOnGameEnd(GameManager.Factions faction) {

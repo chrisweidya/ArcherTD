@@ -14,6 +14,7 @@ public class CreatureHandler : NetworkBehaviour {
     protected HealthNetwork _healthNetwork;
     protected float _radius;
 
+    private GameObject lastHitBy;
     protected void Awake() {
         if(_animator == null)
             _animator = GetComponent<Animator>();
@@ -62,15 +63,21 @@ public class CreatureHandler : NetworkBehaviour {
 
     [Command]
     protected void CmdDoDamage(GameObject target, float amt) {
-        if (!isDead && !target.GetComponent<CreatureHandler>().GetIsDead())
+        if (!isDead && !target.GetComponent<CreatureHandler>().GetIsDead()) {
+            target.GetComponent<CreatureHandler>().SetIsLastHitBy(gameObject);
             target.GetComponent<CreatureHandler>().TakeDamage(amt);
+        } 
     }
 
     [Command]
-    protected void CmdDoDamageById(NetworkInstanceId id, float amt) {
+    protected void CmdDoDamageById( NetworkInstanceId id, float amt) {
         CreatureHandler targetHandler = NetworkServer.FindLocalObject(id).GetComponent<CreatureHandler>();
-        if (!isDead && !targetHandler.GetIsDead())
+        if (!isDead && !targetHandler.GetIsDead()) {
+            targetHandler.SetIsLastHitBy(gameObject);
             targetHandler.TakeDamage(amt);
+            Debug.Log(targetHandler.gameObject.name + " ass " + targetHandler.GetLastHitBy());
+        }
+
     }
 
     //Server
@@ -106,5 +113,11 @@ public class CreatureHandler : NetworkBehaviour {
     public float GetRadius() {
         return _radius;
     }
-    
+    public GameObject GetLastHitBy() {
+        return lastHitBy;
+    }
+
+    public void SetIsLastHitBy(GameObject target) {
+        lastHitBy = target;
+    }
 }
