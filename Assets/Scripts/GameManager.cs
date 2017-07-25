@@ -6,11 +6,10 @@ using UnityEngine.Networking;
 
 public class GameManager : Singleton<GameManager> {
 
-    public enum Factions {Legion, Hellbourne};
-    public enum Scenes { MatchMaking, Lobby};
+    public enum Factions { Legion, Hellbourne };
+    public enum Scenes { MatchMaking, Lobby };
 
     public static bool GameWon = false;
-    private static NetworkConnection ServerConnection;
 
     private GameObject _cameraRigGO = null;
     private GameObject _cameraPlayer = null;
@@ -57,25 +56,6 @@ public class GameManager : Singleton<GameManager> {
         }
         player.transform.position = player.transform.parent.position;
         player.transform.rotation = player.transform.parent.rotation;
-    }
-
-    private void SetSceneProperties(string sceneName) {
-
-    }
-
-    public static void SetOnceServerConnection(NetworkConnection connection) {
-        if (ServerConnection == null)
-            ServerConnection = connection;
-        print("here" +connection);
-    }
-
-    public static NetworkConnection GetServerConnection() {
-        if (ServerConnection == null) {
-            Debug.LogError("No server connection initialized.");
-            return null;
-        }
-        else
-            return ServerConnection;
     }
 
     public static void SetLocalPlayerFaction(GameManager.Factions faction) {

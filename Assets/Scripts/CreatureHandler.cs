@@ -75,7 +75,6 @@ public class CreatureHandler : NetworkBehaviour {
         if (!isDead && !targetHandler.GetIsDead()) {
             targetHandler.SetIsLastHitBy(gameObject);
             targetHandler.TakeDamage(amt);
-            Debug.Log(targetHandler.gameObject.name + " ass " + targetHandler.GetLastHitBy());
         }
 
     }
