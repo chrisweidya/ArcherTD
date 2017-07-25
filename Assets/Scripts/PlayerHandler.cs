@@ -29,7 +29,10 @@ public class PlayerHandler : CreatureHandler {
     [SerializeField]
     private float creatureDamage;
 
-    private float incrementPercentage = 0.1f;
+    private GameObject bowHand;
+
+    //power gain after killing creep
+    private float incrementPercentage = 0.05f;
     private float currentIncrement = 1;
     private float maxIncrement = 3f;
 
@@ -139,5 +142,10 @@ public class PlayerHandler : CreatureHandler {
             creatureDamage = baseCreatureDamage * currentIncrement;
         }
         Debug.Log("towerDamage " + towerDamage + " creature damage " + creatureDamage);
+    }
+
+    public Transform BowLocation() {
+        //gets the right hand of the player
+        return transform.parent.root.GetComponent<Valve.VR.InteractionSystem.Player>().GetHand(0).transform;
     }
 }
