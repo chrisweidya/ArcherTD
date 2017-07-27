@@ -10,12 +10,12 @@ public class CreepManager : NetworkBehaviour {
 
     [SerializeField] private GameObject _legionCreepPrefab;
     [SerializeField] private Transform _legionCreepsContainer;
-    [SerializeField] public List<GameObject> _legionCreeps;
+    [SerializeField] private List<GameObject> _legionCreeps;
     private Stack<GameObject> _legionCreepsDead;
     
     [SerializeField] private GameObject _hellbourneCreepPrefab;
     [SerializeField] private Transform _hellbourneCreepsContainer;
-    [SerializeField] public List<GameObject> _hellbourneCreeps;
+    [SerializeField] private List<GameObject> _hellbourneCreeps;
     private Stack<GameObject> _hellbourneCreepsDead;
 
     [SerializeField] private int _creepsInBatch;
@@ -58,6 +58,7 @@ public class CreepManager : NetworkBehaviour {
             for (int i = 0; i < numCreeps; i++) {
                 SpawnCreep(GameManager.Factions.Legion);
                 SpawnCreep(GameManager.Factions.Hellbourne);
+                //Time interval between each creep in a batch
                 yield return new WaitForSeconds(intervalSecs);
             }
         }

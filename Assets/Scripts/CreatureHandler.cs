@@ -76,7 +76,6 @@ public class CreatureHandler : NetworkBehaviour {
             targetHandler.SetIsLastHitBy(gameObject);
             targetHandler.TakeDamage(amt);
         }
-
     }
 
     //Server

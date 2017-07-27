@@ -30,17 +30,14 @@ public class CreepHandler : CreatureHandler {
     private float _hitboxRadius; //NavMeshAgent radius
     private static float _closesDistanceSquared;
 
-    public Vector3 _targetWaypoint;
+    private Vector3 _targetWaypoint;
     private int _waypointsReached = 0;
     private IList<GameObject> _enemyCreeps;
     private GameObject _enemyTower;
     private GameObject _enemyHero;
-    public GameObject _targetEnemy;
-    public CreepState _currentState;
+    private GameObject _targetEnemy;
+    private CreepState _currentState;
     private Coroutine _currentCoroutine;
-
-    public bool agentStopped = false;
-    public Vector3 currentTargetPos;
 
     [SerializeField]
     private KillReward killReward;
@@ -82,7 +79,6 @@ public class CreepHandler : CreatureHandler {
         _waypointsReached = 0;
         _currentCoroutine = null;
         _agent.radius = _radius;
-        //ResumeAgent();
     }
 
     private void Update() {
@@ -180,7 +176,7 @@ public class CreepHandler : CreatureHandler {
     }
 
     private bool AcquireTarget() {
-        //print("Acquiring target...");
+        //Checks enemy creep list for closest creep
         float closestDistanceSqr = _closesDistanceSquared;
         _targetEnemy = null;
         for (int i = 0; i < _enemyCreeps.Count; i++) {
@@ -195,16 +191,18 @@ public class CreepHandler : CreatureHandler {
         }
         if (_targetEnemy != null)
             return true;
+        //Checks for tower
         if (Utility.IsAliveAndInRange(gameObject, _enemyTower, _acquisitionRadius)) {
             _targetEnemy = _enemyTower;
             _attackDamage = _towerAttackDamage;
+            return true;
         }
+        //Checks for enemy player
         if (Utility.IsAliveAndInRange(gameObject, _enemyHero, _acquisitionRadius)) {
             _targetEnemy = _enemyHero;
             _attackDamage = _towerAttackDamage;
-        }
-        if (_targetEnemy != null)
             return true;
+        }
         return false;
     }
 
@@ -229,19 +227,16 @@ public class CreepHandler : CreatureHandler {
     }
 
     private void SetDestination(Vector3 pos) {
-        currentTargetPos = pos;
         _agent.SetDestination(pos);
         _agent.speed = _defaultCreepSpeed;
     }
 
     private void StopAgent() {
         _agent.isStopped = true;
-        agentStopped = true;
     }
 
     private void ResumeAgent() {
         _agent.isStopped = false;
-        agentStopped = false;
     }
 
     private void DoDamage() {
