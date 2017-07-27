@@ -146,7 +146,6 @@ public class CreepHandler : CreatureHandler {
 
     private IEnumerator AttackingCoroutine() {
         StopAgent();
-        //transform.LookAt(_targetEnemy.transform);
         StartCoroutine(Utility.RotateLerp(gameObject, gameObject.transform.rotation, _targetEnemy.transform.position, 0.5f));
         ChangeState(CreepState.Attacking);
         CmdSetAnimationTrigger(CreepAnimationTrigger.IdleTrigger.ToString());

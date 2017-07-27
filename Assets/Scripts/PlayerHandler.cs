@@ -60,7 +60,7 @@ public class PlayerHandler : CreatureHandler {
                     r.enabled = false;
                 }
                 LocalWardenNetId = netId;
-                GameManager.SetLocalPlayerFaction(faction);
+                GameManager.SetupTeleporter();
             }
             if(isServer)
                 PlayerManager.Instance.SetHeroOnce(gameObject, faction, netId);

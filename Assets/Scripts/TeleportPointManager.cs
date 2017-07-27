@@ -8,10 +8,10 @@ public class TeleportPointManager : MonoBehaviour {
     public GameObject hellborneTelePoints;
 
     public void TeleporterSetUp() {
-        if (GameManager.GetLocalPlayerFaction() == GameManager.Factions.Hellbourne) {
+        if (PlayerHandler.LocalFaction == GameManager.Factions.Hellbourne) {
             hellborneTelePoints.SetActive(true);
         }
-        if (GameManager.GetLocalPlayerFaction() == GameManager.Factions.Legion) {
+        if (PlayerHandler.LocalFaction == GameManager.Factions.Legion) {
             legionTelePoints.SetActive(true);
         }
     }

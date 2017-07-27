@@ -15,8 +15,6 @@ public class GameManager : Singleton<GameManager> {
     private GameObject _cameraPlayer = null;
     [SerializeField] private string _currentScene;
 
-    private static GameManager.Factions localPlayerFaction;
-
     protected override void Awake() {
         base.Awake();
     }
@@ -58,13 +56,8 @@ public class GameManager : Singleton<GameManager> {
         player.transform.rotation = player.transform.parent.rotation;
     }
 
-    public static void SetLocalPlayerFaction(GameManager.Factions faction) {
-        localPlayerFaction = faction;
+    public static void SetupTeleporter() {
         GameObject.Find("TeleporterPointManager").GetComponent<TeleportPointManager>().TeleporterSetUp();
-    }
-
-    public static GameManager.Factions GetLocalPlayerFaction( ) {
-       return localPlayerFaction;
     }
 
     public string GetCurrentSceneName() {
